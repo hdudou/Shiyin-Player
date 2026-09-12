@@ -680,6 +680,10 @@
     <!-- 关于页 -->
     <string name="about_version_build">版本 %1$s · 构建 %2$d</string>
     <string name="about_view_changelog">查看版本更新内容</string>
+    <string name="about_open_source_title">开源许可</string>
+    <string name="about_open_source_desc">本项目遵循 GPL-3.0 协议开源（详见仓库 LICENSE 文件）。基于本项目修改、再分发或发布衍生作品者，同样须以 GPL-3.0 授权并完整开源，同时保留版权声明。</string>
+    <string name="about_github_prefix">GitHub: %1$s</string>
+    <string name="about_github_url">https://github.com/hdudou/Shiyin-Player</string>
     <string name="about_third_party_title">第三方依赖库</string>
     <string name="about_third_party_desc">播放器当前使用的第三方依赖（与构建配置对齐）。详见各库官方许可证。</string>
     <string name="about_purpose_prefix">用途: %1$s</string>

@@ -662,6 +662,10 @@
     <!-- About -->
     <string name="about_version_build">Version %1$s · build %2$d</string>
     <string name="about_view_changelog">View version update notes</string>
+    <string name="about_open_source_title">Open Source License</string>
+    <string name="about_open_source_desc">This project is released under GPL-3.0 (see the LICENSE file in the repository). Anyone who modifies, redistributes or publishes derivative works of this project must also license them under GPL-3.0, keep them fully open, and retain the copyright notice.</string>
+    <string name="about_github_prefix">GitHub: %1$s</string>
+    <string name="about_github_url">https://github.com/hdudou/Shiyin-Player</string>
     <string name="about_third_party_title">Third-party libraries</string>
     <string name="about_third_party_desc">Third-party dependencies currently used by the player (aligned with build config). See each library\'s official license.</string>
     <string name="about_purpose_prefix">Purpose: %1$s</string>

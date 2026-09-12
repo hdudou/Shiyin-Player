@@ -1,5 +1,7 @@
 package com.shiyinplayer.ui.about
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -87,9 +89,11 @@ fun AboutScreen(navController: NavController) {
     val assets = OpenSourceLibraryRegistry.allAssets
     val violations = OpenSourceLibraryRegistry.validateConsistency()
     val complianceNotice = OpenSourceLibraryRegistry.complianceNoticeText()
+    val context = LocalContext.current
     val appVersion = AppVersion.displayName
     val buildInfo = stringResource(R.string.about_version_build, appVersion, AppVersion.code)
     val changelog = rememberChangelog()
+    val githubUrl = stringResource(R.string.about_github_url)
     var showNotes by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -128,6 +132,42 @@ fun AboutScreen(navController: NavController) {
                 Spacer(Modifier.height(4.dp))
                 TextButton(onClick = { showNotes = true }) {
                     Text(stringResource(R.string.about_view_changelog))
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            stringResource(R.string.about_open_source_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            stringResource(R.string.about_open_source_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        TextButton(
+                            onClick = {
+                                runCatching {
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl)))
+                                }
+                            }
+                        ) {
+                            Text(
+                                stringResource(R.string.about_github_prefix, githubUrl),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
                 }
             }
 
