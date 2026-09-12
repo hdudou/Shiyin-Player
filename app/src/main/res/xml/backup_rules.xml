@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 不备份加密凭据库与签名无关内容；曲库缓存可备份 -->
+    <exclude domain="sharedpref" path="smb_credentials.xml" />
+    <exclude domain="sharedpref" path="webdav_credentials.xml" />
+    <!-- P2-15：Last.fm 加密凭据同样不随备份带出（P1-12 迁移后的加密文件） -->
+    <exclude domain="sharedpref" path="lastfm_credentials.xml" />
+</full-backup-content>

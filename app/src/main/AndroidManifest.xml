@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 网络（WebDAV/SMB/ZeroTier 虚拟网访问） -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 网络类型侦测（流量保护 / WiFi 自动同步，2026-08-19） -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 前台媒体播放服务 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!-- 元数据同步保活前台服务（Android 14+ 需 dataSync 类型权限，需求2 2026-08-23） -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- 播放通知（Android 13+） -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 本地音频读取 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <!-- 蓝牙耳机控制（Android 12+ 需要运行时 BLUETOOTH_CONNECT） -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- 所有文件访问（获取本地存储全盘访问，覆盖未入媒体库的音频）：Android 11+ 经设置-特殊权限授予 -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <!-- 桌面歌词悬浮窗（TYPE_APPLICATION_OVERLAY 需此权限） -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 锁屏叠加层 Visualizer 音频捕获 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 后台播放保活 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 闹钟精确闹钟（Android 12+） -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- 版本更新：安装新安装包需运行时授权「允许安装未知来源应用」（Android 8+） -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name=".MusicPlayerApplication"
+        android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MusicPlayer"
+        tools:targetApi="34">
+
+        <!-- 媒体播放前台服务（v2.1：无 VpnService，ZeroTier 走 libzt 用户态） -->
+        <service
+            android:name=".player.PlaybackService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ExportedService">
+            <!-- Media3 媒体会话将硬件媒体按键（蓝牙 AVRCP 上下首等）统一转发到该接收器，
+                 由 PlaybackController.handleMediaButton 按队列切歌，而非 Media3 原生窗口切换 -->
+            <meta-data
+                android:name="androidx.media3.session.MEDIA_BUTTON_RECEIVER"
+                android:value="com.shiyinplayer.player.HeadsetMediaButtonReceiver" />
+        </service>
+
+        <!-- 收音机播放前台服务 -->
+        <service
+            android:name=".player.radio.RadioPlaybackService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ExportedService" />
+
+        <!-- 元数据同步保活前台服务（2026-08-23 需求2） -->
+        <service
+            android:name=".data.metasync.MetadataSyncService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            tools:ignore="ExportedService" />
+
+        <!-- 启动首屏：暖米满屏 + 居中 Logo + 品牌名 + 动态版本号，短暂展示后进入主界面 -->
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MusicPlayer.Splash"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MusicPlayer"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <!-- 接收外部音频文件打开（设置-整合：设为默认播放器 / 外部 Intent） -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- 锁屏叠加层：覆盖在系统锁屏之上的全屏动态可视化页面 -->
+        <activity
+            android:name=".lockscreen.LockScreenOverlayActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.MusicPlayer.LockScreenOverlay" />
+
+        <!-- 耳机媒体按键（有线 HEADSETHOOK / 蓝牙 AVRCP）：经 HeadsetMediaButtonReceiver 分发到播放控制器 -->
+        <receiver
+            android:name=".player.HeadsetMediaButtonReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 闹钟定时播放：AlarmManager 精确闹钟触发后启动电台播放 -->
+        <receiver
+            android:name=".player.radio.RadioAlarmReceiver"
+            android:exported="false"
+            tools:ignore="ExportedReceiver" />
+
+        <!-- 版本更新：经 FileProvider 暴露下载到缓存目录的 APK 给系统安装器 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+    </application>
+
+</manifest>

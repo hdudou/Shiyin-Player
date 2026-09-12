@@ -1,0 +1,13 @@
+<resources>
+    <!-- 冷启动系统 SplashScreen 定制（Android 12+）：
+         令系统屏与自定义首屏视觉连续（暖米底 + 透明图标），消除"单独图标页"跳变 -->
+    <style name="Theme.MusicPlayer.Splash">
+        <item name="android:windowBackground">#FFF6EC</item>
+        <item name="android:statusBarColor">#FFF6EC</item>
+        <item name="android:navigationBarColor">#FFF6EC</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowSplashScreenBackground">#FFF6EC</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_blank</item>
+    </style>
+</resources>

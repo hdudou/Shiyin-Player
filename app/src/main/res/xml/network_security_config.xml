@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  P2-15 / 中危-D：明文流量策略集中管理。
+  - <domain> 无法按 IP 网段（CIDR）匹配，而 SMB/WebDAV 明确支持用户配置任意内网明文 HTTP IP，
+    故 base-config 保持 cleartextTrafficPermitted=true（否则会砍断用户新增的任意内网 HTTP 地址）。
+  - 真正的"仅内网放行明文"收敛在【连接层运行时执行】：
+      * WebDavDataSource / WebDavClient（WebDAV 播放与浏览）：http:// 目标非内网则拒绝；
+      * SmartDataSourceFactory（播放层公网直链路由）：无凭据 http:// 非内网直链拒绝；
+      * HttpDirectFetcher（HTTP 源扫描抓取）：http:// 非内网拒绝。
+    三者统一复用 WebDavClientProvider.cleartextAllowed（RFC1918/回环/链路本地=内网，外链明文一律拒绝）。
+  - WebDAV 的 HTTPS 自签信任仅覆盖内网主机（WebDavClientProvider 按主机分流），外链严格 TLS。
+  - trust-anchors 仅系统 CA。本配置的明文许可仅影响"明文 HTTP"（内网 WebDAV），公网已收敛。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

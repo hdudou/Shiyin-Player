@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题模式 -->
+    <string-array name="theme_modes">
+        <item>跟随系统</item>
+        <item>浅色</item>
+        <item>深色</item>
+    </string-array>
+
+    <!-- 强调色（Material 3 主色种子） -->
+    <string-array name="accent_colors">
+        <item>默认紫 #6750A4</item>
+        <item>蓝 #2196F3</item>
+        <item>青 #009688</item>
+        <item>绿 #4CAF50</item>
+        <item>橙 #FF9800</item>
+        <item>红 #F44336</item>
+    </string-array>
+</resources>

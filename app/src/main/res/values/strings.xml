@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">拾音</string>
+
+    <!-- 底部导航 -->
+    <string name="tab_songs">歌曲</string>
+    <string name="tab_albums">专辑</string>
+    <string name="tab_artists">艺术家</string>
+    <string name="tab_playlists">播放列表</string>
+    <string name="tab_more">更多</string>
+
+    <!-- 通用 -->
+    <string name="action_search">搜索</string>
+    <string name="action_add">添加</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_confirm">确定</string>
+    <string name="action_delete">删除</string>
+    <string name="action_rescan">重新扫描</string>
+    <string name="action_scan_all">全部重新扫描</string>
+    <string name="empty_hint">暂无内容</string>
+
+    <!-- 歌曲页 -->
+    <string name="add_song_title">从音乐源添加歌曲</string>
+    <string name="no_sources_hint">尚未添加音乐源？请先到「设置 → 音乐库 → 音乐库来源管理」添加本地 / WebDAV / SMB 来源。</string>
+
+    <!-- 设置 -->
+    <string name="settings_title">设置</string>
+    <string name="cat_interface">界面</string>
+    <string name="cat_sound">声音引擎</string>
+    <string name="cat_playback">回放</string>
+    <string name="cat_playlist">播放列表</string>
+    <string name="cat_library">音乐库</string>
+    <string name="cat_control">控制</string>
+    <string name="cat_integration">整合</string>
+
+    <!-- ZeroTier -->
+    <string name="zerotier_title">ZeroTier 虚拟网络</string>
+    <string name="zerotier_network_id">Network ID</string>
+    <string name="zerotier_join">加入网络</string>
+    <string name="zerotier_leave">离开网络</string>
+
+    <!-- 通知 -->
+    <string name="notification_channel_name">播放控制</string>
+    <string name="notification_channel_placeholder_name">前台占位</string>
+    <string name="notification_action_prev">上一首</string>
+    <string name="notification_action_play">播放</string>
+    <string name="notification_action_pause">暂停</string>
+    <string name="notification_action_next">下一首</string>
+</resources>

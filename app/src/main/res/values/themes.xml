@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 窗口级主题：仅影响启动屏 / 窗口背景 / 状态栏 / 导航栏；真正的 UI 配色由 Compose MaterialTheme 在代码里提供。
+         2026-08-23 修复「后台切前台闪白」：原父主题为 Material.Light（窗口背景默认白），切前台/重绘时系统先用白色
+         windowBackground 绘制整窗，再叠加黑色 Compose UI，导致窗口框体随列表一起闪白。现改为暗色父主题 +
+         深色 windowBackground + 黑色系统栏，使窗口首帧即为深色，避免白色闪框。
+         注意：material3 Compose 库(1.2.1)不提供 Theme.Material3.* 的 XML 主题样式，其 colorSurface / isLightTheme
+         等属性需 M3 主题链才存在，故此处沿用框架 Material 主题 + 具体颜色值，使资源链接可过。 -->
+    <style name="Theme.MusicPlayer" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- 启动首屏主题：暖米底铺满，避免启动瞬间白闪 -->
+    <style name="Theme.MusicPlayer.Splash">
+        <item name="android:windowBackground">#FFF6EC</item>
+        <item name="android:statusBarColor">#FFF6EC</item>
+        <item name="android:navigationBarColor">#FFF6EC</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <!-- Android 12+ 系统 SplashScreen 定制见 values-v31/themes.xml -->
+    </style>
+
+    <!-- 锁屏叠加层主题：黑底全屏，覆盖在系统锁屏之上 -->
+    <style name="Theme.MusicPlayer.LockScreenOverlay" parent="Theme.MusicPlayer">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+</resources>

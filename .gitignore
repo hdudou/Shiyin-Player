@@ -1,0 +1,27 @@
+# 构建产物
+*.iml
+.gradle/
+build/
+app/build/
+local.properties
+captures/
+
+# 原生构建中间文件
+.externalNativeBuild/
+.cxx/
+app/.cxx/
+
+# 用户特定
+*.log
+.DS_Store
+
+# 密钥 / 签名（绝不入库）
+signing.properties
+*.jks
+*.keystore
+
+# 临时
+*.tmp
+
+# 云占位重解析产物（同构建输出，不入库）
+build_cloud_reparse/

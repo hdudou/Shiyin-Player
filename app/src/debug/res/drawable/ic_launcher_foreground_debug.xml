@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- debug 变体前景：base 图标 + 右下角 "debug" 角标 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@mipmap/ic_launcher_foreground" />
+    <item
+        android:width="42dp"
+        android:height="15dp"
+        android:gravity="bottom|end"
+        android:right="6dp"
+        android:bottom="9dp"
+        android:drawable="@drawable/ic_debug_badge" />
+</layer-list>

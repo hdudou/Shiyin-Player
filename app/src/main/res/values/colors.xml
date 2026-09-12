@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 仅作原生层（通知/状态栏）兜底；UI 颜色由 Compose colorScheme 提供 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="surface">#FF1A1A2E</color>
+    <color name="primary">#FF6750A4</color>
+</resources>

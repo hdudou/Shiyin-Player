@@ -1,0 +1,5679 @@
+﻿[
+    {
+        "name":  "Canton Traffic Radio",
+        "url":  "http://ls.qingting.fm/live/4955.m3u8",
+        "genre":  "交通/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gztv.com/"
+    },
+    {
+        "name":  "体坛速听",
+        "url":  "https://lhttp.qtfm.cn/live/20500171/64k.mp3",
+        "genre":  "体育/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/"
+    },
+    {
+        "name":  "华藏净宗弘化网净空老法师",
+        "url":  "https://vod.amtb.de/liveedge/_definst_/smil:livetv.smil/chunklist_b828000.m3u8",
+        "genre":  "宗教/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hwadzan.tv/"
+    },
+    {
+        "name":  "主内真生命",
+        "url":  "https://stream.tligradio.org/listen/chinese/radio.mp3",
+        "genre":  "宗教/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tlig.tw/index_tw.php"
+    },
+    {
+        "name":  "华藏净宗弘化网网络念佛堂",
+        "url":  "https://vod.amtb.de/liveedge/_definst_/smil:amtb.smil/chunklist_b828000.m3u8",
+        "genre":  "宗教/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hwadzan.tv/"
+    },
+    {
+        "name":  "听·越剧",
+        "url":  "https://lhttp.qtfm.cn/live/20500178/64k.mp3",
+        "genre":  "戏曲曲艺/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/home/contact.html"
+    },
+    {
+        "name":  "BTV文艺伴音",
+        "url":  "https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv2_1/index.m3u8?adapt=0\u0026BR=audio",
+        "genre":  "文艺/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/mobile/"
+    },
+    {
+        "name":  "凤凰卫视资讯台",
+        "url":  "http://playtv-live.ifeng.com/live/06OLEEWQKN4_audio.m3u8",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ifeng.com/"
+    },
+    {
+        "name":  "新闻联播",
+        "url":  "https://rfienchinois64k.ice.infomaniak.ch//rfienchinois-64.mp3",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rfi.fr/cn/"
+    },
+    {
+        "name":  "环球资讯",
+        "url":  "http://sk.cri.cn/905.m3u8",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://m.cnr.cn/#/pages/broadcast/broadcast"
+    },
+    {
+        "name":  "东方卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/dongfang_2.m3u8",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "人间卫视",
+        "url":  "https://5ddce30eb4b55.streamlock.net/bltvhd/bltv1/chunklist_w511254805.m3u8",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://m.bltv.tv/"
+    },
+    {
+        "name":  "REPLAY NEWS - 中文 每5分钟播报一次新闻的电台",
+        "url":  "https://replaynewszh.ice.infomaniak.ch/replaynewszh-128.mp3",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.replaynews.net/"
+    },
+    {
+        "name":  "梅县客都之声",
+        "url":  "https://lhttp.qtfm.cn/live/5021942/64k.mp3",
+        "genre":  "新闻资讯/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gdmx.gov.cn/?p=xb5ak"
+    },
+    {
+        "name":  "故事广播-阿基米德故事会",
+        "url":  "https://lhttp.qtfm.cn/live/20500182/64k.mp3",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/"
+    },
+    {
+        "name":  "BTV生活伴音",
+        "url":  "https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv7_1/index.m3u8?adapt=0\u0026BR=audio",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/mobile/"
+    },
+    {
+        "name":  "健康广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20470/64k.mp3",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.jkwshk.tv/"
+    },
+    {
+        "name":  "Shantung Life Radio",
+        "url":  "http://lhttp.qingting.fm/live/20240/64k.mp3",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sdtv.cn/"
+    },
+    {
+        "name":  "都江堰935爱旅游",
+        "url":  "https://lhttp.qtfm.cn/live/20207773/64k.mp3",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.djy.gov.cn/dyjgb_rmzfwz/index.shtml"
+    },
+    {
+        "name":  "台山五邑旅游频道",
+        "url":  "https://lhttp.qingting.fm/live/5022062/64k.mp3",
+        "genre":  "生活都市/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tsbtv.tv/"
+    },
+    {
+        "name":  "BBN 中文",
+        "url":  "https://streams.radiomast.io/ce298b32-8776-4192-9900-092f44b63e7f",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://bbn1.bbnradio.org/"
+    },
+    {
+        "name":  "天籁之音 - Hi-Fi Radio",
+        "url":  "http://play-radio-stream3.hndt.com/now/JxkyN5mR/chunklist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "90.7mixfm",
+        "url":  "https://lhttp.qingting.fm/live/15318146/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://tingfm.com/radio/976"
+    },
+    {
+        "name":  "AsiaFM 亚洲热歌台【2023.10.17】",
+        "url":  "http://hot.asiafm.net:8000/asiafm",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.hk/"
+    },
+    {
+        "name":  "AsiaFM亚洲天空台",
+        "url":  "https://lhttp.qingting.fm/live/20071/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.cn/"
+    },
+    {
+        "name":  "天籁之音 - 国风",
+        "url":  "http://play-radio-stream3.hndt.com/now/UzPxbRaT/chunklist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "Fred Film Radio(中文)",
+        "url":  "https://s10.webradio-hosting.com/proxy/fredradiocn/stream",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fred.fm/"
+    },
+    {
+        "name":  "Alxa Chinese Radio",
+        "url":  "http://lhttp.qingting.fm/live/5022521/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.artv.net.cn/"
+    },
+    {
+        "name":  "Radio Maria Chinese",
+        "url":  "https://onair7.xdevel.com/proxy/xautocloud_nwct_1310?mp=/;stream/",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://voiceofourmother.cn/"
+    },
+    {
+        "name":  "AsiaFM亚洲天空台",
+        "url":  "http://funradio.cn:8000/funradio",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.net/index.php#page1"
+    },
+    {
+        "name":  "民谣·蓝调",
+        "url":  "http://play-radio-stream3.hndt.com/now/XWfN89gh/chunklist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "民谣·蓝调",
+        "url":  "http://stream3.hndt.com/now/XWfN89gh/playlist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "BTV科教伴音",
+        "url":  "https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv3_1/index.m3u8?adapt=0\u0026BR=audio",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "欢乐调频107.1",
+        "url":  "http://lhttp.qingting.fm/live/15318317/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://m.hdbs.cn/"
+    },
+    {
+        "name":  "CETV-1伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cetv1_2.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.centv.cn/"
+    },
+    {
+        "name":  "他她说：EP.3 读本书吧《百岁人生》",
+        "url":  "https://media.xyzcdn.net/nnkLT7Qx1QNOjB362KOst5vwjYzl.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "    ",
+        "url":  "https://vip1.fhbf9.com/20210705/eoQxrzxS/index.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fqxww.cn/"
+    },
+    {
+        "name":  "Fred Film Radio - 普通话",
+        "url":  "https://s10.webradio-hosting.com/proxy/fredradiocn/stream/;",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://global.superradio.cc/"
+    },
+    {
+        "name":  "CETV-3伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cetv3_2.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.centv.cn/"
+    },
+    {
+        "name":  "CETV-2伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cetv2_2.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.centv.cn/"
+    },
+    {
+        "name":  "CETV-4伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cetv4_2.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.centv.cn/"
+    },
+    {
+        "name":  "舞迷心窍",
+        "url":  "http://stream3.hndt.com/now/WBhgSD3A/playlist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "     ",
+        "url":  "https://vip1.fhbf9.com/20210705/63Zb2fOi/index.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fqxww.cn/"
+    },
+    {
+        "name":  "千里之外",
+        "url":  "https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL1.smil/playlist.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ocj.com.cn/"
+    },
+    {
+        "name":  "江夏女主播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022716/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5022716"
+    },
+    {
+        "name":  "北仑电台",
+        "url":  "https://lhttp.qingting.fm/live/1153/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nbbltv.com/"
+    },
+    {
+        "name":  "Tsingtao Story Radio",
+        "url":  "http://ls.qingting.fm/live/4956.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "十三师广播电视台FM106.5",
+        "url":  "https://lhttp.qtfm.cn/live/5022506/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "项城广播-国风国潮105.9",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20210757/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xiangcheng.gov.cn/"
+    },
+    {
+        "name":  "Tsingtao Private Car Radio",
+        "url":  "http://ls.qingting.fm/live/1675.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "Weifang Private Car Radio",
+        "url":  "http://lhttp.qingting.fm/live/20839/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wfcmw.cn/"
+    },
+    {
+        "name":  "清苑区105.8飞扬调频",
+        "url":  "http://lhttp.qingting.fm/live/5021803/64k.mp3?",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5021803/"
+    },
+    {
+        "name":  "监利电台Jianli National Radio",
+        "url":  "https://lhttp.qtfm.cn/live/15318507/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://m.2265.com/down/136104.html"
+    },
+    {
+        "name":  "Yunho TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yunhe.gov.cn/"
+    },
+    {
+        "name":  "信仰广播一套",
+        "url":  "https://lhttp.qtfm.cn/live/5021977/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://m.xyxww.com.cn/"
+    },
+    {
+        "name":  "青田广播",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXqingtianaud/128k.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.zgqt.zj.cn/"
+    },
+    {
+        "name":  "Tsingtao Economics Radio",
+        "url":  "http://ls.qingting.fm/live/1674.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "Chengtu Golden Radio",
+        "url":  "http://ls.qingting.fm/live/4892.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cdbs.com.cn/"
+    },
+    {
+        "name":  "Kaihwa TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXkaihua1/720p.m3u8",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.kaihua.gov.cn/"
+    },
+    {
+        "name":  "新安县乐享1007",
+        "url":  "https://lhttp.qtfm.cn/live/20500141/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://weibo.com/u/1859158462?is_all=1\u0026sudaref=m.baidu.com"
+    },
+    {
+        "name":  "声音控电台",
+        "url":  "https://lhttp-hw.qtfm.cn/live/15318519/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/15318519"
+    },
+    {
+        "name":  "南乐县广播节目",
+        "url":  "https://lhttp.qtfm.cn/live/20500136/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nanlew.com/"
+    },
+    {
+        "name":  "永康电台FM106.6",
+        "url":  "https://lhttp.qtfm.cn/live/5022570/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5022570"
+    },
+    {
+        "name":  "祥符广播919",
+        "url":  "https://lhttp.qtfm.cn/live/20500156/64k.mp3",
+        "genre":  "综合/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xiangfuqu.gov.cn/index.html"
+    },
+    {
+        "name":  "第一财经",
+        "url":  "http://lhttp.qingting.fm/live/276/64k.mp3",
+        "genre":  "财经/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://m.yicai.com/"
+    },
+    {
+        "name":  "第一财经电视伴音",
+        "url":  "http://a1live.livecdn.yicai.com/live/radio_tv.m3u8",
+        "genre":  "财经/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.yicai.com/"
+    },
+    {
+        "name":  "第一财经（一财官网线路）",
+        "url":  "https://a1live.livecdn.yicai.com/live/yicai_radio.m3u8",
+        "genre":  "财经/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.yicai.com/"
+    },
+    {
+        "name":  "BTV财经伴音",
+        "url":  "https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv5_1/index.m3u8?adapt=0\u0026BR=audio",
+        "genre":  "财经/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/mobile/"
+    },
+    {
+        "name":  "海上财经",
+        "url":  "https://lhttp.qtfm.cn/live/20500170/64k.mp3",
+        "genre":  "财经/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/"
+    },
+    {
+        "name":  "华语金曲500首",
+        "url":  "http://ls.qingting.fm/live/3412131.m3u8?bitrate=64",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://m.qingting.fm/"
+    },
+    {
+        "name":  "怀集音乐之声",
+        "url":  "https://lhttp.qingting.fm/live/4804/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hj0758.cn/"
+    },
+    {
+        "name":  "清晨音乐台",
+        "url":  "http://lhttp.qingting.fm/live/4915/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://m.weibo.cn/u/2022851417"
+    },
+    {
+        "name":  "500首华语经典",
+        "url":  "https://lhttp.qtfm.cn/live/5022308/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5022308"
+    },
+    {
+        "name":  "AsiaFM高清音乐台",
+        "url":  "http://asiafm.hk:8000/asiahd",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.net/index.php#page1"
+    },
+    {
+        "name":  "两广之声音乐台",
+        "url":  "https://lhttp.qtfm.cn/live/20500149/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20500149/"
+    },
+    {
+        "name":  "天籁之音 - 经典正流行",
+        "url":  "http://play-radio-stream3.hndt.com/now/WUBA5hW2/chunklist.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "AsiaFM亚洲经典台",
+        "url":  "http://goldfm.cn:8000/goldfm",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.net/index.php#page1"
+    },
+    {
+        "name":  "AsiaFM 亚洲粤语台",
+        "url":  "https://lhttp.qtfm.cn/live/15318569/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "Chinese Music World",
+        "url":  "http://radio.chinesemusicworld.com/chinesemusic.ogg",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://chinesemusicworld.com/"
+    },
+    {
+        "name":  "怀旧音乐广播",
+        "url":  "https://live.ximalaya.com/radio-first-page-app/live/2629/64.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "Chinese Music World",
+        "url":  "https://radio.chinesemusicworld.com/chinesemusic.ogg",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://chinesemusicworld.com/"
+    },
+    {
+        "name":  "AsiaFM亚洲音乐台(新)",
+        "url":  "https://live.xmcdn.com/live/764/64.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.radiotaiwan.tw/asia-fm-ya-zhou-dian-tai-wei-xing-liu-xing-yin-le-tai"
+    },
+    {
+        "name":  "AsiaFM亚洲经典台",
+        "url":  "https://lhttp.qingting.fm/live/5021912/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.cn/"
+    },
+    {
+        "name":  "AsiaFM亚洲音乐台",
+        "url":  "https://lhttp.qingting.fm/live/4581/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.cn/"
+    },
+    {
+        "name":  "Anison动漫音乐台",
+        "url":  "http://pool.anison.fm:9000/AniSonFM(320)?",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://cn.anison.fm/"
+    },
+    {
+        "name":  "格莱美音乐台",
+        "url":  "http://play-radio-stream3.hndt.com/now/yorSd1X2/chunklist.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "CityFM城市音乐台",
+        "url":  "https://lhttp.qtfm.cn/live/20500153/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20500153"
+    },
+    {
+        "name":  "动听音乐台",
+        "url":  "https://lhttp-hw.qtfm.cn/live/5022107/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qtfm.cn/radios/5022107"
+    },
+    {
+        "name":  "Big B Radio亚洲音乐台",
+        "url":  "https://antares.dribbcast.com/proxy/apop?mp=/s",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://bigbradio.net/"
+    },
+    {
+        "name":  "高阳县怀旧金曲964",
+        "url":  "http://lhttp.qingting.fm/live/5021555/64k.mp3?",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5021555/"
+    },
+    {
+        "name":  "云梦音乐台",
+        "url":  "https://lhttp.qtfm.cn/live/20500187/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027\u0026k=XaH2pt6TEUo8nb1a3WgZyZZNWZeJxG3D\u0026authKey=D1dLycK1I%2BUvgnHTbwUl7%2FJJgSBC01xPZgMX13Nph2VdWTze9X7xE9y7%2BPPe%2B65P\u0026noverify=0\u0026group_code=849566628"
+    },
+    {
+        "name":  "AsiaFM 亚洲粤语台【2023.10.18】",
+        "url":  "http://yyt.asiafm.net:8000/asiafm",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.hk/"
+    },
+    {
+        "name":  "50首经典古典音乐",
+        "url":  "https://lhttp-hw.qtfm.cn/live/5022308/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qtfm.cn/"
+    },
+    {
+        "name":  "Chinese Classical Music (Mp3 stream)",
+        "url":  "https://radio.chinesemusicworld.com/chinesemusic.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://chinesemusicworld.com/"
+    },
+    {
+        "name":  "心灵音乐馆",
+        "url":  "http://stream3.hndt.com/now/AFqvb0VX/playlist.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "Big B Radio - Cpop",
+        "url":  "https://antares.dribbcast.com/proxy/cpop?mp=/s",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://bigbradio.net/cpop"
+    },
+    {
+        "name":  "涿州综合广播年代音乐959",
+        "url":  "https://lhttp.qtfm.cn/live/5021381/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://bd.hebei.com.cn/zhuozhou/"
+    },
+    {
+        "name":  "栾城怀旧金曲965",
+        "url":  "http://lhttp.qingting.fm/live/5022038/64k.mp3?",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/5022038/"
+    },
+    {
+        "name":  "Fm891线上音乐台",
+        "url":  "https://lhttp.qtfm.cn/live/20500215/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fm891.net/"
+    },
+    {
+        "name":  "崇州年代音乐1022",
+        "url":  "http://lhttp.qingting.fm/live/20500066/64k.mp3?",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20500066"
+    },
+    {
+        "name":  "Bridge Radio - 华语 HITS",
+        "url":  "https://das-edge11-live365-dal03.cdnstream.com/a57743_2",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://new.brg-radio.com/"
+    },
+    {
+        "name":  "Shantung Music Radio",
+        "url":  "http://ls.qingting.fm/live/1665.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sdtv.cn/"
+    },
+    {
+        "name":  "Phate Radio 飛特電台 - anime, games and pop",
+        "url":  "https://phate.io/listen",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://phate.io/"
+    },
+    {
+        "name":  "Bridge Radio - 华语 HITS （2）",
+        "url":  "https://das-edge14-live365-dal02.cdnstream.com/a57743_2",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://new.brg-radio.com/"
+    },
+    {
+        "name":  "故城县经典音乐FM90.5",
+        "url":  "http://lhttp.qingting.fm/live/20212269/64k.mp3?",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20212269/"
+    },
+    {
+        "name":  "Tsingtao Music \u0026 Sports Radio",
+        "url":  "http://ls.qingting.fm/live/1677.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "涞水县怀旧音乐广播895",
+        "url":  "https://lhttp.qtfm.cn/live/20211619/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hebei.com.cn/"
+    },
+    {
+        "name":  "Haikow Music Radio",
+        "url":  "http://lhttp.qingting.fm/live/20010/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hkbtv.cn/"
+    },
+    {
+        "name":  "中江综合广播年代音乐994",
+        "url":  "https://lhttp.qtfm.cn/live/20500148/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://m.downcc.com/d/497313"
+    },
+    {
+        "name":  "辉县经典916",
+        "url":  "http://lhttp.qingting.fm/live/20207782/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20207782/"
+    },
+    {
+        "name":  "涞水县流行音乐广播999正青春",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20211620/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.laishui.gov.cn/"
+    },
+    {
+        "name":  "FM98.6城市音乐广播·信都区融媒体中心",
+        "url":  "https://lhttp.qingting.fm/live/20500196/64k.mp3",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "https://www.xinduqu.gov.cn/"
+    },
+    {
+        "name":  "Weifang Music Radio",
+        "url":  "http://ls.qingting.fm/live/4865.m3u8",
+        "genre":  "音乐/大陆",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wfcmw.cn/"
+    },
+    {
+        "name":  "上海交通广播",
+        "url":  "http://lhttp.qingting.fm/live/266/64k.mp3",
+        "genre":  "交通/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fm1057.cn/"
+    },
+    {
+        "name":  "上海交通广播 FM105.7",
+        "url":  "https://lhttp-hw.qtfm.cn/live/266/64k.mp3",
+        "genre":  "交通/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海戏剧曲艺广播",
+        "url":  "https://lhttp.qingting.fm/live/269/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/channel/channel_26/index.html"
+    },
+    {
+        "name":  "上海戏剧曲艺广播 AM1197 FM97.2",
+        "url":  "https://lhttp-hw.qtfm.cn/live/269/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/270/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海东广新闻资讯广播",
+        "url":  "http://lhttp.qingting.fm/live/275/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海新闻广播 FM93.4 AM990",
+        "url":  "https://lhttp-hw.qtfm.cn/live/270/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海浦东FM106.5东上海之声",
+        "url":  "http://lhttp.qingting.fm/live/21355/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.pudongtv.cn/"
+    },
+    {
+        "name":  "上海长三角之声广播 FM89.9",
+        "url":  "https://lhttp-hw.qtfm.cn/live/275/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "Shanghai FM 101 上海动感101",
+        "url":  "https://lhttp.qingting.fm/live/274/64k.mp3",
+        "genre":  "综合/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fm101.cn/"
+    },
+    {
+        "name":  "上海浦东FM100.1新娱乐广播",
+        "url":  "http://lhttp.qingting.fm/live/5022341/64k.mp3",
+        "genre":  "综合/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.pudongtv.cn/"
+    },
+    {
+        "name":  "上海天气台",
+        "url":  "https://lhttp.qtfm.cn/live/20500176/64k.mp3",
+        "genre":  "综合/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/home/contact.html"
+    },
+    {
+        "name":  "上海第一财经广播 FM90.9",
+        "url":  "https://lhttp-hw.qtfm.cn/live/276/64k.mp3",
+        "genre":  "财经/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海经典音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/267/64k.mp3",
+        "genre":  "音乐/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fm947.cn/"
+    },
+    {
+        "name":  "上海音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/273/64k.mp3",
+        "genre":  "音乐/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.1037fm.cn/"
+    },
+    {
+        "name":  "上海经典金曲广播 FM103.7",
+        "url":  "https://lhttp-hw.qtfm.cn/live/273/64k.mp3",
+        "genre":  "音乐/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海流行音乐广播 动感101 FM101.7",
+        "url":  "https://lhttp-hw.qtfm.cn/live/274/64k.mp3",
+        "genre":  "音乐/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "上海经典音乐广播 FM94.7",
+        "url":  "https://lhttp-hw.qtfm.cn/live/267/64k.mp3",
+        "genre":  "音乐/大陆/上海/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.smg.cn/review/index.html"
+    },
+    {
+        "name":  "桐乡人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5021791/64k.mp3",
+        "genre":  "三农/大陆/浙江/嘉兴",
+        "country":  "大陆",
+        "logoUrl":  "http://txnews.zjol.com.cn/"
+    },
+    {
+        "name":  "CNR-15 中国交通广播",
+        "url":  "https://ngcdn002.cnr.cn/live/gsgljtgb/index.m3u8",
+        "genre":  "交通/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "CNR-15 中国交通广播",
+        "url":  "https://satellitepull.cnr.cn/live/wxzgjtgb/playlist.m3u8?wsSession=28e11e3debee46427a9d53dc-174908170190549\u0026wsIPSercert=f7b6cfa8467acd0836b62cf14aa786d3",
+        "genre":  "交通/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/"
+    },
+    {
+        "name":  "郑州人民广播电台 交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1211/64k.mp3",
+        "genre":  "交通/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "CRI中文环球广播·CRI chinese service",
+        "url":  "http://sk.cri.cn/hyhq.m3u8",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://chinese.cri.cn/radio/hyhq/index.html"
+    },
+    {
+        "name":  "CRI环球资迅广播",
+        "url":  "https://sk.cri.cn/905.m3u8",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://newsradio.cri.cn/"
+    },
+    {
+        "name":  "CRI Voice of South China Sea",
+        "url":  "http://sk.cri.cn/nhzs.m3u8",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cri.cn/"
+    },
+    {
+        "name":  "CRI劲曲调频 HIT FM（成都）",
+        "url":  "http://lhttp.qingting.fm/live/15318703/64k.mp3",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hitfm.cn/"
+    },
+    {
+        "name":  "KBS韩国国际广播电台",
+        "url":  "https://api.xmgspace.me/api/kbs-stream/",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://kbsworld.kbs.co.kr/program/list.php"
+    },
+    {
+        "name":  "MY FM全国音乐频道——FM106.3  长春少儿与老年生活广播",
+        "url":  "http://lhttp.qingting.fm/live/4984/64k.mp3",
+        "genre":  "少儿/大陆/吉林/长春",
+        "country":  "大陆",
+        "logoUrl":  "http://www.chinactv.com/"
+    },
+    {
+        "name":  "CCTV-少儿伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv14_2.m3u8",
+        "genre":  "少儿/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-11戏曲伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv11_2.m3u8",
+        "genre":  "戏曲曲艺/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "郑州人民广播电台 文化娱乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1222/64k.mp3",
+        "genre":  "文艺/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "CCTV-13新闻伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv13_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CNR-1 中国之声",
+        "url":  "https://lhttp.qtfm.cn/live/15318317/64k.mp3",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "国际新闻",
+        "url":  "https://lhttp.qtfm.cn/live/20500172/64k.mp3",
+        "genre":  "国际广播/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ajmide.com/"
+    },
+    {
+        "name":  "CNR-1 中国之声",
+        "url":  "http://zbbf2.ahbztv.com/live/4f3.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-4中文国际伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv4_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-15音乐伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv15_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-8电视剧伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv8_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-5体育伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv5_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-12社会与法伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv12_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CNR-1 中国之声",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv2_2.m3u8?",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://china.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-4中文国际美洲伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctvamerica_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://tv.cctv.com/cctv4america/"
+    },
+    {
+        "name":  "CCTV-3综艺伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv3_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-10科教伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv10_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CNR-1 中国之声",
+        "url":  "http://ngcdn002.cnr.cn/live/zgzs/index.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "CNR-3 音乐之声",
+        "url":  "https://ngcdn001.cnr.cn/live/yyzs/index.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-5+体育赛事伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv5plus_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CCTV-4中文国际欧洲伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctveurope_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://tv.cctv.com/cctv4europe/"
+    },
+    {
+        "name":  "郑州人民广播电台 新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1220/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "CCTV农业节目伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv17_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CNR-4 经典音乐广播",
+        "url":  "http://satellitepull.cnr.cn/live/wxdszs/playlist.m3u8?wsSession=d8a4b41c6557ba30cfeebcdb-174709298057895\u0026wsIPSercert=29f90b67755e3a4646651f7aa8eb5fd6",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://ent.cnr.cn/ylzt/goldenradio/"
+    },
+    {
+        "name":  "CCTV奥林匹克伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv16_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.olympicchannelchina.cn/"
+    },
+    {
+        "name":  "CNR-1 中国之声",
+        "url":  "https://satellitepull.cnr.cn/live/wxzgzs/playlist.m3u8?wsSession=28e11e3debee46427a9d53dc-174908087306150\u0026wsIPSercert=f7b6cfa8467acd0836b62cf14aa786d3",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/"
+    },
+    {
+        "name":  "CNR-9 文艺之声",
+        "url":  "http://satellitepull.cnr.cn/live/wxwyzs/playlist.m3u8?wsSession=d8b4488aebb72eb396f72a83-174705706427289\u0026wsIPSercert=29f90b67755e3a4646651f7aa8eb5fd6",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://wyzs.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-1综合伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv1_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://tv.cctv.com/cctv1/index.shtml"
+    },
+    {
+        "name":  "普宁人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022527/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/揭阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gdpntv.com/"
+    },
+    {
+        "name":  "CNR-10 老年之声",
+        "url":  "http://satellitepull.cnr.cn/live/wxlnzs/playlist.m3u8?wsSession=b560e2b8d5c24aef0be2a5c7-174709253203252\u0026wsIPSercert=29f90b67755e3a4646651f7aa8eb5fd6",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://old.cnr.cn/"
+    },
+    {
+        "name":  "CNR-3 音乐之声",
+        "url":  "http://antiserver.kuwo.cn/anti.s?rid=MUSIC_190038250\u0026response=res\u0026format=mp3|aac\u0026type=convert_url\u0026br=128kmp3\u0026agent=iPhone\u0026callback=getlink\u0026jpcallback=getlink.mp3",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://china.cnr.cn/"
+    },
+    {
+        "name":  "CNR-3 音乐之声",
+        "url":  "https://satellitepull.cnr.cn/live/wxyyzs/playlist.m3u8?wsSession=28e11e3debee46427a9d53dc-174908117055114\u0026wsIPSercert=f7b6cfa8467acd0836b62cf14aa786d3",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-6电影频道伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv6_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.1905.com/"
+    },
+    {
+        "name":  "铜山县人民广播电台FM94.2",
+        "url":  "http://lhttp.qingting.fm/live/15318160/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/徐州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hnyh777.com/"
+    },
+    {
+        "name":  "CCTV-9纪录伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv9_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://tv.cctv.com/cctv9/"
+    },
+    {
+        "name":  "CNR-16 中国乡村之声",
+        "url":  "http://satellitepull.cnr.cn/live/wxxczs/playlist.m3u8?wsSession=91f6d734b85656e7f586e4ea-174708860424584\u0026wsIPSercert=29f90b67755e3a4646651f7aa8eb5fd6",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://country.cnr.cn/"
+    },
+    {
+        "name":  "金堂人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20211686/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/成都",
+        "country":  "大陆",
+        "logoUrl":  "http://m.yybnet.net/chengdu/jintang/"
+    },
+    {
+        "name":  "扬中人民广播电台",
+        "url":  "http://live.xmcdn.com/live/2645/64.m3u8",
+        "genre":  "新闻资讯/大陆/江苏/镇江",
+        "country":  "大陆",
+        "logoUrl":  "http://m.yzxw.com/"
+    },
+    {
+        "name":  "曹县人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022340/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/菏泽",
+        "country":  "大陆",
+        "logoUrl":  "http://hezesjt.qingk.cn/information-list/arbscbffdsfasoqaxcvudowoewvwecot/36a13db957b1e9db8bae952c996c6bbf"
+    },
+    {
+        "name":  "大兴区人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5021739/64k.mp3",
+        "genre":  "新闻资讯/大陆/北京/北京",
+        "country":  "大陆",
+        "logoUrl":  "https://weibo.com/u/5240001978"
+    },
+    {
+        "name":  "CCTV-7国防军事伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv7_2.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://tv.cctv.com/cctv7/index.shtml"
+    },
+    {
+        "name":  "斗门人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/15318432/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/珠海",
+        "country":  "大陆",
+        "logoUrl":  "http://www.n21.cc/"
+    },
+    {
+        "name":  "长沙市望城区人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022076/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wangchengtv.com/"
+    },
+    {
+        "name":  "光山人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20500029/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/信阳",
+        "country":  "大陆",
+        "logoUrl":  "http://m.guangshan.gov.cn/"
+    },
+    {
+        "name":  "涿州人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20211619/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/保定",
+        "country":  "大陆",
+        "logoUrl":  "http://bd.hebei.com.cn/zhuozhou/"
+    },
+    {
+        "name":  "中国之声",
+        "url":  "https://ngcdn001.cnr.cn/live/zgzs/index.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/gbzb/"
+    },
+    {
+        "name":  "武安人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022474/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.waxww.com/"
+    },
+    {
+        "name":  "CNR-3",
+        "url":  "https://ngcdn001.cnr.cn/live/jjzs/index.m3u8",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "朝阳县人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20212211/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/朝阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cyx.gov.cn/"
+    },
+    {
+        "name":  "献县人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022603/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/沧州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.czwang.com.cn/cznews/xxnews/"
+    },
+    {
+        "name":  "郾城人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/15318300/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/漯河",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lhgtj.gov.cn/"
+    },
+    {
+        "name":  "高阳人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5021555/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/保定",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gaoyang.gov.cn/gao.asp"
+    },
+    {
+        "name":  "永年人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20212203/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yongniannews.cn/"
+    },
+    {
+        "name":  "慈溪人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/5021401/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/宁波",
+        "country":  "大陆",
+        "logoUrl":  "http://cxnews.cnnb.com.cn/"
+    },
+    {
+        "name":  "兰溪人民广播电台",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXlanxiaud/128k.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/金华",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lxnews.cn/"
+    },
+    {
+        "name":  "庄河人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022473/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/大连",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/"
+    },
+    {
+        "name":  "石狮人民广播电台",
+        "url":  "http://live.xmcdn.com/live/2730/64.m3u8",
+        "genre":  "新闻资讯/大陆/福建/泉州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sstv.cn/"
+    },
+    {
+        "name":  "察布查尔人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/5022610/64k.mp3",
+        "genre":  "新闻资讯/大陆/新疆/伊犁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xjcbcr.gov.cn/news.htm"
+    },
+    {
+        "name":  "金山人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/4022/64k.mp3",
+        "genre":  "新闻资讯/大陆/上海/上海",
+        "country":  "大陆",
+        "logoUrl":  "https://m.weibo.cn/u/2119232542"
+    },
+    {
+        "name":  "孟村回族自治县人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5021914/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/沧州",
+        "country":  "大陆",
+        "logoUrl":  "http://cz.hebei.com.cn/"
+    },
+    {
+        "name":  "故城人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20212269/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/衡水",
+        "country":  "大陆",
+        "logoUrl":  "http://m.hebnews.cn/gucheng/"
+    },
+    {
+        "name":  "宿豫人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/5005/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/宿迁",
+        "country":  "大陆",
+        "logoUrl":  "https://www.sytv88.com/"
+    },
+    {
+        "name":  "长兴人民广播电台·Up Radio FM97.3太湖之声",
+        "url":  "https://lhttp.qtfm.cn/live/5022311/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/湖州",
+        "country":  "大陆",
+        "logoUrl":  "http://zjcxnews.com.cn/"
+    },
+    {
+        "name":  "登封人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/5022077/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://dengfengtv.com/"
+    },
+    {
+        "name":  "任丘人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022470/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/沧州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.renqiu.he.cn/"
+    },
+    {
+        "name":  "乐清人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20204/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yqbtv.cn/"
+    },
+    {
+        "name":  "魏县人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20212412/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "https://www.wz5.cc/"
+    },
+    {
+        "name":  "清苑人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5021803/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/保定",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qyxbtv.com/"
+    },
+    {
+        "name":  "广汉人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/20212405/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/德阳",
+        "country":  "大陆",
+        "logoUrl":  "http://ghsjt.qingk.cn/"
+    },
+    {
+        "name":  "江宁人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20500075/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "https://h5.3ch.net.cn/"
+    },
+    {
+        "name":  "梅河口人民广播电台",
+        "url":  "https://lhttp.qtfm.cn/live/20500115/64k.mp3",
+        "genre":  "新闻资讯/大陆/吉林/通化",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20500115"
+    },
+    {
+        "name":  "瑞安人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/1143/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.66ruian.com/"
+    },
+    {
+        "name":  "瓦房店人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20500094/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/大连",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wfdrtv.cn/"
+    },
+    {
+        "name":  "鼎城人民广播电台",
+        "url":  "https://lhttp.qingting.fm/live/5021860/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/常德",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dcnews.cn/"
+    },
+    {
+        "name":  "西昌人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20211706/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/凉山",
+        "country":  "大陆",
+        "logoUrl":  "http://m.yybnet.net/liangshan/xichang/"
+    },
+    {
+        "name":  "栾城人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022038/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/石家庄",
+        "country":  "大陆",
+        "logoUrl":  "http://lcswyyjd.com/"
+    },
+    {
+        "name":  "怀来人民广播电台",
+        "url":  "http://lhttp.qingting.fm/live/5022643/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/张家口",
+        "country":  "大陆",
+        "logoUrl":  "http://zjk.hebei.com.cn/"
+    },
+    {
+        "name":  "全国党员干部现代远程教育",
+        "url":  "https://12371wbndks.v.kcdnvip.com/12371wbnd/dangyuanwang_2/index.m3u8",
+        "genre":  "综合/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://dygbjy.12371.cn/"
+    },
+    {
+        "name":  "CNR-2 经济之声",
+        "url":  "http://ngcdn002.cnr.cn/live/jjzs/index.m3u8",
+        "genre":  "财经/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "CCTV-2财经伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/cctv2_2.m3u8",
+        "genre":  "财经/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cctv.com/"
+    },
+    {
+        "name":  "CNR-2 经济之声",
+        "url":  "https://satellitepull.cnr.cn/live/wxjjzs/playlist.m3u8?wsSession=5849bb6c90cf7fc1a7e3eae9-174908108209742\u0026wsIPSercert=f7b6cfa8467acd0836b62cf14aa786d3",
+        "genre":  "财经/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/"
+    },
+    {
+        "name":  "郑州人民广播电台 经济广播",
+        "url":  "http://lhttp.qingting.fm/live/1221/64k.mp3",
+        "genre":  "财经/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "MY FM全国音乐频道·广州",
+        "url":  "http://lhttp.qingting.fm/live/20194/64k.mp3",
+        "genre":  "音乐/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gztv.com/"
+    },
+    {
+        "name":  "郑州人民广播电台 音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/4921/64k.mp3",
+        "genre":  "音乐/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "云南新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/1926/64k.mp3",
+        "genre":  "新闻资讯/大陆/云南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ynradio.com/v2/"
+    },
+    {
+        "name":  "云南音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1929/64k.mp3",
+        "genre":  "音乐/大陆/云南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ynradio.com/v2/"
+    },
+    {
+        "name":  "昆明汽车广播",
+        "url":  "https://lhttp.qtfm.cn/live/1936/64k.mp3",
+        "genre":  "生活都市/大陆/云南/昆明",
+        "country":  "大陆",
+        "logoUrl":  "http://www.kunmingbc.com/"
+    },
+    {
+        "name":  "Kunming Auto Radio",
+        "url":  "http://ls.qingting.fm/live/1936.m3u8",
+        "genre":  "综合/大陆/云南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.kmtv.com.cn/"
+    },
+    {
+        "name":  "昭通交通旅游广播",
+        "url":  "http://lhttp.qingting.fm/live/21247/64k.mp3",
+        "genre":  "交通/大陆/云南/昭通",
+        "country":  "大陆",
+        "logoUrl":  "https://v.qq.com/s/videoplus/112693392"
+    },
+    {
+        "name":  "玉溪新闻综合广播",
+        "url":  "http://lhttp.qingting.fm/live/5022031/64k.mp3",
+        "genre":  "新闻资讯/大陆/云南/玉溪",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yxtv.cn/"
+    },
+    {
+        "name":  "京津冀之声",
+        "url":  "https://lhttp.qtfm.cn/live/5022463/64k.mp3",
+        "genre":  "新闻资讯/大陆/京津冀/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rbc.cn/"
+    },
+    {
+        "name":  "BRTV京津冀之声",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm1006.m3u8",
+        "genre":  "新闻资讯/大陆/京津冀/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "蒙古之声",
+        "url":  "https://api.xmgspace.me/api/vom-latest/",
+        "genre":  "新闻资讯/大陆/内蒙古/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vom.mn/zh"
+    },
+    {
+        "name":  "内蒙古音乐之声",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1886/64k.mp3",
+        "genre":  "音乐/大陆/内蒙古/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.nmtv.cn/"
+    },
+    {
+        "name":  "乌海交通音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/15318704/64k.mp3",
+        "genre":  "交通/大陆/内蒙古/乌海",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nmwhrtv.com/"
+    },
+    {
+        "name":  "乌海综合广播",
+        "url":  "http://lhttp.qingting.fm/live/15318706/64k.mp3",
+        "genre":  "新闻资讯/大陆/内蒙古/乌海",
+        "country":  "大陆",
+        "logoUrl":  "https://www.wuhaixw.com/"
+    },
+    {
+        "name":  "包头交通广播",
+        "url":  "https://lhttp.qingting.fm/live/1890/64k.mp3",
+        "genre":  "交通/大陆/内蒙古/包头",
+        "country":  "大陆",
+        "logoUrl":  "http://www.btgdt.com/"
+    },
+    {
+        "name":  "包头综合广播",
+        "url":  "https://lhttp.qingting.fm/live/1889/64k.mp3",
+        "genre":  "新闻资讯/大陆/内蒙古/包头",
+        "country":  "大陆",
+        "logoUrl":  "http://www.btgdt.com/"
+    },
+    {
+        "name":  "呼和浩特综合广播",
+        "url":  "https://lhttp.qingting.fm/live/5021543/64k.mp3",
+        "genre":  "新闻资讯/大陆/内蒙古/呼和浩特",
+        "country":  "大陆",
+        "logoUrl":  "http://www.0471tv.org.cn/home/55295_huhehaotegd.html"
+    },
+    {
+        "name":  "鄂尔多斯交通文体广播",
+        "url":  "http://lhttp.qingting.fm/live/20352/64k.mp3",
+        "genre":  "交通/大陆/内蒙古/鄂尔多斯",
+        "country":  "大陆",
+        "logoUrl":  "http://erdszs.org.cn/"
+    },
+    {
+        "name":  "鄂尔多斯汉语综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20350/64k.mp3",
+        "genre":  "新闻资讯/大陆/内蒙古/鄂尔多斯",
+        "country":  "大陆",
+        "logoUrl":  "http://erdszs.org.cn/"
+    },
+    {
+        "name":  "北京交通广播",
+        "url":  "https://lhttp.qingting.fm/live/336/64k.mp3",
+        "genre":  "交通/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rbc.cn/index.shtml"
+    },
+    {
+        "name":  "BRTV北京交通广播",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm1039.m3u8",
+        "genre":  "交通/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "北京文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/333/64k.mp3",
+        "genre":  "文艺/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rbc.cn/"
+    },
+    {
+        "name":  "BRTV北京文艺广播",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm876.m3u8",
+        "genre":  "文艺/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "北京新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/339/64k.mp3",
+        "genre":  "新闻资讯/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rbc.cn/"
+    },
+    {
+        "name":  "北京BTV新闻伴音",
+        "url":  "https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv9_1/index.m3u8?adapt=0\u0026BR=audio",
+        "genre":  "新闻资讯/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "北京卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/btv1_2.m3u8",
+        "genre":  "新闻资讯/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "BRTV北京新闻广播",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm945.m3u8",
+        "genre":  "新闻资讯/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "BRTV北京城市广播",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm1073.m3u8",
+        "genre":  "生活都市/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "北京音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/332/64k.mp3",
+        "genre":  "音乐/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.rbc.cn/"
+    },
+    {
+        "name":  "BRTV北京音乐广播",
+        "url":  "https://brtv-radiolive.rbc.cn/alive/fm974.m3u8",
+        "genre":  "音乐/大陆/北京/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.brtv.org.cn/"
+    },
+    {
+        "name":  "吉林旅游广播(2)",
+        "url":  "https://lhttp.qingting.fm/live/20487/64k.mp3",
+        "genre":  "生活都市/大陆/吉林/吉林市",
+        "country":  "大陆",
+        "logoUrl":  "https://fm1033.jlradio.cn/"
+    },
+    {
+        "name":  "吉林音乐广播",
+        "url":  "http://stream10.jlntv.cn/fm927/playlist.m3u8",
+        "genre":  "音乐/大陆/吉林/吉林市",
+        "country":  "大陆",
+        "logoUrl":  "https://fm927.jlradio.cn/"
+    },
+    {
+        "name":  "吉林市广播电视台经济广播",
+        "url":  "http://lhttp.qingting.fm/live/1823/64k.mp3",
+        "genre":  "财经/大陆/吉林/吉林市",
+        "country":  "大陆",
+        "logoUrl":  "http://senpre.icoc.cc/"
+    },
+    {
+        "name":  "吉林市音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/20211679/64k.mp3",
+        "genre":  "音乐/大陆/吉林/吉林市",
+        "country":  "大陆",
+        "logoUrl":  "https://www.163.com/dy/media/T1491873190780.html"
+    },
+    {
+        "name":  "长春交通之声",
+        "url":  "http://lhttp.qingting.fm/live/4967/64k.mp3",
+        "genre":  "交通/大陆/吉林/长春",
+        "country":  "大陆",
+        "logoUrl":  "http://www.chinactv.com/"
+    },
+    {
+        "name":  "Changchi News Radio",
+        "url":  "http://lhttp.qingting.fm/live/5021874/64k.mp3",
+        "genre":  "新闻资讯/大陆/吉林/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.czgd.cn/"
+    },
+    {
+        "name":  "长春新闻综合广播",
+        "url":  "http://lhttp.qingting.fm/live/5013/64k.mp3",
+        "genre":  "新闻资讯/大陆/吉林/长春",
+        "country":  "大陆",
+        "logoUrl":  "http://www.chinactv.com/"
+    },
+    {
+        "name":  "长春经济广播U FM88.0",
+        "url":  "http://lhttp.qingting.fm/live/4850/64k.mp3",
+        "genre":  "财经/大陆/吉林/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.chinactv.com/"
+    },
+    {
+        "name":  "四川交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/4886/64k.mp3",
+        "genre":  "交通/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "四川新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/4906/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "四川卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/sichuan_2.m3u8",
+        "genre":  "新闻资讯/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.sctv.com/live/list"
+    },
+    {
+        "name":  "Sichuan News 四川综合广播FM98.1",
+        "url":  "https://lhttp.qingting.fm/live/4906/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "四川城市之音",
+        "url":  "https://lhttp.qtfm.cn/live/1111/64k.mp3",
+        "genre":  "生活都市/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "四川经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/4927/64k.mp3",
+        "genre":  "财经/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "四川音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1110/64k.mp3",
+        "genre":  "音乐/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sctv.com/"
+    },
+    {
+        "name":  "乐山音乐交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/4864/64k.mp3",
+        "genre":  "交通/大陆/四川/乐山",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "彭州综合广播",
+        "url":  "http://live.xmcdn.com/live/2781/64.m3u8",
+        "genre":  "新闻资讯/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cri.cn/"
+    },
+    {
+        "name":  "成都潮台",
+        "url":  "https://live.ximalaya.com/radio-first-page-app/live/2781/64.m3u8",
+        "genre":  "综合/大陆/四川/成都",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "金堂综合广播FM88.9 成都年代音乐怀旧好声音",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20500160/64k.mp3",
+        "genre":  "音乐/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/20500160"
+    },
+    {
+        "name":  "达州交通音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022395/64k.mp3",
+        "genre":  "交通/大陆/四川/达州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dzxw.net/"
+    },
+    {
+        "name":  "达州综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022394/64k.mp3",
+        "genre":  "新闻资讯/大陆/四川/达州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dzxw.net/"
+    },
+    {
+        "name":  "AsiaFM郫都区综合广播",
+        "url":  "https://lhttp.qingting.fm/live/4581/64k.mp3?",
+        "genre":  "新闻资讯/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.cn/"
+    },
+    {
+        "name":  "郫都综合广播亚洲音乐965",
+        "url":  "http://asiafm.vip:8000/fm965",
+        "genre":  "音乐/大陆/四川/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.asiafm.net/index.php#page1"
+    },
+    {
+        "name":  "天津静海区广播电台",
+        "url":  "http://lhttp.qingting.fm/live/20212227/64k.mp3",
+        "genre":  "新闻资讯/大陆/天津/天津",
+        "country":  "大陆",
+        "logoUrl":  "http://tjtv.enorth.com.cn/"
+    },
+    {
+        "name":  "天津新闻广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/5022134/64k.mp3",
+        "genre":  "新闻资讯/大陆/天津/天津",
+        "country":  "大陆",
+        "logoUrl":  "http://tjtv.enorth.com.cn/"
+    },
+    {
+        "name":  "天津经济广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/15318227/64k.mp3",
+        "genre":  "财经/大陆/天津/天津",
+        "country":  "大陆",
+        "logoUrl":  "http://tjtv.enorth.com.cn/"
+    },
+    {
+        "name":  "滨海文艺广播",
+        "url":  "http://traffic.jbh.tjbh.com/live/FM101.7/playlist.m3u8",
+        "genre":  "文艺/大陆/天津/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://a.app.qq.com/o/simple.jsp?pkgname=com.pdmi.binhai.media\u0026fromcase=40003"
+    },
+    {
+        "name":  "滨海综合广播 100.1",
+        "url":  "http://traffic.jbh.tjbh.com/live/FM100.1/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/天津/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://a.app.qq.com/o/simple.jsp?pkgname=com.pdmi.binhai.media\u0026fromcase=40003"
+    },
+    {
+        "name":  "滨海音乐广播",
+        "url":  "http://traffic.jbh.tjbh.com/live/FM100.5/playlist.m3u8",
+        "genre":  "音乐/大陆/天津/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://a.app.qq.com/o/simple.jsp?pkgname=com.pdmi.binhai.media\u0026fromcase=40003"
+    },
+    {
+        "name":  "安徽交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1949/64k.mp3",
+        "genre":  "交通/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽小说评书广播",
+        "url":  "https://lhttp.qtfm.cn/live/1951/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽戏曲广播",
+        "url":  "https://lhttp.qtfm.cn/live/1952/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/anhui_2.m3u8",
+        "genre":  "新闻资讯/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/4919/64k.mp3",
+        "genre":  "新闻资讯/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽生活广播",
+        "url":  "http://lhttp.qingting.fm/live/1948/64k.mp3",
+        "genre":  "生活都市/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽农村广播",
+        "url":  "https://lhttp.qtfm.cn/live/1950/64k.mp3",
+        "genre":  "生活都市/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/4916/64k.mp3",
+        "genre":  "财经/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "安徽音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1947/64k.mp3",
+        "genre":  "音乐/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahrtv.cn/"
+    },
+    {
+        "name":  "亳州交通音乐广播",
+        "url":  "http://zbbf2.ahbztv.com/live/41c.m3u8",
+        "genre":  "交通/大陆/安徽/亳州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahbztv.com/"
+    },
+    {
+        "name":  "亳州综合广播",
+        "url":  "http://zbbf2.ahbztv.com/live/41a.m3u8",
+        "genre":  "新闻资讯/大陆/安徽/亳州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ahbztv.com/"
+    },
+    {
+        "name":  "合肥故事广播",
+        "url":  "http://lhttp.qingting.fm/live/1961/64k.mp3",
+        "genre":  "生活都市/大陆/安徽/合肥",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hfbtv.com/"
+    },
+    {
+        "name":  "安庆综合广播",
+        "url":  "https://lhttp.qingting.fm/live/1965/64k.mp3",
+        "genre":  "新闻资讯/大陆/安徽/安庆",
+        "country":  "大陆",
+        "logoUrl":  "http://tv.aqnews.com.cn/"
+    },
+    {
+        "name":  "安庆农村广播",
+        "url":  "https://lhttp.qingting.fm/live/1966/64k.mp3",
+        "genre":  "生活都市/大陆/安徽/安庆",
+        "country":  "大陆",
+        "logoUrl":  "http://tv.aqnews.com.cn/"
+    },
+    {
+        "name":  "界首之声",
+        "url":  "https://lhttp.qtfm.cn/live/20207785/64k.mp3",
+        "genre":  "新闻资讯/大陆/安徽/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jieshounews.cn/"
+    },
+    {
+        "name":  "芜湖音乐故事广播",
+        "url":  "https://lhttp.qtfm.cn/live/5028/64k.mp3",
+        "genre":  "音乐/大陆/安徽/芜湖",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wuhunews.cn/"
+    },
+    {
+        "name":  "山东交通广播",
+        "url":  "http://audiolive302.iqilu.com/sdradioJiaotong/sdradio05/playlist.m3u8",
+        "genre":  "交通/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://v.iqilu.com/radio/main/jiaotong?spm=zm5094-001.0.0.1.GCuevq"
+    },
+    {
+        "name":  "山东体育休闲广播（2）",
+        "url":  "http://audiolive302.iqilu.com/sdradioTiyu/sdradio08/playlist.m3u8",
+        "genre":  "体育/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.iqilu.com/"
+    },
+    {
+        "name":  "山东文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/20238/64k.mp3",
+        "genre":  "文艺/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://v.iqilu.com/radio/"
+    },
+    {
+        "name":  "山东卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/shandong_2.m3u8",
+        "genre":  "新闻资讯/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.iqilu.com/"
+    },
+    {
+        "name":  "山东乡村广播",
+        "url":  "http://audiolive302.iqilu.com/sdradioXiangcun/sdradio06/playlist.m3u8",
+        "genre":  "生活都市/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.iqilu.com/"
+    },
+    {
+        "name":  "山东经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/20236/64k.mp3",
+        "genre":  "财经/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://v.iqilu.com/radio/"
+    },
+    {
+        "name":  "经典105·山东经典音乐广播",
+        "url":  "http://audiolive302.iqilu.com/sdradioShenghuo/sdradio04/playlist.m3u8",
+        "genre":  "音乐/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://v.iqilu.com/radio/main/shenghuo?spm=zm5094-001.0.0.1.VBBoEr"
+    },
+    {
+        "name":  "山东音乐广播",
+        "url":  "http://audiolive302.iqilu.com/sdradioYinyue/sdradio07/playlist.m3u8",
+        "genre":  "音乐/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://v.iqilu.com/radio/main/yinyue?spm=zm5094-001.0.0.1.o36rXF"
+    },
+    {
+        "name":  "临沂交通旅游广播",
+        "url":  "https://lhttp.qtfm.cn/live/3993/64k.mp3",
+        "genre":  "交通/大陆/山东/临沂",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ilinyi.net/"
+    },
+    {
+        "name":  "临沂文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/3995/64k.mp3",
+        "genre":  "文艺/大陆/山东/临沂",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ilinyi.net/"
+    },
+    {
+        "name":  "临沂综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/3992/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/临沂",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ilinyi.net/"
+    },
+    {
+        "name":  "临沂经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/3994/64k.mp3",
+        "genre":  "财经/大陆/山东/临沂",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ilinyi.net/"
+    },
+    {
+        "name":  "崂山921  听见好时光",
+        "url":  "http://lhttp.qingting.fm/live/20212426/64k.mp3",
+        "genre":  "综合/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "济南文艺广播",
+        "url":  "http://lhttp.qingting.fm/live/1670/64k.mp3",
+        "genre":  "文艺/大陆/山东/济南",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ijntv.cn/"
+    },
+    {
+        "name":  "济南新闻综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/1667/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/济南",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ijntv.cn/"
+    },
+    {
+        "name":  "济南故事广播",
+        "url":  "https://lhttp.qtfm.cn/live/1672/64k.mp3",
+        "genre":  "生活都市/大陆/山东/济南",
+        "country":  "大陆",
+        "logoUrl":  "http://jnradio.ijntv.cn/fm1043/"
+    },
+    {
+        "name":  "济南经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/1668/64k.mp3",
+        "genre":  "财经/大陆/山东/济南",
+        "country":  "大陆",
+        "logoUrl":  "http://jnradio.ijntv.cn/fm909/"
+    },
+    {
+        "name":  "济南音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1671/64k.mp3",
+        "genre":  "音乐/大陆/山东/济南",
+        "country":  "大陆",
+        "logoUrl":  "http://www.music887.com/"
+    },
+    {
+        "name":  "济宁交通文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/20087/64k.mp3",
+        "genre":  "交通/大陆/山东/济宁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jnnews.tv/"
+    },
+    {
+        "name":  "潍坊新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/20320/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/潍坊",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wfcmw.cn/"
+    },
+    {
+        "name":  "潍坊新闻广播·88.1音乐之声",
+        "url":  "https://lhttp.qtfm.cn/live/15318631/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/潍坊",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wfcmw.cn/"
+    },
+    {
+        "name":  "FM89.8烟台汽车音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/5022382/64k.mp3",
+        "genre":  "音乐/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://mpsjt.qingk.cn/"
+    },
+    {
+        "name":  "烟台经典音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/20500097/64k.mp3",
+        "genre":  "音乐/大陆/山东/烟台",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yantaitv.cn/"
+    },
+    {
+        "name":  "烟台音乐广播",
+        "url":  "http://live.xmcdn.com/live/2716/64.m3u8",
+        "genre":  "音乐/大陆/山东/烟台",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yantaitv.cn/"
+    },
+    {
+        "name":  "菏泽音乐广播",
+        "url":  "http://live.hznet.tv:1935/live/live918/32k/tzwj_video.m3u8",
+        "genre":  "音乐/大陆/山东/菏泽",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hezegd.com/"
+    },
+    {
+        "name":  "青岛交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1676/64k.mp3",
+        "genre":  "交通/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛文艺广播",
+        "url":  "http://lhttp.qingting.fm/live/1675/64k.mp3",
+        "genre":  "文艺/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛文艺广播",
+        "url":  "http://video10.qtv.com.cn/zhibosjcgb/manifest.m3u8",
+        "genre":  "文艺/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1673/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛故事广播",
+        "url":  "http://video10.qtv.com.cn/zhibogsgb/manifest.m3u8",
+        "genre":  "生活都市/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛FM105.8",
+        "url":  "http://video10.qtv.com.cn/zhibo875/manifest.m3u8",
+        "genre":  "综合/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛胶州广播",
+        "url":  "http://lhttp.qingting.fm/live/20211644/64k.mp3",
+        "genre":  "综合/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛老年广播",
+        "url":  "http://lhttp.qingting.fm/live/4956/64k.mp3",
+        "genre":  "老年/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛经济广播",
+        "url":  "http://lhttp.qingting.fm/live/1674/64k.mp3",
+        "genre":  "财经/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "青岛音乐•体育广播",
+        "url":  "http://lhttp.qingting.fm/live/1677/64k.mp3",
+        "genre":  "音乐/大陆/山东/青岛",
+        "country":  "大陆",
+        "logoUrl":  "http://wap.qtv.com.cn/"
+    },
+    {
+        "name":  "黄岛综合广播",
+        "url":  "https://lhttp.qingting.fm/live/20176/64k.mp3",
+        "genre":  "新闻资讯/大陆/山东/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qwmedia.cn/web/index.html"
+    },
+    {
+        "name":  "山西交通广播",
+        "url":  "http://radiolive.sxrtv.com/live/jiaotong.m3u8",
+        "genre":  "交通/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "山西文艺广播",
+        "url":  "http://radiolive.sxrtv.com/live/wenyi.m3u8",
+        "genre":  "文艺/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "山西综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/20491/64k.mp3?app",
+        "genre":  "新闻资讯/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "山西综合广播",
+        "url":  "http://radiolive.sxrtv.com/live/xinwen.m3u8",
+        "genre":  "新闻资讯/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "Shansi News Radio",
+        "url":  "http://lhttp.qingting.fm/live/20491/64k.mp3",
+        "genre":  "新闻资讯/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/"
+    },
+    {
+        "name":  "山西故事广播",
+        "url":  "http://radiolive.sxrtv.com/live/gushi.m3u8",
+        "genre":  "生活都市/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "山西广播电视台故事广播",
+        "url":  "http://lhttp.qingting.fm/live/5022511/64k.mp3",
+        "genre":  "生活都市/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/"
+    },
+    {
+        "name":  "山西农村广播",
+        "url":  "http://radiolive.sxrtv.com/live/nongcun.m3u8",
+        "genre":  "生活都市/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "Shansi Agriculture Radio",
+        "url":  "http://lhttp.qingting.fm/live/1186/64k.mp3",
+        "genre":  "综合/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/"
+    },
+    {
+        "name":  "Shansi Literature \u0026 Art Radio",
+        "url":  "http://lhttp.qingting.fm/live/20485/64k.mp3",
+        "genre":  "综合/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/"
+    },
+    {
+        "name":  "山西经济广播",
+        "url":  "http://radiolive.sxrtv.com/live/jingji.m3u8",
+        "genre":  "财经/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "山西音乐广播",
+        "url":  "http://radiolive.sxrtv.com/live/yinyue.m3u8",
+        "genre":  "音乐/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/radio/"
+    },
+    {
+        "name":  "Shansi Music Radio",
+        "url":  "http://ls.qingting.fm/live/4932.m3u8",
+        "genre":  "音乐/大陆/山西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxrtv.com/"
+    },
+    {
+        "name":  "大同交通广播",
+        "url":  "http://lhttp.qingting.fm/live/5022396/64k.mp3",
+        "genre":  "交通/大陆/山西/大同",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dtradio.com.cn/?companyId=2AE520B59BD04FDB\u0026productId=6E86CE0D16CE429EB0B293945EB4679E"
+    },
+    {
+        "name":  "大同新闻综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20211690/64k.mp3",
+        "genre":  "新闻资讯/大陆/山西/大同",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dtradio.com.cn/"
+    },
+    {
+        "name":  "Taiyuan Traffic Radio",
+        "url":  "http://ls.qingting.fm/live/4900.m3u8",
+        "genre":  "交通/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tytv.com.cn/"
+    },
+    {
+        "name":  "太原综合广播",
+        "url":  "http://live.xmcdn.com/live/888/64.m3u8",
+        "genre":  "新闻资讯/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://ty.cutv.com/"
+    },
+    {
+        "name":  "Taiyuan News Radio",
+        "url":  "http://lhttp.qingting.fm/live/20006/64k.mp3",
+        "genre":  "新闻资讯/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tytv.com.cn/"
+    },
+    {
+        "name":  "Taiyuan Economics Radio",
+        "url":  "http://ls.qingting.fm/live/4018.m3u8",
+        "genre":  "综合/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tytv.com.cn/"
+    },
+    {
+        "name":  "太原老年之声",
+        "url":  "http://lhttp.qingting.fm/live/20211701/64k.mp3",
+        "genre":  "老年/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://ty.cutv.com/"
+    },
+    {
+        "name":  "太原音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/1185/64k.mp3",
+        "genre":  "音乐/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://ty.cutv.com/"
+    },
+    {
+        "name":  "Taiyuan Music Radio",
+        "url":  "http://ls.qingting.fm/live/1185.m3u8",
+        "genre":  "音乐/大陆/山西/太原",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tytv.com.cn/"
+    },
+    {
+        "name":  "晋城交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1189/64k.mp3",
+        "genre":  "交通/大陆/山西/晋城",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qingting.fm/radios/1189"
+    },
+    {
+        "name":  "长治交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/5021851/64k.mp3",
+        "genre":  "交通/大陆/山西/长治",
+        "country":  "大陆",
+        "logoUrl":  "https://weibo.com/cznrt"
+    },
+    {
+        "name":  "广东新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/1254/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.gdtv.cn/"
+    },
+    {
+        "name":  "广东南粤之声",
+        "url":  "https://lhttp.qtfm.cn/live/470/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.gdtv.cn/"
+    },
+    {
+        "name":  "广东珠江之声",
+        "url":  "http://ls.qingting.fm/live/470.m3u8",
+        "genre":  "新闻资讯/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gdtv.cn/audioChannelDetail/98"
+    },
+    {
+        "name":  "广东卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/guangdong_2.m3u8",
+        "genre":  "新闻资讯/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gdtv.cn/"
+    },
+    {
+        "name":  "广东股市广播",
+        "url":  "https://lhttp.qtfm.cn/live/4847/64k.mp3",
+        "genre":  "财经/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.gdtv.cn/"
+    },
+    {
+        "name":  "广东音乐之声",
+        "url":  "https://lhttp.qtfm.cn/live/1260/64k.mp3",
+        "genre":  "音乐/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.gdtv.cn/"
+    },
+    {
+        "name":  "云浮综合广播",
+        "url":  "http://lhttp.qingting.fm/live/5022442/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/云浮",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yunfucity.com/"
+    },
+    {
+        "name":  "广州青少年广播",
+        "url":  "http://live.xmcdn.com/live/259/64.m3u8",
+        "genre":  "综合/大陆/广东/广州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gztv.com/"
+    },
+    {
+        "name":  "惠州综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5016/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/惠州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hzrtv.cn/"
+    },
+    {
+        "name":  "深圳交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1272/64k.mp3",
+        "genre":  "交通/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.szmg.com.cn/"
+    },
+    {
+        "name":  "深圳新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1270/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.szmg.com.cn/"
+    },
+    {
+        "name":  "深圳生活广播",
+        "url":  "http://lhttp.qingting.fm/live/1273/64k.mp3",
+        "genre":  "生活都市/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.szmg.com.cn/"
+    },
+    {
+        "name":  "深圳综艺广播",
+        "url":  "http://lhttp.qingting.fm/live/1271/64k.mp3",
+        "genre":  "综合/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.szmg.com.cn/"
+    },
+    {
+        "name":  "深圳龙岗频道",
+        "url":  "http://lhttp.qingting.fm/live/20160/64k.mp3",
+        "genre":  "综合/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.szmg.com.cn/"
+    },
+    {
+        "name":  "深圳音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1271/64k.mp3",
+        "genre":  "音乐/大陆/广东/深圳",
+        "country":  "大陆",
+        "logoUrl":  "https://www.feiyang971.com/"
+    },
+    {
+        "name":  "清远交通音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/20500067/64k.mp3",
+        "genre":  "交通/大陆/广东/清远",
+        "country":  "大陆",
+        "logoUrl":  "http://www.0763f.com/"
+    },
+    {
+        "name":  "珠海交通875·环保经济广播",
+        "url":  "http://lhttp.qingting.fm/live/1275/64k.mp3",
+        "genre":  "交通/大陆/广东/珠海",
+        "country":  "大陆",
+        "logoUrl":  "http://www.n21.cc/"
+    },
+    {
+        "name":  "珠海先锋951·综合广播",
+        "url":  "http://lhttp.qingting.fm/live/1274/64k.mp3",
+        "genre":  "新闻资讯/大陆/广东/珠海",
+        "country":  "大陆",
+        "logoUrl":  "http://www.n21.cc/"
+    },
+    {
+        "name":  "顺德音乐之声",
+        "url":  "https://lhttp.qtfm.cn/live/20500150/64k.mp3",
+        "genre":  "音乐/大陆/广东/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fstv.com.cn/shundepindao/index.html"
+    },
+    {
+        "name":  "广西交通广播",
+        "url":  "https://stream.bbrtv.com:10443/hls/scGbVLJGR/scGbVLJGR_live.m3u8",
+        "genre":  "交通/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "广西交通广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1758/64k.mp3",
+        "genre":  "交通/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gxtv.cn/"
+    },
+    {
+        "name":  "广西文艺广播",
+        "url":  "https://stream.bbrtv.com:10443/hls/rCjJ4Y1MR/rCjJ4Y1MR_live.m3u8",
+        "genre":  "文艺/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "广西综合广播",
+        "url":  "https://stream.bbrtv.com:10443/hls/sIoyCf1Gg/sIoyCf1Gg_live.m3u8",
+        "genre":  "新闻资讯/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "广西教育广播",
+        "url":  "https://stream.bbrtv.com:10443/hls/I7LJVL1Gg/I7LJVL1Gg_live.m3u8",
+        "genre":  "综合/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "广西经济广播",
+        "url":  "https://stream.bbrtv.com:10443/hls/wrr24LJGR/wrr24LJGR_live.m3u8",
+        "genre":  "财经/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "广西经济广播 970女主播电台",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1754/64k.mp3",
+        "genre":  "财经/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gxtv.cn/"
+    },
+    {
+        "name":  "广西文艺广播 FM950广西音乐台",
+        "url":  "https://lhttp-hw.qtfm.cn/live/4875/64k.mp3",
+        "genre":  "音乐/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gxtv.cn/"
+    },
+    {
+        "name":  "北部湾之声",
+        "url":  "https://stream.bbrtv.com:10443/hls/_6ax4Y1MR/_6ax4Y1MR_live.m3u8",
+        "genre":  "新闻资讯/大陆/广西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://stream.bbrtv.com/?channelId=27"
+    },
+    {
+        "name":  "南宁交通音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/20767/64k.mp3",
+        "genre":  "交通/大陆/广西/南宁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nntv.cn/"
+    },
+    {
+        "name":  "南宁综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/20358/64k.mp3",
+        "genre":  "新闻资讯/大陆/广西/南宁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nntv.cn/"
+    },
+    {
+        "name":  "南宁故事广播",
+        "url":  "https://hls.nntv.cn/nnradio/895_24.m3u8",
+        "genre":  "生活都市/大陆/广西/南宁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.nntv.cn/"
+    },
+    {
+        "name":  "桂林城市之声",
+        "url":  "http://lhttp.qingting.fm/live/1759/64k.mp3",
+        "genre":  "生活都市/大陆/广西/桂林",
+        "country":  "大陆",
+        "logoUrl":  "http://m.gltvs.com/"
+    },
+    {
+        "name":  "桂林飞扬频率",
+        "url":  "http://lhttp.qingting.fm/live/1760/64k.mp3",
+        "genre":  "综合/大陆/广西/桂林",
+        "country":  "大陆",
+        "logoUrl":  "http://m.gltvs.com/"
+    },
+    {
+        "name":  "玉林综合广播",
+        "url":  "https://lhttp.qingting.fm/live/1762/64k.mp3",
+        "genre":  "新闻资讯/大陆/广西/玉林",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yltvb.com/"
+    },
+    {
+        "name":  "新疆交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1910/64k.mp3",
+        "genre":  "交通/大陆/新疆/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xjtvs.com.cn/"
+    },
+    {
+        "name":  "兵团之声",
+        "url":  "https://lhttp.qtfm.cn/live/5022410/64k.mp3",
+        "genre":  "新闻资讯/大陆/新疆/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.btzx.com.cn/"
+    },
+    {
+        "name":  "新疆文化旅游广播",
+        "url":  "https://lhttp.qtfm.cn/live/1909/64k.mp3",
+        "genre":  "生活都市/大陆/新疆/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xjtvs.com.cn/"
+    },
+    {
+        "name":  "乌鲁木齐新闻广播",
+        "url":  "https://lhttp.qingting.fm/live/1918/64k.mp3",
+        "genre":  "新闻资讯/大陆/新疆/乌鲁木齐",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xjutv.com/"
+    },
+    {
+        "name":  "乌鲁木齐旅游音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1920/64k.mp3",
+        "genre":  "音乐/大陆/新疆/乌鲁木齐",
+        "country":  "大陆",
+        "logoUrl":  "http://www.urumqi.gov.cn/info/iList.jsp?cat_id=16164\u0026cur_page=1"
+    },
+    {
+        "name":  "伊犁文艺交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022689/64k.mp3",
+        "genre":  "交通/大陆/新疆/伊犁",
+        "country":  "大陆",
+        "logoUrl":  "http://www.allchina.cn/tv/zhibo-zx-8633.html"
+    },
+    {
+        "name":  "伊犁综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20211711/64k.mp3",
+        "genre":  "新闻资讯/大陆/新疆/伊犁",
+        "country":  "大陆",
+        "logoUrl":  "http://m.ylxw.com.cn/"
+    },
+    {
+        "name":  "江苏交通广播网",
+        "url":  "http://lzlive.vojs.cn/4TaHTeL/92/live.m3u8?",
+        "genre":  "交通/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Traffic Radio",
+        "url":  "http://lzlive.vojs.cn/4TaHTeL/92/live.m3u8",
+        "genre":  "交通/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏文艺广播",
+        "url":  "http://lzlive.vojs.cn/pL6NkZo/92/live.m3u8?",
+        "genre":  "文艺/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏新闻广播",
+        "url":  "http://lzlive.vojs.cn/5Fo8mMX/92/live.m3u8?",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏新闻综合广播",
+        "url":  "http://lzlive.vojs.cn/rTyLc36/92/live.m3u8",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏金陵之声",
+        "url":  "http://lzlive.vojs.cn/Hd2hIgM/92/live.m3u8?",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu News Radio",
+        "url":  "http://lzlive.vojs.cn/5Fo8mMX/92/live.m3u8",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏故事广播",
+        "url":  "http://lzlive.vojs.cn/rWjyus9/92/live.m3u8?",
+        "genre":  "生活都市/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏健康广播",
+        "url":  "http://lzlive.vojs.cn/EWpb5Ov/92/live.m3u8?",
+        "genre":  "生活都市/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Literature \u0026 Art Radio",
+        "url":  "http://lzlive.vojs.cn/pL6NkZo/92/live.m3u8",
+        "genre":  "综合/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Story Radio",
+        "url":  "http://lzlive.vojs.cn/rWjyus9/92/live.m3u8",
+        "genre":  "综合/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Health Radio",
+        "url":  "http://lzlive.vojs.cn/EWpb5Ov/92/live.m3u8",
+        "genre":  "综合/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Voice of Kingling Radio",
+        "url":  "http://lzlive.vojs.cn/Hd2hIgM/92/live.m3u8",
+        "genre":  "综合/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏财经广播",
+        "url":  "http://lzlive.vojs.cn/caijing/92/live.m3u8?",
+        "genre":  "财经/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Finance Radio",
+        "url":  "http://lzlive.vojs.cn/caijing/92/live.m3u8",
+        "genre":  "财经/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏经典流行音乐广播",
+        "url":  "http://lzlive.vojs.cn/2wtSfrS/92/live.m3u8?",
+        "genre":  "音乐/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "江苏经典流行音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/4938/64k.mp3",
+        "genre":  "音乐/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.vojs.cn/2014new/c/g/"
+    },
+    {
+        "name":  "江苏音乐广播",
+        "url":  "http://lzlive.vojs.cn/jAmO6Ng/92/live.m3u8?",
+        "genre":  "音乐/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Classical Music Radio",
+        "url":  "http://lzlive.vojs.cn/2wtSfrS/92/live.m3u8",
+        "genre":  "音乐/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "Kiangsu Music Radio",
+        "url":  "http://lzlive.vojs.cn/jAmO6Ng/92/live.m3u8",
+        "genre":  "音乐/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.vojs.cn/"
+    },
+    {
+        "name":  "南京交通广播",
+        "url":  "http://live.xmcdn.com/live/70/64.m3u8",
+        "genre":  "交通/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南京交通广播",
+        "url":  "http://hls.njgb.com/live_hls/2/playlist.m3u8",
+        "genre":  "交通/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南京新闻综合广播",
+        "url":  "http://hls.njgb.com/live_hls/1/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南京音乐广播",
+        "url":  "http://live.xmcdn.com/live/71/64.m3u8",
+        "genre":  "音乐/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南京音乐广播",
+        "url":  "http://hls.njgb.com/live_hls/4/playlist.m3u8",
+        "genre":  "音乐/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南京音乐广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/4963/64k.mp3",
+        "genre":  "音乐/大陆/江苏/南京",
+        "country":  "大陆",
+        "logoUrl":  "http://www.njgb.com/"
+    },
+    {
+        "name":  "南通交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/5021533/64k.mp3",
+        "genre":  "交通/大陆/江苏/南通",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ntjoy.com/"
+    },
+    {
+        "name":  "南通综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/21277/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/南通",
+        "country":  "大陆",
+        "logoUrl":  "https://www.ntjoy.com/"
+    },
+    {
+        "name":  "宿迁交通广播",
+        "url":  "https://lhttp.qingting.fm/live/5004/64k.mp3",
+        "genre":  "交通/大陆/江苏/宿迁",
+        "country":  "大陆",
+        "logoUrl":  "http://tv.xichu.net/m.php"
+    },
+    {
+        "name":  "常州交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/2796/64k.mp3",
+        "genre":  "交通/大陆/江苏/常州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cztv.tv/"
+    },
+    {
+        "name":  "常州新闻综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/2798/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/常州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.tv/"
+    },
+    {
+        "name":  "常州经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/2794/64k.mp3",
+        "genre":  "财经/大陆/江苏/常州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.tv/"
+    },
+    {
+        "name":  "徐州交通广播",
+        "url":  "https://lhttp.qingting.fm/live/4924/64k.mp3",
+        "genre":  "交通/大陆/江苏/徐州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xzgd.com/login/Login.jsp?logintype=1"
+    },
+    {
+        "name":  "徐州新闻综合广播",
+        "url":  "https://lhttp.qingting.fm/live/4922/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/徐州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xzgd.com/"
+    },
+    {
+        "name":  "徐州音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/4923/64k.mp3",
+        "genre":  "音乐/大陆/江苏/徐州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xzgd.com/login/Login.jsp?logintype=1"
+    },
+    {
+        "name":  "扬州新闻广播",
+        "url":  "https://lhttp.qingting.fm/live/5000/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/扬州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yzntv.com/"
+    },
+    {
+        "name":  "无锡交通广播",
+        "url":  "http://lhttp.qingting.fm/live/2780/64k.mp3",
+        "genre":  "交通/大陆/江苏/无锡",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "无锡新闻综合广播FM93.7",
+        "url":  "https://lhttp.qtfm.cn/live/2777/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "无锡梁溪之声",
+        "url":  "http://lhttp.qingting.fm/live/2782/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/无锡",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "无锡新闻综合广播AM1161",
+        "url":  "https://lhttp.qtfm.cn/live/2776/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "无锡经济广播",
+        "url":  "http://lhttp.qingting.fm/live/2778/64k.mp3",
+        "genre":  "财经/大陆/江苏/无锡",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "无锡音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/2779/64k.mp3",
+        "genre":  "音乐/大陆/江苏/无锡",
+        "country":  "大陆",
+        "logoUrl":  "http://btv.thmz.com/"
+    },
+    {
+        "name":  "Wukin News TV",
+        "url":  "http://live.wjyanghu.com/live/CH1.m3u8",
+        "genre":  "新闻资讯/大陆/江苏/无锡",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wjyanghu.com/"
+    },
+    {
+        "name":  "盐城音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022380/64k.mp3",
+        "genre":  "音乐/大陆/江苏/盐城",
+        "country":  "大陆",
+        "logoUrl":  "http://www.0515yc.cn/"
+    },
+    {
+        "name":  "苏州交通经济广播",
+        "url":  "http://lhttp.qingting.fm/live/2806/64k.mp3",
+        "genre":  "交通/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.com/"
+    },
+    {
+        "name":  "苏州儿童广播",
+        "url":  "http://lhttp.qingting.fm/live/2807/64k.mp3",
+        "genre":  "少儿/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.cn/"
+    },
+    {
+        "name":  "苏州戏曲广播",
+        "url":  "http://lhttp.qingting.fm/live/20211622/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.cn/"
+    },
+    {
+        "name":  "苏州新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/2808/64k.mp3",
+        "genre":  "新闻资讯/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.com/"
+    },
+    {
+        "name":  "苏州生活广播",
+        "url":  "http://lhttp.qingting.fm/live/2801/64k.mp3",
+        "genre":  "生活都市/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.com/"
+    },
+    {
+        "name":  "苏州都市音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/2803/64k.mp3",
+        "genre":  "音乐/大陆/江苏/苏州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csztv.com/"
+    },
+    {
+        "name":  "江西广播电视台新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1809/64k.mp3",
+        "genre":  "新闻资讯/大陆/江西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jxntv.cn/"
+    },
+    {
+        "name":  "江西综合新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/1809/64k.mp3",
+        "genre":  "新闻资讯/大陆/江西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.jxntv.cn/"
+    },
+    {
+        "name":  "江西故事广播",
+        "url":  "https://lhttp.qtfm.cn/live/20500092/64k.mp3",
+        "genre":  "生活都市/大陆/江西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.jxntv.cn/"
+    },
+    {
+        "name":  "江西文艺音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1802/64k.mp3",
+        "genre":  "音乐/大陆/江西/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.jxntv.cn/"
+    },
+    {
+        "name":  "九江交通广播",
+        "url":  "https://lhttp.qingting.fm/live/5021918/64k.mp3",
+        "genre":  "交通/大陆/江西/九江",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jjntv.cn/"
+    },
+    {
+        "name":  "红调频·九江综合广播",
+        "url":  "https://lhttp.qingting.fm/live/5022729/64k.mp3",
+        "genre":  "新闻资讯/大陆/江西/九江",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jjntv.cn/"
+    },
+    {
+        "name":  "九江年代音乐台",
+        "url":  "https://lhttp.qingting.fm/live/20212210/64k.mp3",
+        "genre":  "音乐/大陆/江西/九江",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jjntv.cn/"
+    },
+    {
+        "name":  "南昌交通音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1804/64k.mp3",
+        "genre":  "交通/大陆/江西/南昌",
+        "country":  "大陆",
+        "logoUrl":  "https://www.nctv.net.cn/"
+    },
+    {
+        "name":  "河北农民广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebnczx.m3u8",
+        "genre":  "三农/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北交通广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebjt.m3u8",
+        "genre":  "交通/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北文艺广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebwy.m3u8",
+        "genre":  "文艺/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北新闻广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebxw.m3u8",
+        "genre":  "新闻资讯/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北综合广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebzh.m3u8",
+        "genre":  "新闻资讯/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北旅游广播Hopei Travel Radio",
+        "url":  "http://ls.qingting.fm/live/1651.m3u8",
+        "genre":  "生活都市/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hebtv.com/"
+    },
+    {
+        "name":  "河北旅游文化广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebly.m3u8",
+        "genre":  "生活都市/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北生活广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebshzx.m3u8",
+        "genre":  "生活都市/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北私家车广播",
+        "url":  "http://ls.qingting.fm/live/4868.m3u8",
+        "genre":  "综合/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hebtv.com/"
+    },
+    {
+        "name":  "河北经济广播（故事广播）",
+        "url":  "https://radio.pull.hebtv.com/live/hebjj.m3u8",
+        "genre":  "财经/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北音乐广播",
+        "url":  "https://radio.pull.hebtv.com/live/hebyy.m3u8",
+        "genre":  "音乐/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "河北汽车音乐台",
+        "url":  "https://radio.pull.hebtv.com/live/hebqcyy.m3u8",
+        "genre":  "音乐/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hebtv.com/"
+    },
+    {
+        "name":  "保定交通频道",
+        "url":  "https://lhttp.qtfm.cn/live/20168/64k.mp3",
+        "genre":  "交通/大陆/河北/保定",
+        "country":  "大陆",
+        "logoUrl":  "http://www.bdgdw.com/"
+    },
+    {
+        "name":  "唐山曹妃甸之声",
+        "url":  "https://lhttp.qtfm.cn/live/1660/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/唐山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tsr.he.cn/"
+    },
+    {
+        "name":  "唐山音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/4871/64k.mp3",
+        "genre":  "音乐/大陆/河北/唐山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.tsr.he.cn/"
+    },
+    {
+        "name":  "廊坊交通长书广播",
+        "url":  "http://lhttp.qingting.fm/live/3948/64k.mp3",
+        "genre":  "交通/大陆/河北/廊坊",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lfnrtv.com/"
+    },
+    {
+        "name":  "廊坊戏曲广播·飞扬105",
+        "url":  "http://lhttp.qingting.fm/live/20211678/64k.mp3",
+        "genre":  "戏曲曲艺/大陆/河北/廊坊",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lfnrtv.com/"
+    },
+    {
+        "name":  "廊坊综合广播",
+        "url":  "https://lhttp.qingting.fm/live/3948/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/廊坊",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lfnrtv.com/"
+    },
+    {
+        "name":  "张家口986音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/5021801/64k.mp3",
+        "genre":  "音乐/大陆/河北/张家口",
+        "country":  "大陆",
+        "logoUrl":  "https://superradio.cc/"
+    },
+    {
+        "name":  "承德交通文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/15318216/64k.mp3",
+        "genre":  "交通/大陆/河北/承德",
+        "country":  "大陆",
+        "logoUrl":  "https://www.chengdetv.com/"
+    },
+    {
+        "name":  "沧州交通音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/3954/64k.mp3",
+        "genre":  "交通/大陆/河北/沧州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.czgd.tv/"
+    },
+    {
+        "name":  "沧州长书文艺广播",
+        "url":  "https://lhttp.qingting.fm/live/5021902/64k.mp3",
+        "genre":  "文艺/大陆/河北/沧州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.czgd.tv/"
+    },
+    {
+        "name":  "河间综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/15318503/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://apps.apple.com/hr/app/%E5%86%80%E4%BA%91%E6%B2%B3%E9%97%B4/id1518775413"
+    },
+    {
+        "name":  "石家庄交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1655/64k.mp3",
+        "genre":  "交通/大陆/河北/石家庄",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sjzntv.cn/"
+    },
+    {
+        "name":  "石家庄综合广播",
+        "url":  "http://lhttp.qingting.fm/live/1652/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/石家庄",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sjzntv.cn/"
+    },
+    {
+        "name":  "石家庄音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1654/64k.mp3",
+        "genre":  "音乐/大陆/河北/石家庄",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sjzntv.cn/"
+    },
+    {
+        "name":  "衡水交通评书广播",
+        "url":  "https://lhttp.qtfm.cn/live/5021940/64k.mp3",
+        "genre":  "交通/大陆/河北/衡水",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hsrtv.cn/"
+    },
+    {
+        "name":  "邢台交通•音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/15318481/64k.mp3",
+        "genre":  "交通/大陆/河北/邢台",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xttv.com.cn/"
+    },
+    {
+        "name":  "邢台新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/20211628/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/邢台",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xttv.com.cn/"
+    },
+    {
+        "name":  "邯郸交通音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/3950/64k.mp3",
+        "genre":  "交通/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hdbs.cn/"
+    },
+    {
+        "name":  "邯郸新闻综合广播",
+        "url":  "https://lhttp.qingting.fm/live/5072/64k.mp3",
+        "genre":  "新闻资讯/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hdbs.cn/"
+    },
+    {
+        "name":  "邯郸经济文艺广播",
+        "url":  "https://lhttp.qingting.fm/live/4601/64k.mp3",
+        "genre":  "财经/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hdbs.cn/"
+    },
+    {
+        "name":  "邯郸音乐广播",
+        "url":  "http://ls.qingting.fm/live/4601.m3u8",
+        "genre":  "音乐/大陆/河北/邯郸",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hdbs.cn/"
+    },
+    {
+        "name":  "河南交通广播",
+        "url":  "https://stream.hndt.com/live/jiaotong/playlist.m3u8",
+        "genre":  "交通/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南少儿广播",
+        "url":  "https://lhttp.qtfm.cn/live/20500038/64k.mp3",
+        "genre":  "少儿/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南戏曲广播",
+        "url":  "https://stream.hndt.com/live/yule/playlist.m3u8",
+        "genre":  "戏曲曲艺/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南戏曲网络广播",
+        "url":  "http://stream.hndt.com/live/wangluoxiqu/playlist.m3u8",
+        "genre":  "戏曲曲艺/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南新闻广播",
+        "url":  "https://stream.hndt.com/live/xinwen/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南警广之声",
+        "url":  "http://stream3.hndt.com/now/prIgXGFo/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/henan_2.m3u8",
+        "genre":  "新闻资讯/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hntv.tv/"
+    },
+    {
+        "name":  "河南旅游广播",
+        "url":  "https://stream.hndt.com/live/sijiache/playlist.m3u8",
+        "genre":  "生活都市/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南天籁之音",
+        "url":  "http://stream.hndt.com/live/gudian/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南卷卷猫电台",
+        "url":  "http://lhttp.qingting.fm/live/20500038/64k.mp3",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络广播·摇滚天空台",
+        "url":  "http://stream3.hndt.com/now/SXJtR4M4/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南教育广播",
+        "url":  "https://stream.hndt.com/live/jiaoyu/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南影视广播",
+        "url":  "https://stream.hndt.com/live/yingshi/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络广播·爵士FM",
+        "url":  "http://stream3.hndt.com/now/p16uWRAi/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南信息广播",
+        "url":  "https://stream.hndt.com/live/leling/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南卷卷猫电台（2）",
+        "url":  "http://stream3.hndt.com/now/PHucVOu2/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络广播·安全百科网络台",
+        "url":  "http://stream3.hndt.com/now/4pcovD2L/playlist.m3u8",
+        "genre":  "综合/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南星河音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/20210755/64k.mp3",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南音乐广播",
+        "url":  "https://stream.hndt.com/live/yinyue/playlist.m3u8",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://fm881.hnr.cn/"
+    },
+    {
+        "name":  "河南网络经典FM",
+        "url":  "http://stream3.hndt.com/now/C5NvUpwy/playlist.m3u8",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络星河音乐台",
+        "url":  "http://stream.hndt.com/live/1061/playlist.m3u8",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络格莱美音乐台 Grammy Radio",
+        "url":  "http://stream3.hndt.com/now/yorSd1X2/playlist.m3u8",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "河南网络动感音乐台",
+        "url":  "http://stream3.hndt.com/now/ufjjbZxV/playlist.m3u8",
+        "genre":  "音乐/大陆/河南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hndt.com/"
+    },
+    {
+        "name":  "信阳平桥广播",
+        "url":  "https://lhttp.qingting.fm/live/15318156/64k.mp3",
+        "genre":  "综合/大陆/河南/信阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xytv.cn/"
+    },
+    {
+        "name":  "开封交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1214/64k.mp3",
+        "genre":  "交通/大陆/河南/开封",
+        "country":  "大陆",
+        "logoUrl":  "http://www.kftv.net.cn/"
+    },
+    {
+        "name":  "开封音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/4569/64k.mp3",
+        "genre":  "音乐/大陆/河南/开封",
+        "country":  "大陆",
+        "logoUrl":  "http://www.kftv.net.cn/"
+    },
+    {
+        "name":  "洛阳音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1226/64k.mp3",
+        "genre":  "音乐/大陆/河南/洛阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lytv.com.cn/dist/#/"
+    },
+    {
+        "name":  "许昌综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022092/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/许昌",
+        "country":  "大陆",
+        "logoUrl":  "http://xctv.cn/"
+    },
+    {
+        "name":  "郑州交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1211/64k.mp3",
+        "genre":  "交通/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "郑州新闻综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/1220/64k.mp3",
+        "genre":  "新闻资讯/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "郑州经济生活广播",
+        "url":  "https://lhttp.qtfm.cn/live/1221/64k.mp3",
+        "genre":  "财经/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "郑州音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/4921/64k.mp3",
+        "genre":  "音乐/大陆/河南/郑州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zzradio.cn/"
+    },
+    {
+        "name":  "浙江交通之声",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm93/128k.m3u8",
+        "genre":  "交通/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江之声",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm88/128k.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.am810.net/"
+    },
+    {
+        "name":  "浙江新闻频道",
+        "url":  "http://ali-vl.cztv.com/channels/lantian/channel007/360p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江新闻广播",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm988/128k.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江民生资讯广播",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm996/128k.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江城市之声",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm107/128k.m3u8",
+        "genre":  "生活都市/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江旅游之声",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm1045/128k.m3u8",
+        "genre":  "生活都市/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江经济广播",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm95/128k.m3u8",
+        "genre":  "财经/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "浙江音乐调频",
+        "url":  "http://ali-m-l.cztv.com/channels/lantian/fm968/128k.m3u8",
+        "genre":  "音乐/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cztv.com/"
+    },
+    {
+        "name":  "Shangyu News TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXshangyu1/720p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/绍兴/上虞",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sybtv.com/"
+    },
+    {
+        "name":  "Shangyu New Commercial City TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXshangyu3/720p.m3u8",
+        "genre":  "综合/大陆/浙江/绍兴/上虞",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sybtv.com/"
+    },
+    {
+        "name":  "Shangyu TV Series TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXshangyu2/720p.m3u8",
+        "genre":  "综合/大陆/浙江/绍兴/上虞",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sybtv.com/"
+    },
+    {
+        "name":  "义乌新闻",
+        "url":  "https://lhttp.qtfm.cn/live/20537/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ywcity.cn/#/homepage"
+    },
+    {
+        "name":  "Yurao News TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/宁波/余姚",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yysee.net/"
+    },
+    {
+        "name":  "Yurao Culture TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m3u8",
+        "genre":  "综合/大陆/浙江/宁波/余姚",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yysee.net/"
+    },
+    {
+        "name":  "台州交通广播",
+        "url":  "https://lhttp.qingting.fm/live/1146/64k.mp3",
+        "genre":  "交通/大陆/浙江/台州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.576tv.com/"
+    },
+    {
+        "name":  "台州综合广播",
+        "url":  "https://lhttp.qingting.fm/live/1145/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/台州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.576tv.com/"
+    },
+    {
+        "name":  "台州音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/1144/64k.mp3",
+        "genre":  "音乐/大陆/浙江/台州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.576tv.com/"
+    },
+    {
+        "name":  "嘉兴新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1154/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/嘉兴",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jxrtv.com/"
+    },
+    {
+        "name":  "嘉兴音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1136/64k.mp3",
+        "genre":  "音乐/大陆/浙江/嘉兴",
+        "country":  "大陆",
+        "logoUrl":  "http://www.jxrtv.com/"
+    },
+    {
+        "name":  "Sinchang News TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxinchang1/720p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/绍兴/新昌",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zjxcw.com/"
+    },
+    {
+        "name":  "杭州交通经济广播",
+        "url":  "http://live.xmcdn.com/live/632/64.m3u8",
+        "genre":  "交通/大陆/浙江/杭州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hcrt.cn/"
+    },
+    {
+        "name":  "杭州交通经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/1133/64k.mp3",
+        "genre":  "交通/大陆/浙江/杭州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hoolo.tv/"
+    },
+    {
+        "name":  "杭州市广播电视台西湖之声",
+        "url":  "https://lhttp.qtfm.cn/live/1163/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/杭州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hoolo.tv/"
+    },
+    {
+        "name":  "杭州音乐时尚广播",
+        "url":  "https://live.xmcdn.com/live/1845/64.m3u8",
+        "genre":  "音乐/大陆/浙江/杭州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hoolo.tv/"
+    },
+    {
+        "name":  "杭州华语之声网络广播",
+        "url":  "https://lhttp.qtfm.cn/live/20505/64k.mp3",
+        "genre":  "音乐/大陆/浙江/杭州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hoolo.tv/"
+    },
+    {
+        "name":  "Wuyi News TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/金华/武义",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wycntv.com/"
+    },
+    {
+        "name":  "温州交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1156/64k.mp3",
+        "genre":  "交通/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "温州之声",
+        "url":  "http://lhttp.qingting.fm/live/1155/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "温州综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/1155/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "温州经济生活广播",
+        "url":  "http://lhttp.qingting.fm/live/1157/64k.mp3",
+        "genre":  "财经/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "温州音乐之声",
+        "url":  "https://lhttp.qtfm.cn/live/1149/64k.mp3",
+        "genre":  "音乐/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "温州私家车音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1149/64k.mp3",
+        "genre":  "音乐/大陆/浙江/温州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.wztv.cn/"
+    },
+    {
+        "name":  "湖州交通文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/2811/64k.mp3",
+        "genre":  "交通/大陆/浙江/湖州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hugd.com/"
+    },
+    {
+        "name":  "湖州综合广播",
+        "url":  "https://lhttp.qingting.fm/live/2810/64k.mp3",
+        "genre":  "新闻资讯/大陆/浙江/湖州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hugd.com/"
+    },
+    {
+        "name":  "绍兴戏曲广播",
+        "url":  "http://live.shaoxing.com.cn/audio/s10001-xq3/index.m3u8",
+        "genre":  "戏曲曲艺/大陆/浙江/绍兴",
+        "country":  "大陆",
+        "logoUrl":  "http://www.shaoxing.com.cn/"
+    },
+    {
+        "name":  "Siaoshan News TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/绍兴/萧山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xianghunet.com/"
+    },
+    {
+        "name":  "Siaoshan Life TV",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxiaoshan2/720p.m3u8",
+        "genre":  "生活都市/大陆/浙江/绍兴/萧山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xianghunet.com/"
+    },
+    {
+        "name":  "Siaoshan Cable Radio",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxiaoshanaud2/128k.m3u8",
+        "genre":  "综合/大陆/浙江/绍兴/萧山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xianghunet.com/"
+    },
+    {
+        "name":  "Siaoshan FM Radio",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxiaoshanaud1/128k.m3u8",
+        "genre":  "综合/大陆/浙江/绍兴/萧山",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xianghunet.com/"
+    },
+    {
+        "name":  "象山综合广播",
+        "url":  "http://l.cztvcloud.com/channels/lantian/SXxiangshanaud/128k.m3u8",
+        "genre":  "新闻资讯/大陆/浙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnxsg.cn/"
+    },
+    {
+        "name":  "海南交通广播",
+        "url":  "https://lhttp.qingting.fm/live/4911/64k.mp3",
+        "genre":  "交通/大陆/海南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnntv.cn/"
+    },
+    {
+        "name":  "海南新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/1861/64k.mp3",
+        "genre":  "新闻资讯/大陆/海南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnntv.cn/"
+    },
+    {
+        "name":  "海南民生广播",
+        "url":  "http://lhttp.qingting.fm/live/21243/64k.mp3",
+        "genre":  "综合/大陆/海南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnntv.cn/"
+    },
+    {
+        "name":  "海南音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/4878/64k.mp3",
+        "genre":  "音乐/大陆/海南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnntv.cn/"
+    },
+    {
+        "name":  "三亚天涯之声",
+        "url":  "http://lhttp.qingting.fm/live/20450/64k.mp3",
+        "genre":  "新闻资讯/大陆/海南/三亚",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zaity.tv/"
+    },
+    {
+        "name":  "三亚旅游之声103.8",
+        "url":  "http://lhttp.qingting.fm/live/15318203/64k.mp3",
+        "genre":  "生活都市/大陆/海南/三亚",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zaity.tv/"
+    },
+    {
+        "name":  "海口交通广播",
+        "url":  "http://lhttp.qingting.fm/live/5022079/64k.mp3?",
+        "genre":  "交通/大陆/海南/海口",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hkbtv.cn/"
+    },
+    {
+        "name":  "海口综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022015/64k.mp3",
+        "genre":  "新闻资讯/大陆/海南/海口",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hkbtv.cn/"
+    },
+    {
+        "name":  "湖北楚天交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1291/64k.mp3",
+        "genre":  "交通/大陆/湖北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://m.hbgbdst.com/"
+    },
+    {
+        "name":  "湖北之声（调频版）（2）",
+        "url":  "https://lhttp.qingting.fm/live/1303/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://news.hbtv.com.cn/"
+    },
+    {
+        "name":  "湖北卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/hubei_2.m3u8",
+        "genre":  "新闻资讯/大陆/湖北/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://news.hbtv.com.cn/"
+    },
+    {
+        "name":  "湖北经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/1295/64k.mp3",
+        "genre":  "财经/大陆/湖北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://m.hbgbdst.com/"
+    },
+    {
+        "name":  "湖北经典音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1296/64k.mp3",
+        "genre":  "音乐/大陆/湖北/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://m.hbgbdst.com/"
+    },
+    {
+        "name":  "十堰交通音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/20342/64k.mp3",
+        "genre":  "交通/大陆/湖北/十堰",
+        "country":  "大陆",
+        "logoUrl":  "http://www.syiptv.com/"
+    },
+    {
+        "name":  "十堰综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20338/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖北/十堰",
+        "country":  "大陆",
+        "logoUrl":  "http://www.syrtv.com/"
+    },
+    {
+        "name":  "宜昌交通广播",
+        "url":  "https://lhttp.qingting.fm/live/20563/64k.mp3",
+        "genre":  "交通/大陆/湖北/宜昌",
+        "country":  "大陆",
+        "logoUrl":  "http://www.3xgd.com/"
+    },
+    {
+        "name":  "宜昌都市生活广播",
+        "url":  "https://lhttp.qingting.fm/live/20567/64k.mp3",
+        "genre":  "生活都市/大陆/湖北/宜昌",
+        "country":  "大陆",
+        "logoUrl":  "http://www.3xgd.com/"
+    },
+    {
+        "name":  "武汉交通广播·武汉市应急广播电台",
+        "url":  "http://ls.qingting.fm/live/4665.m3u8",
+        "genre":  "交通/大陆/湖北/武汉",
+        "country":  "大陆",
+        "logoUrl":  "http://www.whbc.com.cn/"
+    },
+    {
+        "name":  "武汉新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/20198/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖北/武汉",
+        "country":  "大陆",
+        "logoUrl":  "http://www.whbc.com.cn/"
+    },
+    {
+        "name":  "武汉经典音乐广播·岁月悠长，听见好时光",
+        "url":  "http://ls.qingting.fm/live/1297.m3u8",
+        "genre":  "音乐/大陆/湖北/武汉",
+        "country":  "大陆",
+        "logoUrl":  "http://www.whbc.com.cn/"
+    },
+    {
+        "name":  "襄阳交通音乐广播",
+        "url":  "http://ls.qingting.fm/live/1308.m3u8",
+        "genre":  "交通/大陆/湖北/襄阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xyrtv.com/"
+    },
+    {
+        "name":  "襄阳文化教育广播",
+        "url":  "http://lhttp.qingting.fm/live/5057/64k.mp3",
+        "genre":  "文艺/大陆/湖北/襄阳",
+        "country":  "大陆",
+        "logoUrl":  "http://xiangyang.cjyun.org/"
+    },
+    {
+        "name":  "襄阳综合广播",
+        "url":  "http://ls.qingting.fm/live/1307.m3u8",
+        "genre":  "新闻资讯/大陆/湖北/襄阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xyrtv.com/"
+    },
+    {
+        "name":  "随州综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20853/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖北/随州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hbsztv.com/TV/szxw/"
+    },
+    {
+        "name":  "黄冈交通音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/20207776/64k.mp3",
+        "genre":  "交通/大陆/湖北/黄冈",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hgitv.com/hgtv/"
+    },
+    {
+        "name":  "黄石经济广播",
+        "url":  "https://lhttp.qingting.fm/live/3964/64k.mp3",
+        "genre":  "财经/大陆/湖北/黄石",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hsgd.net.cn/"
+    },
+    {
+        "name":  "湖南交通广播",
+        "url":  "http://a.live.hnradio.com/jtpd/radio120k_jtpd.m3u8?auth_key=1588751155-0-0-301d7e28868eff70a72edf5e4569b546",
+        "genre":  "交通/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnradio.com/"
+    },
+    {
+        "name":  "湖南金鹰之声",
+        "url":  "http://a.live.hnradio.com/jypd/radio120k_jypd.m3u8?auth_key=1588751199-0-0-e412c6c15ca2bf1ad6f0833c2bd73bb2",
+        "genre":  "新闻资讯/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnradio.com/"
+    },
+    {
+        "name":  "湖南卫视伴音",
+        "url":  "http://satellitepull.cnr.cn/live/wx32hunws/playlist.m3u8?wsSession=5047841c34cc76f1a161d1fe-174718229204467\u0026wsIPSercert=29f90b67755e3a4646651f7aa8eb5fd6",
+        "genre":  "新闻资讯/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.mgtv.com/show/?hk=p69ci"
+    },
+    {
+        "name":  "湖南综合广播",
+        "url":  "http://a.live.hnradio.com/xwpd/radio120k_xwpd.m3u8?auth_key=1588751187-0-0-f1675340b0cec8720747b81d8dfc9e99",
+        "genre":  "新闻资讯/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnradio.com/"
+    },
+    {
+        "name":  "湖南音乐之声",
+        "url":  "http://a.live.hnradio.com/yypd/radio120k_yypd.m3u8?auth_key=1588751172-0-0-d97b858279c1c86650172b9913ea4af2",
+        "genre":  "音乐/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hnradio.com/"
+    },
+    {
+        "name":  "岳阳时尚广播EASY FM",
+        "url":  "http://lhttp.qingting.fm/live/5022391/64k.mp3",
+        "genre":  "综合/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.0730news.com/"
+    },
+    {
+        "name":  "常德综合广播",
+        "url":  "https://lhttp.qingting.fm/live/15318208/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/常德",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cdyee.com/"
+    },
+    {
+        "name":  "益阳综合广播",
+        "url":  "https://lhttp.qingting.fm/live/20314/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/益阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yyrtv.com/YYwap/index.html"
+    },
+    {
+        "name":  "邵阳综合广播",
+        "url":  "http://lhttp.qingting.fm/live/20148/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/邵阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sytv.net.cn/"
+    },
+    {
+        "name":  "邵阳经济广播",
+        "url":  "http://lhttp.qingting.fm/live/20500058/64k.mp3",
+        "genre":  "财经/大陆/湖南/邵阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sytv.net.cn/"
+    },
+    {
+        "name":  "郴州交通广播",
+        "url":  "https://lhttp.qingting.fm/live/20867/64k.mp3",
+        "genre":  "交通/大陆/湖南/郴州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ngcz.tv/"
+    },
+    {
+        "name":  "郴州综合广播",
+        "url":  "https://lhttp.qingting.fm/live/20489/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/郴州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ngcz.tv/"
+    },
+    {
+        "name":  "长沙交通广播",
+        "url":  "http://lhttp.qingting.fm/live/3967/64k.mp3",
+        "genre":  "交通/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csbtv.com/"
+    },
+    {
+        "name":  "长沙县综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/4930/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "https://www.csxrmt.com/"
+    },
+    {
+        "name":  "长沙新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/4877/64k.mp3",
+        "genre":  "新闻资讯/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "https://www.csbtv.com/"
+    },
+    {
+        "name":  "长沙城市之音",
+        "url":  "http://lhttp.qingting.fm/live/4237/64k.mp3",
+        "genre":  "生活都市/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csbtv.com/"
+    },
+    {
+        "name":  "长沙BIG RADIO流行音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/20847/64k.mp3",
+        "genre":  "音乐/大陆/湖南/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csbtv.com/"
+    },
+    {
+        "name":  "长沙音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/20847/64k.mp3",
+        "genre":  "音乐/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "https://www.csbtv.com/"
+    },
+    {
+        "name":  "长沙品味音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/4930/64k.mp3",
+        "genre":  "音乐/大陆/湖南/长沙",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csbtv.com/"
+    },
+    {
+        "name":  "甘肃交通广播",
+        "url":  "https://lhttp.qingting.fm/live/3939/64k.mp3",
+        "genre":  "交通/大陆/甘肃/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gstv.com.cn/"
+    },
+    {
+        "name":  "Hotse News Radio",
+        "url":  "http://live.hznet.tv:1935/live/live875/32K/tzwj_video.m3u8",
+        "genre":  "新闻资讯/大陆/甘肃/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hznet.tv/"
+    },
+    {
+        "name":  "Hotse Music Radio",
+        "url":  "http://live.hznet.tv:1935/live/live918/32K/tzwj_video.m3u8",
+        "genre":  "音乐/大陆/甘肃/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hznet.tv/"
+    },
+    {
+        "name":  "张掖新闻综合广播",
+        "url":  "http://lhttp.qingting.fm/live/5022096/64k.mp3",
+        "genre":  "新闻资讯/大陆/甘肃/张掖",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zytv.cc/"
+    },
+    {
+        "name":  "福建交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1733/64k.mp3",
+        "genre":  "交通/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjtv.net/"
+    },
+    {
+        "name":  "福建新闻综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/1731/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjtv.net/"
+    },
+    {
+        "name":  "福建东南卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/dongnan_2.m3u8",
+        "genre":  "新闻资讯/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fjtv.net/"
+    },
+    {
+        "name":  "福建海峡之声",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1744/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.vos.com.cn/"
+    },
+    {
+        "name":  "福建都市生活广播",
+        "url":  "https://lhttp.qtfm.cn/live/1736/64k.mp3",
+        "genre":  "生活都市/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjtv.net/"
+    },
+    {
+        "name":  "福建经济广播",
+        "url":  "https://lhttp.qtfm.cn/live/1732/64k.mp3",
+        "genre":  "财经/大陆/福建/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjtv.net/"
+    },
+    {
+        "name":  "厦门经济交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1738/64k.mp3",
+        "genre":  "交通/大陆/福建/厦门",
+        "country":  "大陆",
+        "logoUrl":  "https://2020.xmtv.cn/"
+    },
+    {
+        "name":  "厦门综合广播",
+        "url":  "http://lhttp.qingting.fm/live/1737/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/厦门",
+        "country":  "大陆",
+        "logoUrl":  "https://2020.xmtv.cn/"
+    },
+    {
+        "name":  "厦门音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1739/64k.mp3",
+        "genre":  "音乐/大陆/福建/厦门",
+        "country":  "大陆",
+        "logoUrl":  "https://www.xmtv.cn/"
+    },
+    {
+        "name":  "泉州交通广播",
+        "url":  "https://lhttp.qingting.fm/live/15318189/64k.mp3",
+        "genre":  "交通/大陆/福建/泉州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qztv.cn/"
+    },
+    {
+        "name":  "泉州新闻综合广播",
+        "url":  "https://lhttp.qingting.fm/live/15318346/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/泉州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qztv.cn/"
+    },
+    {
+        "name":  "泉州经济生活广播",
+        "url":  "https://live.xmcdn.com/live/1166/64.m3u8",
+        "genre":  "财经/大陆/福建/泉州",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qztv.cn/"
+    },
+    {
+        "name":  "漳州交通广播",
+        "url":  "http://lhttp.qingting.fm/live/1743/64k.mp3",
+        "genre":  "交通/大陆/福建/漳州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjzzfm.com/"
+    },
+    {
+        "name":  "漳州综合广播",
+        "url":  "http://lhttp.qingting.fm/live/1742/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/漳州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.fjzzfm.com/"
+    },
+    {
+        "name":  "福州交通之声",
+        "url":  "http://lhttp.qingting.fm/live/5026/64k.mp3",
+        "genre":  "交通/大陆/福建/福州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zohi.tv/"
+    },
+    {
+        "name":  "福州新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/5025/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/福州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zohi.tv/"
+    },
+    {
+        "name":  "福州左海之声",
+        "url":  "http://lhttp.qingting.fm/live/3937/64k.mp3",
+        "genre":  "新闻资讯/大陆/福建/福州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zohi.tv/"
+    },
+    {
+        "name":  "福州新闻广播",
+        "url":  "http://live.zohi.tv/audio/s10001-FM944/index.m3u8",
+        "genre":  "新闻资讯/大陆/福建/福州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zohi.tv/"
+    },
+    {
+        "name":  "福州音乐广播",
+        "url":  "http://live.zohi.tv/audio/s10001-FM893/index.m3u8",
+        "genre":  "音乐/大陆/福建/福州",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zohi.tv/"
+    },
+    {
+        "name":  "贵州交通广播",
+        "url":  "http://lhttp.qingting.fm/live/20057/64k.mp3",
+        "genre":  "交通/大陆/贵州/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gzstv.com/"
+    },
+    {
+        "name":  "贵州卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/guizhou_2.m3u8",
+        "genre":  "新闻资讯/大陆/贵州/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gzstv.com/"
+    },
+    {
+        "name":  "贵州音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/20067/64k.mp3",
+        "genre":  "音乐/大陆/贵州/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gzstv.com/"
+    },
+    {
+        "name":  "贵阳综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/1773/64k.mp3",
+        "genre":  "新闻资讯/大陆/贵州/贵阳",
+        "country":  "大陆",
+        "logoUrl":  "https://www.gystv.com/"
+    },
+    {
+        "name":  "黔东南交通广播",
+        "url":  "http://lhttp.qingting.fm/live/5022285/64k.mp3",
+        "genre":  "交通/大陆/贵州/黔东南",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qdntv.com/"
+    },
+    {
+        "name":  "辽宁交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/20025/64k.mp3",
+        "genre":  "交通/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.cn/"
+    },
+    {
+        "name":  "辽宁卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/liaoning_2.m3u8",
+        "genre":  "新闻资讯/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.weibo.com/wangluods?sudaref=www.baidu.com"
+    },
+    {
+        "name":  "辽宁资讯广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022018/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.cn/"
+    },
+    {
+        "name":  "辽宁广播电视台都市广播",
+        "url":  "http://lhttp.qingting.fm/live/1099/64k.mp3",
+        "genre":  "生活都市/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.com.cn/"
+    },
+    {
+        "name":  "辽宁都市广播",
+        "url":  "https://lhttp.qtfm.cn/live/1099/64k.mp3?app",
+        "genre":  "生活都市/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csytv.com/"
+    },
+    {
+        "name":  "辽宁生活广播",
+        "url":  "https://lhttp.qtfm.cn/live/1102/64k.mp3?app",
+        "genre":  "生活都市/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csytv.com/"
+    },
+    {
+        "name":  "辽宁乡村广播",
+        "url":  "https://lhttp.qtfm.cn/live/20018/64k.mp3",
+        "genre":  "生活都市/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.cn/"
+    },
+    {
+        "name":  "辽宁广播电视台生活广播",
+        "url":  "http://lhttp.qingting.fm/live/1102/64k.mp3",
+        "genre":  "生活都市/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.com.cn/"
+    },
+    {
+        "name":  "辽宁经典流行音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/20021/64k.mp3",
+        "genre":  "音乐/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.ln.gov.cn/"
+    },
+    {
+        "name":  "辽宁广播电视台音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1101/64k.mp3",
+        "genre":  "音乐/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.lntv.com.cn/"
+    },
+    {
+        "name":  "辽宁音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/1101/64k.mp3?app",
+        "genre":  "音乐/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csytv.com/"
+    },
+    {
+        "name":  "大连体育广播",
+        "url":  "http://lhttp.qingting.fm/live/1085/64k.mp3",
+        "genre":  "体育/大陆/辽宁/大连",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/"
+    },
+    {
+        "name":  "DLR-3 大连体育广播",
+        "url":  "https://lhttp.qingting.fm/live/1085/64k.mp3",
+        "genre":  "体育/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/test/"
+    },
+    {
+        "name":  "大连少儿广播",
+        "url":  "http://ls.qingting.fm/live/1084.m3u8",
+        "genre":  "少儿/大陆/辽宁/大连",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dlxww.com/"
+    },
+    {
+        "name":  "大连金普新区FM104.3 综合广播",
+        "url":  "http://lhttp.qingting.fm/live/15318307/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/"
+    },
+    {
+        "name":  "大连音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/1084/64k.mp3",
+        "genre":  "音乐/大陆/辽宁/大连",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/"
+    },
+    {
+        "name":  "DLR-5 大连音乐广播",
+        "url":  "https://lhttp.qingting.fm/live/1084/64k.mp3",
+        "genre":  "音乐/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dltv.cn/test/"
+    },
+    {
+        "name":  "沈阳新闻广播",
+        "url":  "http://lhttp.qingting.fm/live/20024/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/沈阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.csytv.com/"
+    },
+    {
+        "name":  "沈阳新民广播FM103.9",
+        "url":  "http://lhttp.qingting.fm/live/5022535/64k.mp3",
+        "genre":  "综合/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xinmin.gov.cn/"
+    },
+    {
+        "name":  "沈阳经典音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/5022520/64k.mp3",
+        "genre":  "音乐/大陆/辽宁/沈阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sjtgbdst.cn/"
+    },
+    {
+        "name":  "海城新闻综合广播",
+        "url":  "http://lhttp.qingting.fm/live/15318107/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://1069.hcren.com/"
+    },
+    {
+        "name":  "辽阳交通文艺广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022030/64k.mp3",
+        "genre":  "交通/大陆/辽宁/辽阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.newsly.com.cn/"
+    },
+    {
+        "name":  "辽阳综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022447/64k.mp3",
+        "genre":  "新闻资讯/大陆/辽宁/辽阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.newsly.com.cn/"
+    },
+    {
+        "name":  "巴南综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/5022385/64k.mp3",
+        "genre":  "新闻资讯/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://banan.cbg.cn/"
+    },
+    {
+        "name":  "永川之声100.7",
+        "url":  "https://lhttp.qtfm.cn/live/20210236/64k.mp3",
+        "genre":  "新闻资讯/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.yongchuanwang.com.cn/"
+    },
+    {
+        "name":  "重庆之声",
+        "url":  "http://ls.qingting.fm/live/1498.m3u8",
+        "genre":  "新闻资讯/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.weibo.cn/u/1917366833"
+    },
+    {
+        "name":  "重庆都市广播",
+        "url":  "https://lhttp.qtfm.cn/live/1502/64k.mp3",
+        "genre":  "生活都市/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cbg.cn/"
+    },
+    {
+        "name":  "重庆私家车广播",
+        "url":  "http://ls.qingting.fm/live/1502.m3u8",
+        "genre":  "综合/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://fm938.com.cn/"
+    },
+    {
+        "name":  "重庆音乐广播",
+        "url":  "http://ls.qingting.fm/live/647.m3u8",
+        "genre":  "音乐/大陆/重庆/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://m.weibo.cn/u/1891083462"
+    },
+    {
+        "name":  "陕西交通广播",
+        "url":  "https://lhttp.qtfm.cn/live/1601/64k.mp3",
+        "genre":  "交通/大陆/陕西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxtvs.com/"
+    },
+    {
+        "name":  "陕西新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/1600/64k.mp3",
+        "genre":  "新闻资讯/大陆/陕西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.snrtv.com/"
+    },
+    {
+        "name":  "陕西农村广播",
+        "url":  "https://lhttp.qtfm.cn/live/1602/64k.mp3",
+        "genre":  "生活都市/大陆/陕西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.snrtv.com/"
+    },
+    {
+        "name":  "陕西音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/4873/64k.mp3",
+        "genre":  "音乐/大陆/陕西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxtvs.com/"
+    },
+    {
+        "name":  "陕西青少广播好听1055（经典流行金曲）",
+        "url":  "https://lhttp.qtfm.cn/live/4885/64k.mp3",
+        "genre":  "音乐/大陆/陕西/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.sxtvs.com/"
+    },
+    {
+        "name":  "咸阳综合广播",
+        "url":  "https://lhttp.qingting.fm/live/5022397/64k.mp3",
+        "genre":  "新闻资讯/大陆/陕西/咸阳",
+        "country":  "大陆",
+        "logoUrl":  "http://www.xybtv.com/"
+    },
+    {
+        "name":  "安康交通广播",
+        "url":  "http://lhttp.qingting.fm/live/5021862/64k.mp3",
+        "genre":  "交通/大陆/陕西/安康",
+        "country":  "大陆",
+        "logoUrl":  "http://www.aktv.com.cn/#/Login"
+    },
+    {
+        "name":  "西安交通旅游广播",
+        "url":  "http://stream3.xiancity.cn/5/sd/live.m3u8",
+        "genre":  "交通/大陆/陕西/西安",
+        "country":  "大陆",
+        "logoUrl":  "http://v.xiancity.cn/"
+    },
+    {
+        "name":  "西安新闻广播",
+        "url":  "http://stream3.xiancity.cn/1/sd/live.m3u8",
+        "genre":  "新闻资讯/大陆/陕西/西安",
+        "country":  "大陆",
+        "logoUrl":  "http://v.xiancity.cn/"
+    },
+    {
+        "name":  "西安音乐广播",
+        "url":  "http://stream3.xiancity.cn/4/sd/live.m3u8",
+        "genre":  "音乐/大陆/陕西/西安",
+        "country":  "大陆",
+        "logoUrl":  "http://v.xiancity.cn/"
+    },
+    {
+        "name":  "青海卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/qinghai_2.m3u8",
+        "genre":  "新闻资讯/大陆/青海/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.qhbtv.com/"
+    },
+    {
+        "name":  "黑龙江卫视伴音",
+        "url":  "https://piccpndali.v.myalicdn.com/audio/heilongjiang_2.m3u8",
+        "genre":  "新闻资讯/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hljtv.com/"
+    },
+    {
+        "name":  "黑龙江新闻广播",
+        "url":  "https://lhttp.qtfm.cn/live/4974/64k.mp3",
+        "genre":  "新闻资讯/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hljtv.com/"
+    },
+    {
+        "name":  "黑龙江都市·女性广播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/4968/64k.mp3",
+        "genre":  "生活都市/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hljtv.com/"
+    },
+    {
+        "name":  "黑龙江生活广播",
+        "url":  "https://lhttp.qtfm.cn/live/4970/64k.mp3",
+        "genre":  "生活都市/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hljtv.com/"
+    },
+    {
+        "name":  "黑龙江音乐广播",
+        "url":  "https://lhttp.qtfm.cn/live/4969/64k.mp3",
+        "genre":  "音乐/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hljtv.com/"
+    },
+    {
+        "name":  "哈尔滨电视台 新闻综合频道",
+        "url":  "http://stream.hrbtv.net/xwzh/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  null
+    },
+    {
+        "name":  "哈尔滨电视台 都市资讯频道",
+        "url":  "http://stream.hrbtv.net/zxpd/playlist.m3u8",
+        "genre":  "新闻资讯/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  null
+    },
+    {
+        "name":  "Harbin News Radio",
+        "url":  "http://lhttp.qingting.fm/live/20077/64k.mp3",
+        "genre":  "新闻资讯/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hrbtv.net/"
+    },
+    {
+        "name":  "哈尔滨电视台 生活频道",
+        "url":  "http://stream.hrbtv.net/shpd/playlist.m3u8",
+        "genre":  "生活都市/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  null
+    },
+    {
+        "name":  "哈尔滨电视台 影视频道",
+        "url":  "http://stream.hrbtv.net/yspd/playlist.m3u8",
+        "genre":  "综合/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  null
+    },
+    {
+        "name":  "哈尔滨电视台 娱乐频道",
+        "url":  "http://stream.hrbtv.net/ylpd/playlist.m3u8",
+        "genre":  "综合/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  null
+    },
+    {
+        "name":  "Harbin Literature \u0026 Art Radio",
+        "url":  "http://lhttp.qingting.fm/live/20083/64k.mp3",
+        "genre":  "综合/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hrbtv.net/"
+    },
+    {
+        "name":  "哈尔滨古典音乐广播",
+        "url":  "http://lhttp.qingting.fm/live/5022338/64k.mp3",
+        "genre":  "音乐/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hrbtv.net/"
+    },
+    {
+        "name":  "Harbin Music Radio",
+        "url":  "http://ls.qingting.fm/live/839.m3u8",
+        "genre":  "音乐/大陆/黑龙江/哈尔滨",
+        "country":  "大陆",
+        "logoUrl":  "http://www.hrbtv.net/"
+    },
+    {
+        "name":  "Peony River News Radio",
+        "url":  "http://lhttp.qingting.fm/live/5022434/64k.mp3",
+        "genre":  "新闻资讯/大陆/黑龙江/省级",
+        "country":  "大陆",
+        "logoUrl":  "http://www.dpcm.cn/"
+    },
+    {
+        "name":  "齐齐哈尔综合广播",
+        "url":  "https://lhttp.qtfm.cn/live/20500133/64k.mp3",
+        "genre":  "新闻资讯/大陆/黑龙江/齐齐哈尔",
+        "country":  "大陆",
+        "logoUrl":  "https://www.qqhrnews.com/"
+    },
+    {
+        "name":  "凤凰卫视中文台",
+        "url":  "http://playtv-live.ifeng.com/live/06OLEGEGM4G_audio.m3u8",
+        "genre":  "新闻资讯/港澳台/香港",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.ifeng.com/"
+    },
+    {
+        "name":  "香港普通话台",
+        "url":  "https://rthkradiopth-live.akamaized.net/hls/live/2040082/radiopth/master.m3u8",
+        "genre":  "综合/港澳台/香港",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.rthk.hk/radio/pth"
+    },
+    {
+        "name":  "香港普通话台",
+        "url":  "https://rthkaudio6-lh.akamaihd.net/i/radiopth_1@355869/index_56_a-p.m3u8",
+        "genre":  "综合/港澳台/香港",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.rthk.hk/radio/pth"
+    },
+    {
+        "name":  "良友电台友音乐频道",
+        "url":  "https://c25.radioboss.fm:8334/stream",
+        "genre":  "音乐/港澳台/香港",
+        "country":  "港澳台",
+        "logoUrl":  "https://r1.lyradio.net/ly-platforms"
+    },
+    {
+        "name":  "中山環保旅遊之聲",
+        "url":  "https://lhttp.qingting.fm/live/1278/64k.mp3",
+        "genre":  "综合/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "http://www.zsbtv.com.cn/"
+    },
+    {
+        "name":  "深圳交通廣播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1272/64k.mp3",
+        "genre":  "交通/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "https://www.sztv.com.cn/"
+    },
+    {
+        "name":  "深圳生活廣播",
+        "url":  "http://ls.qingting.fm/live/1273.m3u8",
+        "genre":  "生活都市/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "https://www.sztv.com.cn/"
+    },
+    {
+        "name":  "深圳音樂廣播",
+        "url":  "http://ls.qingting.fm/live/1271.m3u8",
+        "genre":  "综合/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "https://www.sztv.com.cn/"
+    },
+    {
+        "name":  "珠海綜合廣播",
+        "url":  "https://lhttp-hw.qtfm.cn/live/1274/64k.mp3",
+        "genre":  "综合/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "https://www.hizh.cn/"
+    },
+    {
+        "name":  "CNR-7 粵港澳大灣區之聲",
+        "url":  "https://satellitepull.cnr.cn/live/wxhxzs/playlist.m3u8?wsSession=a919bd0baf31a1a6f3966f08-174761752612586\u0026wsIPSercert=270c8446fe14303f2433a2f164ccd9e5",
+        "genre":  "新闻资讯/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://rtgb.cnr.cn/"
+    },
+    {
+        "name":  "VOA Macau",
+        "url":  "https://voa-ingest.akamaized.net/hls/live/2035206/151_124L/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.voachinese.com/"
+    },
+    {
+        "name":  "Romance Radio 95.5 FM",
+        "url":  "http://162.220.162.10:8011/stream",
+        "genre":  "综合/港澳台/澳门",
+        "country":  "港澳台",
+        "logoUrl":  "https://norilynonecoin.wixsite.com/criradioplayers-push"
+    },
+    {
+        "name":  "CGTN Radio - Macau 1341 AM",
+        "url":  "https://sk.cri.cn/am846.m3u8",
+        "genre":  "综合/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://radio.cgtn.com/"
+    },
+    {
+        "name":  "101.1 Smooth FM",
+        "url":  "https://stream-icy.bauermedia.pt/smooth.aac",
+        "genre":  "综合/海外/葡萄牙",
+        "country":  "海外",
+        "logoUrl":  "https://smoothfm.pt/"
+    },
+    {
+        "name":  "M80 Radio Macau - 107.1 FM",
+        "url":  "https://stream-icy.bauermedia.pt/m80.mp3",
+        "genre":  "综合/海外/葡萄牙",
+        "country":  "海外",
+        "logoUrl":  "https://m80.pt/"
+    },
+    {
+        "name":  "M80 Radio Macau - 90s",
+        "url":  "https://stream-icy.bauermedia.pt/m8090.aac",
+        "genre":  "综合/海外/葡萄牙",
+        "country":  "海外",
+        "logoUrl":  "https://bauermedia.pt/m80/m80-90"
+    },
+    {
+        "name":  "M80 Radio Macau - Rock",
+        "url":  "https://stream-icy.bauermedia.pt/m80rock.aac",
+        "genre":  "音乐/海外/葡萄牙",
+        "country":  "海外",
+        "logoUrl":  "https://bauermedia.pt/m80/m80-rock"
+    },
+    {
+        "name":  "济南交通广播",
+        "url":  "https://lhttp.qingting.fm/live/1669/64k.mp3",
+        "genre":  "交通/大陆/山东",
+        "country":  "大陆",
+        "logoUrl":  "http://jnradio.ijntv.cn/fm1031/"
+    },
+    {
+        "name":  "China Radio-5 少儿频道",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20500038/64k.mp3?",
+        "genre":  "少儿/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "新西兰中文广播电台 FM90.6 Radio Chinese",
+        "url":  "https://s26.myradiostream.com:20274/listen.mp3",
+        "genre":  "新闻资讯/海外/新西兰",
+        "country":  "海外",
+        "logoUrl":  "https://fm906.co.nz/"
+    },
+    {
+        "name":  "华夏之声China FM·西班牙马德里FM92.9",
+        "url":  "https://radioserver12.profesionalhosting.com/proxy/pkg152387/stream",
+        "genre":  "新闻资讯/海外/西班牙",
+        "country":  "海外",
+        "logoUrl":  "https://chinafm.es/"
+    },
+    {
+        "name":  "华夏之声China FM·意大利罗马FM89.5",
+        "url":  "https://radioserver12.profesionalhosting.com/proxy/pkg152492/stream",
+        "genre":  "新闻资讯/海外/意大利",
+        "country":  "海外",
+        "logoUrl":  "https://chinafm.es/"
+    },
+    {
+        "name":  "Canton News Radio China",
+        "url":  "http://ls.qingting.fm/live/4848.m3u8",
+        "genre":  "新闻资讯/大陆/广东",
+        "country":  "大陆",
+        "logoUrl":  "http://www.gztv.com/"
+    },
+    {
+        "name":  "REPLAY NEWS - हिन्दी 【हर 5 मिनट पर खबरों वाला रेडियो】",
+        "url":  "https://replaynewshi.ice.infomaniak.ch/replaynewshi-128.mp3",
+        "genre":  "新闻资讯/海外/印度",
+        "country":  "海外",
+        "logoUrl":  "https://www.replaynews.net/"
+    },
+    {
+        "name":  "城市廣播網•台南知音",
+        "url":  "http://fm971.cityfm.tw:8080/971.mp3",
+        "genre":  "生活都市/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.cityfm.tw/"
+    },
+    {
+        "name":  "台中城市廣播",
+        "url":  "http://fm901.cityfm.tw:8080/901.mp3",
+        "genre":  "生活都市/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.cityfm.tw/"
+    },
+    {
+        "name":  "臺北電台",
+        "url":  "https://stream.ginnet.cloud/live0130lo-yfyo/_definst_/fm/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.radio.gov.taipei/"
+    },
+    {
+        "name":  "YES 933 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/YES933AAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.meradio.sg/radio/yes-933"
+    },
+    {
+        "name":  "Love 972 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/LOVE972FMAAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.meradio.sg/radio/love-972"
+    },
+    {
+        "name":  "Jia 883 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/883JIAAAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.883jia.com.sg/"
+    },
+    {
+        "name":  "UFM 100.3 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/UFM_1003AAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.ufm1003.sg/"
+    },
+    {
+        "name":  "Capital 958 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/CAPITAL958FMAAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.meradio.sg/radio/capital-958"
+    },
+    {
+        "name":  "SPH 963 Radio",
+        "url":  "http://playerservices.streamtheworld.com/api/livestream-redirect/HAO_963AAC.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "http://www.963haofm.sg/"
+    },
+    {
+        "name":  "加拿大中文电台FM.96.1",
+        "url":  "https://5b2959fe11444.streamlock.net/radio/fm961.stream/playlist.m3u8",
+        "genre":  "综合/海外/加拿大",
+        "country":  "海外",
+        "logoUrl":  "http://www.am1470.com/home_c.php?1634199366"
+    },
+    {
+        "name":  "Hit FM台北之音廣播",
+        "url":  "http://202.39.43.67:1935/live/RA000036/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.hitoradio.com/newweb/onair.php"
+    },
+    {
+        "name":  "臺北電台AM",
+        "url":  "https://stream.ginnet.cloud/live0130lo-yfyo/_definst_/am/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.radio.gov.taipei/"
+    },
+    {
+        "name":  "美国中文电台-旧金山",
+        "url":  "http://radiokest.serverroom.us:6670/;?type=http\u0026nocache=3295",
+        "genre":  "综合/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "https://www.uschineseradio.com/"
+    },
+    {
+        "name":  "星岛中文电台国语广播",
+        "url":  "http://nap.casthost.net:8759/;?icy=http",
+        "genre":  "综合/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "http://www.chineseradio.com/main/#"
+    },
+    {
+        "name":  "A1中文电台",
+        "url":  "http://s2.voscast.com:9530/",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://www.a1chineseradio.ca/"
+    },
+    {
+        "name":  "美国中文电台-西雅图",
+        "url":  "http://kxparadio.serverroom.us:5852/stream.mp3",
+        "genre":  "综合/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "https://www.uschineseradio.com/"
+    },
+    {
+        "name":  "台中廣播",
+        "url":  "http://211.20.119.101:8081/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.fm1007lucky.com/"
+    },
+    {
+        "name":  "佳音經典音樂網",
+        "url":  "https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/classic/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.goodnews.org.tw/forum.php?change_model=forum_detail\u0026id=124"
+    },
+    {
+        "name":  "LOVE 972",
+        "url":  "https://playerservices.streamtheworld.com/api/livestream-redirect/LOVE972FM_PREM.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "https://www.melisten.sg/radio/love-972"
+    },
+    {
+        "name":  "佳音電台",
+        "url":  "https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm909/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.goodnews.org.tw/forum.php?change_model=forum_detail\u0026id=124"
+    },
+    {
+        "name":  "台中歡喜之聲FM105.5",
+        "url":  "http://59.125.41.65:8081/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.smileradio.com.tw/radio-info.asp?id=245"
+    },
+    {
+        "name":  "嘉義環球廣播",
+        "url":  "http://60.248.53.115:8081/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.smileradio.com.tw/radio-info.asp?id=246"
+    },
+    {
+        "name":  "民本電台-2",
+        "url":  "https://streamak0134.akamaized.net/live0134lh-5gst/_definst_/am855/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://mingpen.com.tw/"
+    },
+    {
+        "name":  "CAPITAL 958",
+        "url":  "https://playerservices.streamtheworld.com/api/livestream-redirect/CAPITAL958FM_PREM.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "https://www.melisten.sg/radio/capital-958"
+    },
+    {
+        "name":  "自由亚洲",
+        "url":  "https://stream-283.surfernetwork.com/ub3pfplpqbktv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1YjNwZnBscHFia3R2IiwiaG9zdCI6InN0cmVhbS0yODMuc3VyZmVybmV0d29yay5jb20iLCJ0bSI6ZmFsc2UsInJ0dGwiOjUsImp0aSI6IjMxNE9WWXFMVGJtY0N3c0xUWFhONFEiLCJpYXQiOjE3ODgxOTIxNjYsImV4cCI6MTc4ODE5MjIyNn0.rdn5o3P9qjSvGgaVRc6cZiSLQYmXSOVSbIMl-v76vxw",
+        "genre":  "综合/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "http://www.xsbnrtv.cn/"
+    },
+    {
+        "name":  "漢聲調頻",
+        "url":  "http://202.39.43.67:1935/live/RA000076/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://audio.voh.com.tw/TW/Program/ugC_Program.aspx?Show=B"
+    },
+    {
+        "name":  "Culture Failure",
+        "url":  "http://culturefailure.com:8000/;",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://culturefailure.com/"
+    },
+    {
+        "name":  "牽手之聲網路台",
+        "url":  "http://us3.internet-radio.com:8232/stream",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.ilovetacp.org.tw/cancheers/cancheers.aspx"
+    },
+    {
+        "name":  "中廣新聞網",
+        "url":  "https://n03.rcs.revma.com/78fm9wyy2tzuv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.bcc.com.tw/"
+    },
+    {
+        "name":  "民本電台-1",
+        "url":  "https://streamak0134.akamaized.net/live0134lh-5gst/_definst_/am1296/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://mingpen.com.tw/"
+    },
+    {
+        "name":  "1766線上電臺-百家知識",
+        "url":  "http://livestream.1766.today:1768/live1.mp3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.1766.today/"
+    },
+    {
+        "name":  "桃園GO GO104.3",
+        "url":  "https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm1043/chunklist_w1108784103.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://stream.ginnet.cloud/live0119lo-p4rb/_definst_/fm1043/chunklist_w1108784103.m3u8"
+    },
+    {
+        "name":  "好事聯播網 高雄港都",
+        "url":  "http://202.39.43.67:1935/live/RA000012/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.apple-line.com/"
+    },
+    {
+        "name":  "YES 933",
+        "url":  "https://playerservices.streamtheworld.com/api/livestream-redirect/YES933_PREM.aac",
+        "genre":  "综合/海外/新加坡",
+        "country":  "海外",
+        "logoUrl":  "https://www.melisten.sg/radio/yes-933"
+    },
+    {
+        "name":  "KVTO AM1400 FM93.7 旧金山湾区中文电台",
+        "url":  "https://us2.maindigitalstream.com/ssl/KVTO",
+        "genre":  "综合/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "https://kvto.net/"
+    },
+    {
+        "name":  "台海之聲",
+        "url":  "https://satellitepull.cnr.cn/live/wxzhzs/playlist.m3u8?wsSession=c650605f64c6488d38b66982-174761774475052\u0026wsIPSercert=270c8446fe14303f2433a2f164ccd9e5",
+        "genre":  "综合/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "http://www.cnr.cn/"
+    },
+    {
+        "name":  "RADIO CLUB DJ",
+        "url":  "http://4stream.pl:18272/stream",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://radioclubdj.prv.pl/"
+    },
+    {
+        "name":  "漢聲中波",
+        "url":  "http://202.39.43.67:1935/live/RA000074/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://audio.voh.com.tw/TW/Program/ugC_Program.aspx?Show=B"
+    },
+    {
+        "name":  "屏東大武山廣播",
+        "url":  "http://59.120.255.171:8081/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.smileradio.com.tw/radio-info.asp?id=249"
+    },
+    {
+        "name":  "fairchildren radio",
+        "url":  "http://icecast01.eseenet.com:8000/am1430",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://www.am1430.com/"
+    },
+    {
+        "name":  "加拿大中文电台FM94.7",
+        "url":  "https://5b2959fe11444.streamlock.net/radio/fm947.stream/playlist.m3u8",
+        "genre":  "综合/海外/加拿大",
+        "country":  "海外",
+        "logoUrl":  "https://www.fm947.com/"
+    },
+    {
+        "name":  "九八新聞台",
+        "url":  "https://n17a-eu.rcs.revma.com/pntx1639ntzuv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.news98.com.tw/"
+    },
+    {
+        "name":  "Eight无限 FM",
+        "url":  "https://stream.rcs.revma.com/qp0xrd9mtd3vv",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://www.eight.audio/"
+    },
+    {
+        "name":  "中廣音樂網",
+        "url":  "https://n03.rcs.revma.com/ndk05tyy2tzuv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.bcc.com.tw/"
+    },
+    {
+        "name":  "CHMB AM1320 Mainstream Broadcasting Corporation",
+        "url":  "http://n05.radiojar.com/nugqupcv8qzuv?1611015943=\u0026rj-tok=AAABdxgRmqYARTfy-oDrHGtfeA\u0026rj-ttl=5",
+        "genre":  "综合/海外/加拿大",
+        "country":  "海外",
+        "logoUrl":  "http://www.am1320.com/"
+    },
+    {
+        "name":  "中國華藝廣播公司 AM873",
+        "url":  "https://lhttp-hw.qtfm.cn/live/20500139/64k.mp3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.vos.com.cn/"
+    },
+    {
+        "name":  "世新廣播電台-1",
+        "url":  "https://stream.ginnet.cloud/live0115lo-89xv/_definst_/fm881/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://shrs.shu.edu.tw/"
+    },
+    {
+        "name":  "新竹好聽廣播電台",
+        "url":  "http://202.39.43.67:1935/live/RA000124/chunklist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.pop917.com/home.aspx"
+    },
+    {
+        "name":  "海峽之聲廣播電台",
+        "url":  "http://ls.qingting.fm/live/1744.m3u8",
+        "genre":  "综合/大陆/福建",
+        "country":  "大陆",
+        "logoUrl":  "https://www.vos.com.cn/"
+    },
+    {
+        "name":  "台灣廣播 台北一台",
+        "url":  "http://test.taiwan-radio.tw:8000/TP.AM1323",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.taiwanradio.com.tw/ec99/rwd1638/product.asp?prodid=tp01"
+    },
+    {
+        "name":  "ADBT Radio",
+        "url":  "http://217.79.181.61:8000/;",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://adbt.it.cx/"
+    },
+    {
+        "name":  "CKWR 98.5  \"Real Community Radio\" Kitchener, ON ",
+        "url":  "https://stream2.statsradio.com:8150/stream",
+        "genre":  "综合/海外/加拿大",
+        "country":  "海外",
+        "logoUrl":  "https://ckwr.com/"
+    },
+    {
+        "name":  "幸福廣播電台TR Radio FM102.5",
+        "url":  "http://61.218.61.251:8080/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.tr-radio.com/index.htm"
+    },
+    {
+        "name":  "電台測試2",
+        "url":  "http://125.227.87.206:8000/SuperUS",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://daairadio.tw/Page/Home/Index.aspx"
+    },
+    {
+        "name":  "世新廣播電台-2",
+        "url":  "https://stream.ginnet.cloud/live0115lo-89xv/_definst_/am729/playlist.m3u8",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://shrs.shu.edu.tw/"
+    },
+    {
+        "name":  "福建東南廣播",
+        "url":  "http://live.ximalaya.com/radio-first-page-app/live/788/64.m3u8",
+        "genre":  "综合/大陆/福建",
+        "country":  "大陆",
+        "logoUrl":  "https://www.fjtv.net/"
+    },
+    {
+        "name":  "南方之音",
+        "url":  "http://43.254.16.40:8000/KS.FM89.3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.facebook.com/FM893RADIO/"
+    },
+    {
+        "name":  "AsiaFM 亞洲電台",
+        "url":  "https://n13.rcs.revma.com/xpgtqc74hv8uv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.asiafm.com.tw/"
+    },
+    {
+        "name":  "台灣廣播 中興台",
+        "url":  "http://test.taiwan-radio.tw:8000/NT.AM963",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.taiwanradio.com.tw/ec99/rwd1638/product.asp?prodid=zc01"
+    },
+    {
+        "name":  "飛碟聯播網 飛碟電台",
+        "url":  "https://n10.rcs.revma.com/em90w4aeewzuv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.fm995.com.tw/index.html"
+    },
+    {
+        "name":  "台灣廣播 台北二台",
+        "url":  "http://test.taiwan-radio.tw:8000/TP.AM1188",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.taiwanradio.com.tw/ec99/rwd1638/product.asp?prodid=tp01"
+    },
+    {
+        "name":  "神州之聲",
+        "url":  "https://satellitepull.cnr.cn/live/wxszzs/playlist.m3u8?wsSession=d966c1f28016a758d88ba0c2-174761731342853\u0026wsIPSercert=270c8446fe14303f2433a2f164ccd9e5",
+        "genre":  "综合/大陆/中央",
+        "country":  "大陆",
+        "logoUrl":  "https://www.cnr.cn/tyzj/tyzj_jmsjb/201208/t20120814_510587088.html"
+    },
+    {
+        "name":  "台灣廣播 台中台",
+        "url":  "http://test.taiwan-radio.tw:8000/TC.AM774",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.taiwanradio.com.tw/ec99/rwd1638/product.asp?prodid=tz01"
+    },
+    {
+        "name":  "嘉義之音",
+        "url":  "http://test.taiwan-radio.tw:8000/CY.FM91.3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.baodaoradio.com.tw/web/programme/programme.jsp?cp_id=CP1641526281117"
+    },
+    {
+        "name":  "勝利之聲AM756",
+        "url":  "http://test.taiwan-radio.tw:8000/PH.AM756",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://e-go.org.tw/victor/index.asp"
+    },
+    {
+        "name":  "飛揚調頻FM89.5",
+        "url":  "https://n13.rcs.revma.com/e0tdah74hv8uv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.flyradio.com.tw/"
+    },
+    {
+        "name":  "桃園先聲廣播AM774",
+        "url":  "http://test.taiwan-radio.tw:8000/TY.AM774",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.facebook.com/people/%E5%85%88%E8%81%B2%E5%BB%A3%E6%92%AD%E9%9B%BB%E5%8F%B0/100063756072769/"
+    },
+    {
+        "name":  "Radio Linguas",
+        "url":  "https://radiolinguas.eu:8001/radiolinguas",
+        "genre":  "综合/海外",
+        "country":  "海外",
+        "logoUrl":  "https://www.podomatic.com/podcasts/radiolinguas-eoidevigo"
+    },
+    {
+        "name":  "Ai Radio TAIWAN 台灣AI電台",
+        "url":  "https://n10.rcs.revma.com/h4ta80hbqwuvv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.airadiotaiwan.com/"
+    },
+    {
+        "name":  "M Radio 全國廣播",
+        "url":  "https://n03.rcs.revma.com/044q61ha7a0uv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.mradio.com.tw/"
+    },
+    {
+        "name":  "正聲台北調幅台 AM819",
+        "url":  "http://test.taiwan-radio.tw:8000/TP.AM819",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.cslive.com.tw/Programe/Programe.php?Station=Tap\u0026ProgID=1"
+    },
+    {
+        "name":  "栗子的輕音樂",
+        "url":  "http://lizeradio.com:8080/",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://lizeradio.com/blog/"
+    },
+    {
+        "name":  "大愛網路電台",
+        "url":  "http://test.taiwan-radio.tw:8000/DaAiRadio",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://daairadio.tw/Page/Home/Index.aspx"
+    },
+    {
+        "name":  "AsiaFM 亞太電台",
+        "url":  "https://n13.rcs.revma.com/kydend74hv8uv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.asiafm.com.tw/"
+    },
+    {
+        "name":  "新聲廣播FM99.3",
+        "url":  "http://test.taiwan-radio.tw:8000/HC.FM99.3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.facebook.com/LoveRadioFM99.3"
+    },
+    {
+        "name":  "勝利之聲台南2台AM1188",
+        "url":  "http://test.taiwan-radio.tw:8000/TN.AM1188",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://e-go.org.tw/victor/01_about_us.htm"
+    },
+    {
+        "name":  "都會聲音FM99.7",
+        "url":  "http://test.taiwan-radio.tw:8000/TN.FM99.7",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://reurl.cc/Zy4gll"
+    },
+    {
+        "name":  "農鄉廣播電台",
+        "url":  "http://test.taiwan-radio.tw:8000/YL.FM106.3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.facebook.com/RadioFM106.3/"
+    },
+    {
+        "name":  "Spectrum Radio International 558 AM",
+        "url":  "http://direct.sharp-stream.com/spectrum5.mp3",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.558.net/lander"
+    },
+    {
+        "name":  "雲端新廣播",
+        "url":  "http://test.taiwan-radio.tw:8000/KS.FM99.5",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://newradio.tw/"
+    },
+    {
+        "name":  "台南建國廣播公司",
+        "url":  "http://test.taiwan-radio.tw:8000/TN.AM801",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://xn--kpr15ecvjts4d.tw/company.html"
+    },
+    {
+        "name":  "CITYPlus FM",
+        "url":  "https://stream.rcs.revma.com/9ykdmcawe1bwv",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://cityplusfm.my/"
+    },
+    {
+        "name":  "濁水溪FM90.1",
+        "url":  "http://test.taiwan-radio.tw:8000/YL.FM90.1",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.fm901.com.tw/"
+    },
+    {
+        "name":  "上海麗都廣播電台 1940\u0027s Shanghai Vintage Jazz Shidaiqu Radio",
+        "url":  "https://radio.nitro-server.uk/listen/1940sshanghaioldtimesmusicradio/radio.mp3",
+        "genre":  "综合/海外/英国",
+        "country":  "海外",
+        "logoUrl":  "https://radio.nitro-server.uk/public/1940sshanghaioldtimesmusicradio"
+    },
+    {
+        "name":  "天聲AM1314",
+        "url":  "http://test.taiwan-radio.tw:8000/ML.AM1314",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://zh-tw.facebook.com/am131410261215/"
+    },
+    {
+        "name":  "台灣廣播 松嶺台",
+        "url":  "http://test.taiwan-radio.tw:8000/NT.AM630",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.taiwanradio.com.tw/ec99/rwd1638/category.asp?category_id=57"
+    },
+    {
+        "name":  "MCBS 銘傳廣播電台",
+        "url":  "http://radio.mcu.edu.tw:8080/radio?1747274117052",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://radio.mcu.edu.tw/"
+    },
+    {
+        "name":  "彰化花園廣播電台",
+        "url":  "http://test.taiwan-radio.tw:8000/CH.FM88.7",
+        "genre":  "综合/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.facebook.com/GardenRadio887/"
+    },
+    {
+        "name":  "Classical 古典音樂台 FM 97.7",
+        "url":  "http://59.120.88.155:8000/live.mp3",
+        "genre":  "音乐/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "http://www.family977.com.tw/index.php"
+    },
+    {
+        "name":  "全澳华语广播华厦之声",
+        "url":  "http://46.4.40.246:8059/stream",
+        "genre":  "音乐/海外/澳大利亚",
+        "country":  "海外",
+        "logoUrl":  "http://www.huaxia.net.au/"
+    },
+    {
+        "name":  "台北流行音樂廣播",
+        "url":  "http://202.39.43.67:1935/live/RA000080/chunklist.m3u8",
+        "genre":  "音乐/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.pop917.com/home.aspx"
+    },
+    {
+        "name":  "Music of China 中国音乐",
+        "url":  "https://vip.wongsong.cn/proxy/wongsong/stream-mp3-WongSong",
+        "genre":  "音乐/海外",
+        "country":  "海外",
+        "logoUrl":  "https://wongsong.cn/"
+    },
+    {
+        "name":  "WKDM 纽约华语广播国语台",
+        "url":  "https://video1.getstreamhosting.com:8292/stream?.mp3",
+        "genre":  "音乐/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "https://nysino.com/am1380/"
+    },
+    {
+        "name":  "Big B Radio - Asian pop",
+        "url":  "https://antares.dribbcast.com/proxy/apop?mp=/s?",
+        "genre":  "音乐/海外/美国",
+        "country":  "海外",
+        "logoUrl":  "https://bigbradio.net/"
+    },
+    {
+        "name":  "中廣流行網",
+        "url":  "https://n03.rcs.revma.com/aw9uqyxy2tzuv",
+        "genre":  "音乐/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.bcc.com.tw/"
+    },
+    {
+        "name":  "好家庭廣播電台（Classical 台中古典音樂台）",
+        "url":  "http://test.taiwan-radio.tw:8000/TC.FM97.7",
+        "genre":  "音乐/港澳台/台湾",
+        "country":  "港澳台",
+        "logoUrl":  "https://www.family977.com.tw/"
+    }
+]

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 版本更新：暴露缓存目录下的下载安装包给系统安装器 -->
+<paths>
+    <cache-path name="cache" path="." />
+</paths>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules xmlns:android="http://schemas.android.com/apk/res/android">
+    <cloud-backup>
+        <exclude domain="sharedpref" path="smb_credentials.xml" />
+        <exclude domain="sharedpref" path="webdav_credentials.xml" />
+        <!-- P2-15：Last.fm 加密凭据不随云备份带出 -->
+        <exclude domain="sharedpref" path="lastfm_credentials.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="smb_credentials.xml" />
+        <exclude domain="sharedpref" path="webdav_credentials.xml" />
+        <!-- P2-15：Last.fm 加密凭据不随设备迁移带出 -->
+        <exclude domain="sharedpref" path="lastfm_credentials.xml" />
+    </device-transfer>
+</data-extraction-rules>
