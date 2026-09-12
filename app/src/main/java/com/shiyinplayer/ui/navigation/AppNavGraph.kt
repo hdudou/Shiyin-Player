@@ -43,9 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.shiyinplayer.R
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -105,13 +107,15 @@ internal data class MainNavItem(
 )
 
 // 底部导航：左侧 曲库/歌单，右侧 队列/更多；中键 ▶ 进全屏正在播放（需求 1/2/6）
-internal val leftNavItems = listOf(
-    MainNavItem(Screen.Library, "曲库", Icons.Filled.MusicNote),
-    MainNavItem(Screen.Playlists, "歌单", Icons.Filled.Star)
+@Composable
+internal fun leftNavItems() = listOf(
+    MainNavItem(Screen.Library, stringResource(R.string.nav_library), Icons.Filled.MusicNote),
+    MainNavItem(Screen.Playlists, stringResource(R.string.nav_playlists), Icons.Filled.Star)
 )
-internal val rightNavItems = listOf(
-    MainNavItem(Screen.Queue, "队列", Icons.AutoMirrored.Filled.QueueMusic),
-    MainNavItem(Screen.More, "更多", Icons.Filled.MoreHoriz)
+@Composable
+internal fun rightNavItems() = listOf(
+    MainNavItem(Screen.Queue, stringResource(R.string.nav_queue), Icons.AutoMirrored.Filled.QueueMusic),
+    MainNavItem(Screen.More, stringResource(R.string.nav_more), Icons.Filled.MoreHoriz)
 )
 
 /** 隐藏底部导航栏的路由（竖屏）：全屏正在播放 + 「更多」及其全部下级页面（设置 7 分类/均衡器/网络/ZeroTier/关于）。 */
@@ -257,15 +261,15 @@ fun AppNavGraph() {
                                     .background(MaterialTheme.colorScheme.surface),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                leftNavItems.forEach { item -> BottomEntry(item, currentRoute, navController, Modifier.weight(1f)) }
+                                leftNavItems().forEach { item -> BottomEntry(item, currentRoute, navController, Modifier.weight(1f)) }
                                 Box(Modifier.weight(1f).height(64.dp), contentAlignment = Alignment.Center) {
                                     ModeSwitchFab(
-                                        label = "播放/切换",
+                                        label = stringResource(R.string.nav_play_toggle),
                                         onClick = enterNowPlaying,
                                         onDoubleClick = switchToRadio
                                     )
                                 }
-                                rightNavItems.forEach { item -> BottomEntry(item, currentRoute, navController, Modifier.weight(1f)) }
+                                rightNavItems().forEach { item -> BottomEntry(item, currentRoute, navController, Modifier.weight(1f)) }
                             }
                         }
                     }
@@ -406,7 +410,7 @@ private fun PlayFab(onClick: () -> Unit) {
     ) {
         Icon(
             Icons.Filled.PlayArrow,
-            contentDescription = "播放",
+            contentDescription = stringResource(R.string.action_play_pause),
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.size(30.dp)
         )

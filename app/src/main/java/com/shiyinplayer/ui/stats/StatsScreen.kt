@@ -27,12 +27,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.util.TimeUtils
 
@@ -49,29 +51,29 @@ fun StatsScreen(navController: NavController? = null, viewModel: StatsViewModel 
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             IconButton(onClick = { navController?.popBackStack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
             }
-            Text("播放统计", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.stats_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
         }
         HorizontalDivider()
         LazyColumn(contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)) {
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                    StatCard("曲库曲目", "${stats.totalSongs}", Modifier.weight(1f))
-                    StatCard("累计播放", formatCount(stats.totalPlays), Modifier.weight(1f))
-                    StatCard("播放过", "${stats.playedSongs}", Modifier.weight(1f))
+                    StatCard(stringResource(R.string.stats_total_songs), "${stats.totalSongs}", Modifier.weight(1f))
+                    StatCard(stringResource(R.string.stats_total_plays), formatCount(stats.totalPlays, stringResource(R.string.stats_count_wan)), Modifier.weight(1f))
+                    StatCard(stringResource(R.string.stats_played_songs), "${stats.playedSongs}", Modifier.weight(1f))
                 }
             }
-            item { SectionTitle("最常播放 TOP 10") }
+            item { SectionTitle(stringResource(R.string.stats_top10)) }
             items(top, key = { it.id }) { song ->
                 TopPlayedBar(song = song, maxCount = top.firstOrNull()?.playCount ?: 1)
             }
             if (top.isEmpty()) {
-                item { Text("暂无播放记录，去播放几首吧", style = MaterialTheme.typography.bodySmall) }
+                item { Text(stringResource(R.string.stats_no_record), style = MaterialTheme.typography.bodySmall) }
             }
             item {
                 Spacer(Modifier.height(8.dp))
-                SectionTitle("最近播放")
+                SectionTitle(stringResource(R.string.smart_recent))
             }
                 items(recent, key = { "r${it.id}" }) { song ->
                     RecentRow(song = song, onPlay = {
@@ -80,7 +82,7 @@ fun StatsScreen(navController: NavController? = null, viewModel: StatsViewModel 
                     })
             }
             if (recent.isEmpty()) {
-                item { Text("暂无最近播放", style = MaterialTheme.typography.bodySmall) }
+                item { Text(stringResource(R.string.stats_no_recent), style = MaterialTheme.typography.bodySmall) }
             }
         }
     }
@@ -157,7 +159,7 @@ private fun RecentRow(song: Song, onPlay: () -> Unit) {
         Column(Modifier.weight(1f).padding(horizontal = 10.dp)) {
             Text(song.title, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(
-                (song.artistName?.ifBlank { null } ?: "未知艺术家"),
+                (song.artistName?.ifBlank { null } ?: stringResource(R.string.unknown_artist)),
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -168,7 +170,7 @@ private fun RecentRow(song: Song, onPlay: () -> Unit) {
     HorizontalDivider()
 }
 
-private fun formatCount(n: Long): String = when {
-    n >= 10000 -> String.format("%.1f 万", n / 10000.0)
+private fun formatCount(n: Long, wanFormat: String): String = when {
+    n >= 10000 -> String.format(wanFormat, n / 10000.0)
     else -> "$n"
 }

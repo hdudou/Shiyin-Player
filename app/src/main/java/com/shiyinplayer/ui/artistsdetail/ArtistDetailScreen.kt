@@ -33,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Album
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
@@ -78,21 +80,21 @@ fun ArtistDetailScreen(
                 if (selectionMode) { selectionMode = false; selectedIds = emptySet() }
                 else navController.popBackStack()
             }) {
-                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) "退出选择" else "返回")
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) stringResource(R.string.action_exit_selection) else stringResource(R.string.action_back))
             }
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == songs.size) emptySet() else songs.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == songs.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == songs.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
                 Text(artistName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         HorizontalDivider()
@@ -113,7 +115,7 @@ fun ArtistDetailScreen(
                             if (artistInfo?.avatarUrl != null) {
                                 AsyncImage(
                                     model = artistInfo?.avatarUrl,
-                                    contentDescription = "歌手头像",
+                                    contentDescription = stringResource(R.string.artist_avatar),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.size(72.dp).clip(CircleShape)
                                 )
@@ -128,7 +130,7 @@ fun ArtistDetailScreen(
                 if (albums.isNotEmpty()) {
                     item {
                         Text(
-                            "作品年表（${albums.size} 张专辑）",
+                            stringResource(R.string.artist_discography_count, albums.size),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -144,7 +146,7 @@ fun ArtistDetailScreen(
                     }
                     item {
                         Text(
-                            "曲目（${songs.size} 首）",
+                            stringResource(R.string.artist_songs_count, songs.size),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -181,7 +183,7 @@ private fun DiscographyRow(album: Album, onClick: () -> Unit) {
         Text(album.name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f), maxLines = 1)
         album.year?.let { Text("$it", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         if (album.songCount > 0) {
-            Text("  · ${album.songCount} 首", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.artist_album_song_count, album.songCount), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
     HorizontalDivider()

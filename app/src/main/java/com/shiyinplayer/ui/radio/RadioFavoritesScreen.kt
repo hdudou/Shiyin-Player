@@ -47,11 +47,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.data.radio.MergedRadioStation
 
 /**
@@ -80,9 +82,9 @@ fun RadioFavoritesScreen(
     LaunchedEffect(Unit) {
         viewModel.opmlImportResult.collect { count ->
             if (count > 0) {
-                Toast.makeText(context, "成功导入 $count 个电台", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.radio_import_success, count), Toast.LENGTH_SHORT).show()
             } else if (count == 0) {
-                Toast.makeText(context, "导入失败或文件为空", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.radio_import_fail_empty), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -90,7 +92,7 @@ fun RadioFavoritesScreen(
     LaunchedEffect(Unit) {
         viewModel.opmlExportResult.collect { uri ->
             if (uri != null) {
-                Toast.makeText(context, "导出成功，请查看下载目录", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.radio_export_success), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -102,7 +104,7 @@ fun RadioFavoritesScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text("电台收藏 · ${favorites.size}台") },
+            title = { Text(stringResource(R.string.radio_favorites_title, favorites.size)) },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
@@ -115,7 +117,7 @@ fun RadioFavoritesScreen(
                     if (isOpmlBusy) {
                         CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                     } else {
-                        Icon(Icons.Filled.SaveAlt, contentDescription = "导出 OPML")
+                        Icon(Icons.Filled.SaveAlt, contentDescription = stringResource(R.string.radio_export_opml))
                     }
                 }
                 // 导入 OPML
@@ -123,7 +125,7 @@ fun RadioFavoritesScreen(
                     onClick = { opmlImportLauncher.launch(arrayOf("text/x-opml", "text/xml", "*/*")) },
                     enabled = !isOpmlBusy
                 ) {
-                    Icon(Icons.Filled.FileUpload, contentDescription = "导入 OPML")
+                    Icon(Icons.Filled.FileUpload, contentDescription = stringResource(R.string.radio_import_opml))
                 }
             }
         )
@@ -146,13 +148,13 @@ fun RadioFavoritesScreen(
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "还没有收藏电台",
+                        stringResource(R.string.radio_fav_empty_title),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "去电台列表添加喜欢的电台吧",
+                        stringResource(R.string.radio_fav_empty_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -199,7 +201,7 @@ fun RadioFavoritesScreen(
                 )
                 if (station.streamCount > 1) {
                     Text(
-                        "${station.streamCount} 个线路",
+                        stringResource(R.string.radio_lines_count, station.streamCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 24.dp, vertical = 2.dp)
@@ -207,7 +209,7 @@ fun RadioFavoritesScreen(
                 }
                 androidx.compose.material3.HorizontalDivider()
                 androidx.compose.material3.NavigationDrawerItem(
-                    label = { Text("查看电台信息") },
+                    label = { Text(stringResource(R.string.radio_view_info)) },
                     icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                     selected = false,
                     onClick = {
@@ -216,7 +218,7 @@ fun RadioFavoritesScreen(
                     }
                 )
                 androidx.compose.material3.NavigationDrawerItem(
-                    label = { Text("取消收藏") },
+                    label = { Text(stringResource(R.string.radio_unfavorite)) },
                     icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                     selected = false,
                     onClick = {
@@ -225,7 +227,7 @@ fun RadioFavoritesScreen(
                     }
                 )
                 androidx.compose.material3.NavigationDrawerItem(
-                    label = { Text("修改") },
+                    label = { Text(stringResource(R.string.radio_edit)) },
                     icon = { Icon(Icons.Filled.MusicNote, contentDescription = null) },
                     selected = false,
                     onClick = {
@@ -234,7 +236,7 @@ fun RadioFavoritesScreen(
                     }
                 )
                 androidx.compose.material3.NavigationDrawerItem(
-                    label = { Text("删除", color = MaterialTheme.colorScheme.error) },
+                    label = { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) },
                     icon = {
                         Icon(
                             Icons.Filled.Favorite,
@@ -257,45 +259,50 @@ fun RadioFavoritesScreen(
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showInfoDialog = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("电台信息") },
+            title = { Text(stringResource(R.string.radio_station_info)) },
             text = {
                 Column {
-                    InfoRow("名称", station.displayName)
-                    InfoRow("分类", station.genre?.split("/")?.firstOrNull() ?: "未分类")
-                    InfoRow("地区", station.country ?: station.genre?.split("/")?.getOrNull(1) ?: "-")
-                    station.genre?.split("/")?.getOrNull(2)?.let { InfoRow("省份", it) }
-                    station.genre?.split("/")?.getOrNull(3)?.let { InfoRow("城市", it) }
-                    InfoRow("线路数", "${station.streamCount}")
+                    InfoRow(stringResource(R.string.radio_name_label), station.displayName)
+                    InfoRow(stringResource(R.string.radio_category), RadioDictTranslate.text(station.genre?.split("/")?.firstOrNull() ?: "").ifEmpty { stringResource(R.string.radio_uncategorized) })
+                    InfoRow(stringResource(R.string.radio_region), RadioDictTranslate.text(station.country ?: station.genre?.split("/")?.getOrNull(1) ?: "-"))
+                    station.genre?.split("/")?.getOrNull(2)?.let { InfoRow(stringResource(R.string.radio_province), RadioDictTranslate.text(it)) }
+                    station.genre?.split("/")?.getOrNull(3)?.let { InfoRow(stringResource(R.string.radio_city), RadioDictTranslate.text(it)) }
+                    InfoRow(stringResource(R.string.radio_line_total_label), "${station.streamCount}")
                     station.streams.forEachIndexed { index, stream ->
-                        InfoRow("线路${index + 1}", stream.name)
+                        InfoRow(stringResource(R.string.radio_line_item, index + 1), stream.name)
                     }
-                    InfoRow("来源", station.source)
+                    InfoRow(stringResource(R.string.radio_source), station.source)
                 }
             },
             confirmButton = {
-                androidx.compose.material3.TextButton(onClick = { showInfoDialog = null }) { Text("关闭") }
+                androidx.compose.material3.TextButton(onClick = { showInfoDialog = null }) { Text(stringResource(R.string.action_close)) }
             }
         )
     }
 
     // 删除确认对话框
     showDeleteConfirm?.let { station ->
-        val suffix = if (station.streamCount > 1) "（共 ${station.streamCount} 个线路）" else ""
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showDeleteConfirm = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("删除电台") },
-            text = { Text("确定要删除「${station.displayName}」${suffix}吗？此操作不可恢复。") },
+            title = { Text(stringResource(R.string.radio_delete_station_title)) },
+            text = {
+                if (station.streamCount > 1) {
+                    Text(stringResource(R.string.radio_delete_station_confirm_multi, station.displayName, station.streamCount))
+                } else {
+                    Text(stringResource(R.string.radio_delete_station_confirm, station.displayName))
+                }
+            },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.deleteStation(station)
                     showDeleteConfirm = null
                 }) {
-                    Text("删除", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showDeleteConfirm = null }) { Text("取消") }
+                androidx.compose.material3.TextButton(onClick = { showDeleteConfirm = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -348,7 +355,7 @@ private fun FavoriteStationListItem(
             } else if (isPlaying) {
                 Icon(
                     Icons.Filled.Pause,
-                    contentDescription = "正在播放",
+                    contentDescription = stringResource(R.string.radio_now_playing),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -389,8 +396,8 @@ private fun FavoriteStationListItem(
                 genreParts.getOrNull(0),
                 genreParts.getOrNull(2),
                 genreParts.getOrNull(3),
-                if (station.streamCount > 1) "${station.streamCount}线路" else null
-            ).filter { it.isNotBlank() }.joinToString(" · ")
+                if (station.streamCount > 1) stringResource(R.string.radio_line_count_short, station.streamCount) else null
+            ).filter { it.isNotBlank() }.map { RadioDictTranslate.text(it) }.joinToString(" · ")
             if (subtitle.isNotEmpty()) {
                 Text(
                     subtitle,

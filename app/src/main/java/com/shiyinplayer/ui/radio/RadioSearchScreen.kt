@@ -39,9 +39,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shiyinplayer.R
 import com.shiyinplayer.data.radio.RadioBrowserClient
 import kotlinx.coroutines.launch
 
@@ -63,10 +65,10 @@ fun RadioSearchScreen(
             .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("搜索电台") },
+            title = { Text(stringResource(R.string.radio_search_title)) },
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "返回")
+                    Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                 }
             }
         )
@@ -99,7 +101,7 @@ private fun RadioBrowserSearchTab(
             value = query,
             onValueChange = { query = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("搜索电台名称...") },
+            placeholder = { Text(stringResource(R.string.radio_search_placeholder)) },
             trailingIcon = {
                 IconButton(onClick = {
                     if (query.isNotBlank()) {
@@ -113,7 +115,7 @@ private fun RadioBrowserSearchTab(
                         }
                     }
                 }) {
-                    Icon(Icons.Filled.Search, contentDescription = "搜索")
+                    Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.action_search))
                 }
             },
             singleLine = true
@@ -189,7 +191,7 @@ private fun RadioBrowserStationItem(
                     )
                 }
                 Text(
-                    "${station.country} · ${station.bitrate}kbps · ${station.votes}票",
+                    stringResource(R.string.radio_search_meta, station.country, station.bitrate, station.votes),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -198,7 +200,7 @@ private fun RadioBrowserStationItem(
             IconButton(onClick = onClick) {
                 Icon(
                     Icons.Filled.PlayArrow,
-                    contentDescription = "播放",
+                    contentDescription = stringResource(R.string.radio_play),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -206,7 +208,7 @@ private fun RadioBrowserStationItem(
             IconButton(onClick = onFavorite) {
                 Icon(
                     if (isFavorited) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = if (isFavorited) "已收藏" else "收藏",
+                    contentDescription = stringResource(if (isFavorited) R.string.radio_favorited else R.string.radio_favorite),
                     tint = if (isFavorited) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant
                 )

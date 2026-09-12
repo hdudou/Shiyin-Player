@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +33,7 @@ import javax.inject.Inject
 import com.shiyinplayer.ui.navigation.AppNavGraph
 import com.shiyinplayer.ui.radio.RadioNavGraph
 import com.shiyinplayer.util.toast
+import com.shiyinplayer.R
 
 /**
  * 应用入口（T10）。承载底部导航 + 全屏导航图；并处理外部「打开音频」Intent（设置-整合：设为默认播放器）。
@@ -42,7 +42,7 @@ import com.shiyinplayer.util.toast
  * 退出时把当前队列存为「上次播放队列」歌单快照。
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : LocalizedComponentActivity() {
 
     @Inject lateinit var playerManager: PlayerManager
 
@@ -142,7 +142,7 @@ class MainActivity : ComponentActivity() {
                 // file:// 仅放行本应用可读的本地文件；越权/不存在一律拒绝。
                 val f = uri.path?.let { java.io.File(it) }
                 if (f == null || !f.isFile || !f.canRead()) {
-                    toast("无法访问该本地音频文件")
+                    toast(getString(R.string.external_open_deny_file))
                     return true
                 }
             }
@@ -160,17 +160,17 @@ class MainActivity : ComponentActivity() {
                     contentResolver.openFileDescriptor(uri, "r")?.use { true } ?: false
                 }.getOrDefault(false)
                 if (!readable) {
-                    toast("无权限访问该音频")
+                    toast(getString(R.string.external_open_deny_permission))
                     return true
                 }
             }
             else -> {
-                toast("不支持的音频来源")
+                toast(getString(R.string.external_open_deny_scheme))
                 return true
             }
         }
         // 中危-C：标题字符清洗 + 长度上限（去控制字符/不可见字符，防止异常标题注入界面）。
-        val rawTitle = uri.lastPathSegment?.substringBeforeLast('.') ?: "外部音频"
+        val rawTitle = uri.lastPathSegment?.substringBeforeLast('.') ?: getString(R.string.external_open_fallback_title)
         val title = sanitizeExternalTitle(rawTitle)
         // 解析真实 MIME（content:// 经 ContentResolver；file:// 按扩展名兜底），
         // 供 DecoderAwareMediaSourceFactory 将 exotic 格式路由到 RawFileExtractor 透传。

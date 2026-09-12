@@ -40,10 +40,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import kotlinx.coroutines.launch
 
 /** 播放器数据导出界面（更多 → 播放器数据导出/导入 → 导出数据）。密码保护默认开启。 */
@@ -55,6 +58,7 @@ fun DataExportScreen(
 ) {
     val snackbar = SnackbarHostState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val busy by viewModel.busy.collectAsState()
 
     var includeSettings by rememberSaveable { androidx.compose.runtime.mutableStateOf(true) }
@@ -66,7 +70,7 @@ fun DataExportScreen(
 
     LaunchedEffect(viewModel.message.value) {
         viewModel.message.value?.let {
-            snackbar.showSnackbar(it)
+            snackbar.showSnackbar(context.getString(it.resId, *it.argArray))
             viewModel.consumeMessage()
         }
     }
@@ -85,11 +89,11 @@ fun DataExportScreen(
     fun runExport() {
         if (!(includeSettings || includeSongs || includePlaylists)) return
         if (protectExport && exportPassword.isBlank()) {
-            scope.launch { snackbar.showSnackbar("请输入导出密码") }
+            scope.launch { snackbar.showSnackbar(context.getString(R.string.transfer_export_password_hint)) }
             return
         }
         if (protectExport && exportPassword != exportPasswordConfirm) {
-            scope.launch { snackbar.showSnackbar("两次输入的密码不一致") }
+            scope.launch { snackbar.showSnackbar(context.getString(R.string.transfer_password_mismatch)) }
             return
         }
         createDoc.launch(viewModel.defaultFileName())
@@ -99,10 +103,10 @@ fun DataExportScreen(
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(
-                title = { Text("导出数据") },
+                title = { Text(stringResource(R.string.transfer_export_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
             )
@@ -117,24 +121,24 @@ fun DataExportScreen(
         ) {
             Spacer(Modifier.height(8.dp))
             Text(
-                "可将系统设置（含网络和源设置、开关状态与登录凭据）、曲库歌曲条目（含元数据）与保存的歌单导出为单个数据文件。",
+                stringResource(R.string.transfer_export_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(Modifier.height(16.dp))
-            ExportRow("系统设置", "含网络和源设置、开关状态、网络源登录凭据", includeSettings) { includeSettings = it }
-            ExportRow("曲库歌曲条目", "含歌曲元数据（标题/歌手/专辑/年份等）", includeSongs) { includeSongs = it }
-            ExportRow("保存的歌单", "含各歌单及其中曲目", includePlaylists) { includePlaylists = it }
+            ExportRow(stringResource(R.string.transfer_export_settings), stringResource(R.string.transfer_export_settings_sub), includeSettings) { includeSettings = it }
+            ExportRow(stringResource(R.string.transfer_export_songs), stringResource(R.string.transfer_export_songs_sub), includeSongs) { includeSongs = it }
+            ExportRow(stringResource(R.string.transfer_export_playlists), stringResource(R.string.transfer_export_playlists_sub), includePlaylists) { includePlaylists = it }
 
             Spacer(Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Switch(checked = protectExport, onCheckedChange = { protectExport = it })
                 Spacer(Modifier.width(8.dp))
                 Column {
-                    Text("密码保护", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.transfer_password_protect), style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        "加密导出的数据文件，导入时需输入此密码",
+                        stringResource(R.string.transfer_password_protect_sub),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -146,7 +150,7 @@ fun DataExportScreen(
                 OutlinedTextField(
                     value = exportPassword,
                     onValueChange = { exportPassword = it },
-                    label = { Text("导出密码") },
+                    label = { Text(stringResource(R.string.transfer_export_password_label)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
@@ -155,7 +159,7 @@ fun DataExportScreen(
                 OutlinedTextField(
                     value = exportPasswordConfirm,
                     onValueChange = { exportPasswordConfirm = it },
-                    label = { Text("确认密码") },
+                    label = { Text(stringResource(R.string.transfer_export_password_confirm)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
@@ -171,9 +175,9 @@ fun DataExportScreen(
                 if (busy) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(8.dp))
-                    Text("正在导出…")
+                    Text(stringResource(R.string.transfer_exporting))
                 } else {
-                    Text("导出")
+                    Text(stringResource(R.string.transfer_export))
                 }
             }
             Spacer(Modifier.height(24.dp))

@@ -50,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -58,8 +59,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.compose.ui.platform.LocalContext
+import androidx.annotation.StringRes
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.data.media.ScanMode
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.MusicSource
@@ -94,11 +97,11 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("音乐库来源管理", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.network_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
             Button(onClick = { showAdd = true }) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(4.dp))
-                Text("添加来源")
+                Text(stringResource(R.string.network_add))
             }
         }
         Spacer(Modifier.height(8.dp))
@@ -108,7 +111,7 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
 
         if (sources.isEmpty()) {
             Text(
-                "暂无网络来源。点击「添加来源」添加 SMB、WebDAV 或 HTTP 直链，扫描后即可在曲库中播放。",
+                stringResource(R.string.network_empty),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 16.dp)
             )
@@ -139,7 +142,7 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
             Spacer(Modifier.height(8.dp))
             HorizontalDivider()
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
-                IconButton(onClick = viewModel::up) { Icon(Icons.Default.NavigateBefore, contentDescription = "上一级") }
+                IconButton(onClick = viewModel::up) { Icon(Icons.Default.NavigateBefore, contentDescription = stringResource(R.string.action_up)) }
                 // 2026-08-24：local 源可见路径为 content:// 树 URI，解码后再展示，避免百分号编码乱码
                 Text(Uri.decode(path) ?: path, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
             }
@@ -207,19 +210,12 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
                 TextButton(onClick = {
                     scope.launch { viewModel.removeSource(src) }
                     deletingSource = null
-                }) { Text("删除", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { deletingSource = null }) { Text("取消") } },
-            title = { Text("删除网络来源") },
+            dismissButton = { TextButton(onClick = { deletingSource = null }) { Text(stringResource(R.string.action_cancel)) } },
+            title = { Text(stringResource(R.string.network_delete_title)) },
             text = {
-                Text(
-                    "确定删除「${src.name}」吗？\n\n" +
-                        "将同时：\n" +
-                        "① 删除本机保存的该源的连接信息；\n" +
-                        "② 删除本机曲库中该源的音乐文件条目及其元数据。\n\n" +
-                        "若同一音乐在多个源存在，仅删除该源的条目，其它源保留；" +
-                        "仅当某音乐只有这一个来源时，才会连同其元数据和整个条目一并删除。"
-                )
+                Text(stringResource(R.string.network_delete_body, src.name))
             }
         )
     }
@@ -228,25 +224,25 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
     scanTarget?.let { src ->
         AlertDialog(
             onDismissRequest = { scanTarget = null },
-            title = { Text("扫描「${src.name}」") },
+            title = { Text(stringResource(R.string.network_scan_title, src.name)) },
             text = {
-                Text("请选择本次扫描方式：", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.network_scan_choose), style = MaterialTheme.typography.bodyMedium)
             },
             confirmButton = {
                 Row {
                     TextButton(onClick = {
                         viewModel.scanSource(src, ScanMode.NEW_ONLY)
                         scanTarget = null
-                    }) { Text("只扫描新增内容") }
+                    }) { Text(stringResource(R.string.network_scan_newonly)) }
                     Spacer(Modifier.width(8.dp))
                     TextButton(onClick = {
                         viewModel.scanSource(src, ScanMode.FULL_UPDATE)
                         scanTarget = null
-                    }) { Text("全部扫描并更新已有内容") }
+                    }) { Text(stringResource(R.string.network_scan_full)) }
                 }
             },
             dismissButton = {
-                TextButton(onClick = { scanTarget = null }) { Text("取消") }
+                TextButton(onClick = { scanTarget = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -255,16 +251,16 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
     if (needsAllFilesAccess && !storagePermReminderHidden) {
         AlertDialog(
             onDismissRequest = { storagePermReminderHidden = true },
-            title = { Text("需要「所有文件访问」权限") },
-            text = { Text("本机文件夹来源通过绝对路径扫描本机音乐，需要「所有文件访问」权限。请前往系统设置授予，否则该文件夹将无法扫描。") },
+            title = { Text(stringResource(R.string.network_perm_title)) },
+            text = { Text(stringResource(R.string.network_perm_body)) },
             confirmButton = {
                 TextButton(onClick = {
                     storagePermReminderHidden = true
                     runCatching { context.startActivity(com.shiyinplayer.util.PermissionsHelper.allFilesAccessSettingsIntent(context)) }
-                }) { Text("去授权") }
+                }) { Text(stringResource(R.string.network_go_grant)) }
             },
             dismissButton = {
-                TextButton(onClick = { storagePermReminderHidden = true }) { Text("暂不") }
+                TextButton(onClick = { storagePermReminderHidden = true }) { Text(stringResource(R.string.network_later)) }
             }
         )
     }
@@ -304,17 +300,17 @@ private fun NetworkSourceRow(
         Spacer(Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                src.name + if (isScanning) "（扫描中…）" else "",
+                src.name + if (isScanning) stringResource(R.string.network_scanning_suffix) else "",
                 style = MaterialTheme.typography.bodyLarge
             )
-            Text(typeLabel(src.type) + if (src.enabled) "" else "（已禁用）", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(typeLabelRes(src.type)) + if (src.enabled) "" else stringResource(R.string.network_disabled_suffix), style = MaterialTheme.typography.bodySmall)
             // 2026-08-26：扫描实况计数——仅新增答新增数量；全量更新答已更新+已新增数量
             if (isScanning && progress != null) {
                 Text(
                     if (progress.mode == ScanMode.FULL_UPDATE) {
-                        "已更新 ${progress.updated} 首，已新增 ${progress.added} 首"
+                        stringResource(R.string.network_progress_update, progress.updated, progress.added)
                     } else {
-                        "已新增 ${progress.added} 首"
+                        stringResource(R.string.network_progress_added, progress.added)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
@@ -323,26 +319,27 @@ private fun NetworkSourceRow(
         }
         // HTTP 直链无目录结构，不提供「浏览」；保留同步/修改/删除
         if (src.type != MediaSourceType.HTTP) {
-            IconButton(onClick = { onBrowse(src) }) { Icon(Icons.Default.FolderOpen, contentDescription = "浏览") }
+            IconButton(onClick = { onBrowse(src) }) { Icon(Icons.Default.FolderOpen, contentDescription = stringResource(R.string.action_browse)) }
         }
         IconButton(onClick = { onSync(src) }) {
             Icon(
                 Icons.Default.Sync,
-                contentDescription = if (isScanning) "扫描中" else "同步",
+                contentDescription = if (isScanning) stringResource(R.string.action_scanning) else stringResource(R.string.network_sync),
                 modifier = if (isScanning) Modifier.rotate(angle) else Modifier
             )
         }
-        IconButton(onClick = { onEdit(src) }) { Icon(Icons.Default.Edit, contentDescription = "修改") }
-        IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = "删除") }
+        IconButton(onClick = { onEdit(src) }) { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit)) }
+        IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete)) }
     }
     HorizontalDivider()
 }
 
-private fun typeLabel(t: MediaSourceType): String = when (t) {
-    MediaSourceType.SMB -> "SMB"
-    MediaSourceType.WEBDAV -> "WebDAV"
-    MediaSourceType.HTTP -> "HTTP 直链"
-    MediaSourceType.LOCAL -> "文件夹"
+@StringRes
+private fun typeLabelRes(t: MediaSourceType): Int = when (t) {
+    MediaSourceType.SMB -> R.string.network_type_smb
+    MediaSourceType.WEBDAV -> R.string.network_type_webdav
+    MediaSourceType.HTTP -> R.string.network_type_http
+    MediaSourceType.LOCAL -> R.string.network_type_folder
 }
 
 @Composable
@@ -396,42 +393,42 @@ private fun AddSourceDialog(
             Button(
                 enabled = url.isNotBlank(),
                 onClick = { onSave(type, name.trim(), url.trim(), user.trim(), pass) }
-            ) { Text(if (initial == null) "保存" else "保存修改") }
+            ) { Text(if (initial == null) stringResource(R.string.action_save) else stringResource(R.string.network_save_edit)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
-        title = { Text(if (initial == null) "添加来源" else "修改来源") },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+        title = { Text(if (initial == null) stringResource(R.string.network_add_title) else stringResource(R.string.network_edit_src)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         onClick = { type = MediaSourceType.SMB },
                         modifier = Modifier.weight(1f)
-                    ) { Text("SMB", color = if (type == MediaSourceType.SMB) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                    ) { Text(stringResource(R.string.network_type_smb), color = if (type == MediaSourceType.SMB) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
                     OutlinedButton(
                         onClick = { type = MediaSourceType.WEBDAV },
                         modifier = Modifier.weight(1f)
-                    ) { Text("WebDAV", color = if (type == MediaSourceType.WEBDAV) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                    ) { Text(stringResource(R.string.network_type_webdav), color = if (type == MediaSourceType.WEBDAV) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         onClick = { type = MediaSourceType.HTTP },
                         modifier = Modifier.weight(1f)
-                    ) { Text("HTTP直链", color = if (type == MediaSourceType.HTTP) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                    ) { Text(stringResource(R.string.network_type_http), color = if (type == MediaSourceType.HTTP) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
                     OutlinedButton(
                         onClick = { type = MediaSourceType.LOCAL },
                         modifier = Modifier.weight(1f)
-                    ) { Text("文件夹", color = if (type == MediaSourceType.LOCAL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                    ) { Text(stringResource(R.string.network_type_folder), color = if (type == MediaSourceType.LOCAL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
                 }
-                OutlinedTextField(name, { name = it }, label = { Text("名称（可选）") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.network_name)) }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(
                     url, { url = it },
                     label = {
                         Text(
                             when (type) {
-                                MediaSourceType.SMB -> "地址，如 smb://192.168.1.10/Music"
-                                MediaSourceType.WEBDAV -> "地址，如 https://dav.example.com/dav"
-                                MediaSourceType.HTTP -> "播放列表/索引地址，如 https://example.com/playlist.m3u"
-                                MediaSourceType.LOCAL -> "文件夹路径，如 /storage/emulated/0/Music"
+                                MediaSourceType.SMB -> stringResource(R.string.network_url_hint_smb)
+                                MediaSourceType.WEBDAV -> stringResource(R.string.network_url_hint_webdav)
+                                MediaSourceType.HTTP -> stringResource(R.string.network_url_hint_http)
+                                MediaSourceType.LOCAL -> stringResource(R.string.network_url_hint_local)
                             }
                         )
                     },
@@ -441,17 +438,17 @@ private fun AddSourceDialog(
                     if (type == MediaSourceType.SMB) {
                         OutlinedButton(
                             onClick = { smbBrowseOpen = true; scope.launch { loadSMBList("smb://") } }
-                        ) { Text("浏览局域网") }
+                        ) { Text(stringResource(R.string.network_browse_lan)) }
                     }
                     if (type == MediaSourceType.LOCAL) {
-                        OutlinedButton(onClick = { folderPicker.launch(null) }) { Text("浏览文件夹") }
+                        OutlinedButton(onClick = { folderPicker.launch(null) }) { Text(stringResource(R.string.network_browse_folder)) }
                     }
                 }
                 if (type != MediaSourceType.HTTP && type != MediaSourceType.LOCAL) {
-                    OutlinedTextField(user, { user = it }, label = { Text("用户名（可选）") }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(user, { user = it }, label = { Text(stringResource(R.string.network_user)) }, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(
                         pass, { pass = it },
-                        label = { Text(if (initial == null) "密码" else "密码（留空则不修改）") },
+                        label = { Text(if (initial == null) stringResource(R.string.network_pass) else stringResource(R.string.network_pass_edit)) },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(autoCorrect = false),
                         modifier = Modifier.fillMaxWidth()
@@ -459,8 +456,8 @@ private fun AddSourceDialog(
                 } else {
                     Text(
                         when (type) {
-                            MediaSourceType.LOCAL -> "本机文件夹直接扫描文件系统，无需账号密码；需已授予「所有文件访问」权限。"
-                            else -> "HTTP 直链无需账号密码；扫描将抓取该地址并导入其中的音频链接。"
+                            MediaSourceType.LOCAL -> stringResource(R.string.network_note_local)
+                            else -> stringResource(R.string.network_note_http)
                         },
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -473,7 +470,7 @@ private fun AddSourceDialog(
     if (smbBrowseOpen) {
         AlertDialog(
             onDismissRequest = { smbBrowseOpen = false },
-            title = { Text("浏览局域网主机 / 共享") },
+            title = { Text(stringResource(R.string.network_smb_title)) },
             text = {
                 Column {
                     // 2026-08-24：自动发现（NetBIOS 广播）在许多家用/办公网络下取不到工作组，
@@ -483,13 +480,13 @@ private fun AddSourceDialog(
                             manualHost,
                             { manualHost = it },
                             modifier = Modifier.weight(1f),
-                            label = { Text("自动发现无结果时，输入主机 IP") },
+                            label = { Text(stringResource(R.string.network_smb_manual_host)) },
                             singleLine = true
                         )
                         Button(onClick = {
                             val h = manualHost.trim()
                             if (h.isNotEmpty()) scope.launch { loadSMBList("smb://$h") }
-                        }) { Text("打开") }
+                        }) { Text(stringResource(R.string.action_open)) }
                     }
                     Spacer(Modifier.height(4.dp))
                     Text(browsePath, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -509,9 +506,9 @@ private fun AddSourceDialog(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { url = browsePath; smbBrowseOpen = false }) { Text("使用此目录") }
+                TextButton(onClick = { url = browsePath; smbBrowseOpen = false }) { Text(stringResource(R.string.network_use_dir)) }
             },
-            dismissButton = { TextButton(onClick = { smbBrowseOpen = false }) { Text("取消") } }
+            dismissButton = { TextButton(onClick = { smbBrowseOpen = false }) { Text(stringResource(R.string.action_cancel)) } }
         )
     }
 }

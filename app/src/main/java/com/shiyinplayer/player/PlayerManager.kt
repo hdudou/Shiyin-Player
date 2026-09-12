@@ -13,11 +13,13 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.shiyinplayer.data.cache.MusicCacheManager
+import com.shiyinplayer.R
 import com.shiyinplayer.data.local.dao.SongDao
 import com.shiyinplayer.data.mapper.EntityMappers.toModel
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.data.repository.LibraryRepository
+import com.shiyinplayer.player.radio.RadioPlayer
 import com.shiyinplayer.player.decoder.AudioFormatRegistry
 import com.shiyinplayer.player.decoder.DeviceCodecProbe
 import com.shiyinplayer.ui.settings.SettingsRepository
@@ -78,7 +80,9 @@ class PlayerManager @Inject constructor(
     // 网络源本地缓存（离网播放，自动缓存触发点）
     private val musicCache: MusicCacheManager,
     // AZ-删除对账：收纳删曲/删源事件，剔除内存队列失效曲目（避免与 LibraryRepository 构造环）。
-    private val queueReconciler: QueueReconciler
+    private val queueReconciler: QueueReconciler,
+    // 跨模式互斥：音乐起播时强制停电台流，杜绝两条独立 ExoPlayer 同时出声混音。
+    private val radioPlayer: RadioPlayer
 ) {
     /** 当前生效的 ExoPlayer（音频链开关 #9-12 热重建时整体替换；@Volatile 保证各线程读一致）。 */
     @Volatile
@@ -165,6 +169,13 @@ class PlayerManager @Inject constructor(
         startProgressLoop()
         observeSettings()
         observeFallback()
+        // 2026-09-12 跨模式互斥（方向二）：电台起播时若音乐链仍在出声，强制暂停音乐。
+        // 与 playQueueInternal 里 `radioPlayer.suppressForMusicMode()` 形成双向闭环，
+        // 保证任一时刻只有音乐或电台一条音频链在响（RadioPlayer.addPreemptionListener 原本是空转回调）。
+        radioPlayer.addPreemptionListener {
+            runCatching { playbackController.pause() }
+            runCatching { mediaPlayerFallback.pause() }
+        }
     }
 
     /**
@@ -333,6 +344,10 @@ class PlayerManager @Inject constructor(
             // 点击 APE/WMA」时未暂停 ExoPlayer 的路径（navigateTo 同分支有 pause，此处补齐统一）。
             runCatching { exoPlayer.pause() }
             stopFallbackIfNeeded()
+            // 2026-09-12 跨模式互斥：音乐起播时强制停电台流（电台是独立 ExoPlayer，不与音乐共享实例），
+            // 防止冷启动自动恢复与手动点歌时电台链仍在后台出声造成两条音频链混音为「两首歌」。
+            runCatching { radioPlayer.suppressForMusicMode() }
+            runCatching { radioPlayer.cancelSleepForMusicMode() }
             queueController.setQueue(songs, startIndex)
             queueManager.altAttempts.clear()
             ensureServiceStarted()
@@ -710,7 +725,7 @@ class PlayerManager @Inject constructor(
         // 1. 文件头魔数校验失败 → 文件损坏或扩展名伪造
         if (!song.formatVerified) {
             Log.w("PlayerManager", "格式校验失败，文件损坏或扩展名伪造：${song.title}（ext=$ext）")
-            context.toast("文件损坏或非音频文件")
+            context.toast(context.getString(R.string.toast_corrupt_file))
             if (skipOnError) advancePastBroken()
             return false
         }
@@ -721,7 +736,7 @@ class PlayerManager @Inject constructor(
             if (!deviceCodecProbe.supports(mime)) {
                 val desc = AudioFormatRegistry.allFormats.firstOrNull { it.extension == ext }?.description ?: ext
                 Log.w("PlayerManager", "设备不支持解码：$desc（mime=$mime）")
-                context.toast("本设备不支持 $desc 解码")
+                context.toast(context.getString(R.string.toast_unsupported_decode, desc))
                 if (skipOnError) advancePastBroken()
                 return false
             }
@@ -737,7 +752,7 @@ class PlayerManager @Inject constructor(
             playbackController.navigateTo(idx)
         } else {
             runCatching { exoPlayer.pause() }
-            context.toast("该曲无法播放，请重试或切换")
+            context.toast(context.getString(R.string.toast_unplayable_retry))
         }
     }
 
@@ -856,7 +871,7 @@ class PlayerManager @Inject constructor(
                     playbackController.navigateTo(idx)
                 } else {
                     runCatching { exoPlayer.pause() }
-                    context.toast("播放失败，已停止")
+                    context.toast(context.getString(R.string.toast_play_failed_stopped))
                 }
             }
             emitFull()

@@ -23,10 +23,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Album
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.AddToPlaylistDialog
@@ -61,16 +63,20 @@ fun AlbumsScreen(navController: NavController? = null, viewModel: AlbumsViewMode
         ) {
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 项",
+                    stringResource(R.string.albums_selected_count, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == albums.size) emptySet() else albums.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == albums.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == albums.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
-                listOf("名称" to AlbumsViewModel.SORT_NAME, "年代" to AlbumsViewModel.SORT_YEAR, "艺术家" to AlbumsViewModel.SORT_ARTIST)
+                listOf(
+                    stringResource(R.string.albums_sort_name) to AlbumsViewModel.SORT_NAME,
+                    stringResource(R.string.albums_sort_year) to AlbumsViewModel.SORT_YEAR,
+                    stringResource(R.string.albums_sort_artist) to AlbumsViewModel.SORT_ARTIST
+                )
                     .forEach { (label, value) ->
                         OutlinedButton(
                             onClick = { viewModel.setSortMode(value) },
@@ -83,15 +89,16 @@ fun AlbumsScreen(navController: NavController? = null, viewModel: AlbumsViewMode
                             )
                         }
                     }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
+        val unknownYearLabel = stringResource(R.string.unknown_year)
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 140.dp),
             modifier = Modifier
         ) {
             if (sortMode == AlbumsViewModel.SORT_YEAR) {
-                albums.groupBy { it.year?.toString() ?: "未知年代" }.forEach { (year, list) ->
+                albums.groupBy { it.year?.toString() ?: unknownYearLabel }.forEach { (year, list) ->
                     item(key = "year-$year", span = { GridItemSpan(maxLineSpan) }) {
                         Text(
                             year,
@@ -148,15 +155,15 @@ fun AlbumsScreen(navController: NavController? = null, viewModel: AlbumsViewMode
                 OutlinedButton(onClick = {
                     scope.launch { actionsViewModel.playAll(viewModel.songsFor(selectedAlbums)) }
                 }, modifier = Modifier.weight(1f)) {
-                    Text("播放全部")
+                    Text(stringResource(R.string.action_play_all))
                 }
                 OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) {
-                    Text("停止")
+                    Text(stringResource(R.string.action_stop))
                 }
                 OutlinedButton(onClick = {
                     scope.launch { pendingSongs = viewModel.songsFor(selectedAlbums); showPlaylistPicker = true }
                 }, modifier = Modifier.weight(1f)) {
-                    Text("加入歌单")
+                    Text(stringResource(R.string.action_add_to_playlist))
                 }
             }
         }
@@ -165,7 +172,7 @@ fun AlbumsScreen(navController: NavController? = null, viewModel: AlbumsViewMode
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${pendingSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, pendingSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, pendingSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, pendingSongs) }; showPlaylistPicker = false }

@@ -3,10 +3,13 @@ package com.shiyinplayer.ui.smart
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.data.repository.LibraryRepository
 import com.shiyinplayer.player.PlayerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,14 +24,15 @@ import javax.inject.Inject
 class SmartPlaylistViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repo: LibraryRepository,
-    private val playerManager: PlayerManager
+    private val playerManager: PlayerManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     val type: String = savedStateHandle.get<String>("type") ?: "recent"
 
     val title: String = when (type) {
-        "most" -> "最常播放"
-        "random" -> "随机播放"
-        else -> "最近播放"
+        "most" -> context.getString(R.string.smart_most)
+        "random" -> context.getString(R.string.smart_random)
+        else -> context.getString(R.string.smart_recent)
     }
 
     val songs: StateFlow<List<Song>> = when (type) {

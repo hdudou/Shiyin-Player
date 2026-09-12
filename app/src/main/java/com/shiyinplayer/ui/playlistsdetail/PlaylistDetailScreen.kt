@@ -33,10 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
 import com.shiyinplayer.ui.common.SongMenuHost
@@ -80,29 +82,29 @@ fun PlaylistDetailScreen(
                 if (selectionMode) { selectionMode = false; selectedIds = emptySet() }
                 else navController.popBackStack()
             }) {
-                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) "退出选择" else "返回")
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) stringResource(R.string.action_exit_selection) else stringResource(R.string.action_back))
             }
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == songs.size) emptySet() else songs.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == songs.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == songs.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
                 Text(name, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                 IconButton(onClick = { renameDialog = true }) {
-                    Icon(Icons.Default.Edit, contentDescription = "重命名")
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_rename))
                 }
                 IconButton(onClick = {
                     scope.launch { viewModel.delete(); navController.popBackStack() }
                 }) {
-                    Icon(Icons.Default.Delete, contentDescription = "删除")
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete))
                 }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         if (!selectionMode) {
@@ -113,14 +115,14 @@ fun PlaylistDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = { viewModel.play(songs.firstOrNull() ?: return@OutlinedButton) }) {
-                    Text("全部播放")
+                    Text(stringResource(R.string.action_play_all))
                 }
                 OutlinedButton(onClick = { viewModel.stop() }) {
-                    Text("停止")
+                    Text(stringResource(R.string.action_stop))
                 }
                 OutlinedButton(onClick = { addDialog = true }) {
-                    Icon(Icons.AutoMirrored.Filled.PlaylistAdd, contentDescription = "添加")
-                    Text("添加歌曲")
+                    Icon(Icons.AutoMirrored.Filled.PlaylistAdd, contentDescription = stringResource(R.string.action_add))
+                    Text(stringResource(R.string.action_add_song))
                 }
             }
         }
@@ -139,7 +141,7 @@ fun PlaylistDetailScreen(
                     } else {
                         SongRow(song = song, onClick = { viewModel.play(song) }, onLongPress = { menuSong = song }, modifier = Modifier.weight(1f), isCurrent = song.id == currentPlayingId)
                         IconButton(onClick = { viewModel.removeSong(song.id) }) {
-                            Icon(Icons.Default.RemoveCircle, contentDescription = "移除")
+                            Icon(Icons.Default.RemoveCircle, contentDescription = stringResource(R.string.action_remove))
                         }
                     }
                 }
@@ -152,16 +154,16 @@ fun PlaylistDetailScreen(
         var text by remember { mutableStateOf(name) }
         AlertDialog(
             onDismissRequest = { renameDialog = false },
-            title = { Text("重命名播放列表") },
+            title = { Text(stringResource(R.string.playlist_rename_title)) },
             text = { TextField(value = text, onValueChange = { text = it }, singleLine = true) },
             confirmButton = {
                 TextButton(onClick = {
                     if (text.isNotBlank()) viewModel.rename(text.trim())
                     renameDialog = false
-                }) { Text("确定") }
+                }) { Text(stringResource(R.string.action_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { renameDialog = false }) { Text("取消") }
+                TextButton(onClick = { renameDialog = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -169,7 +171,7 @@ fun PlaylistDetailScreen(
     if (addDialog) {
         AlertDialog(
             onDismissRequest = { addDialog = false },
-            title = { Text("添加歌曲") },
+            title = { Text(stringResource(R.string.action_add_song)) },
             text = {
                 LazyColumn(Modifier.fillMaxWidth()) {
                     items(allSongs, key = { it.id }) { song ->
@@ -187,7 +189,7 @@ fun PlaylistDetailScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { addDialog = false }) { Text("关闭") }
+                TextButton(onClick = { addDialog = false }) { Text(stringResource(R.string.action_close)) }
             }
         )
     }

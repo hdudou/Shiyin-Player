@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,11 +72,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Album
 import com.shiyinplayer.data.model.Artist
 import com.shiyinplayer.data.model.Song
@@ -96,7 +99,13 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /** 曲库二级导航标签（歌曲/文件夹/专辑/艺术家）。 */
-private val tabs = listOf("歌曲", "文件夹", "专辑", "艺术家")
+@Composable
+private fun libraryTabs() = listOf(
+    stringResource(R.string.tab_songs),
+    stringResource(R.string.tab_folders),
+    stringResource(R.string.tab_albums),
+    stringResource(R.string.tab_artists)
+)
 
 /** 歌曲分组键：拉丁字母取大写首字母，其余归入 #。 */
 private fun groupKey(title: String): String {
@@ -171,7 +180,7 @@ fun LibraryScreen(navController: NavController? = null) {
                 )
             }
             val name = androidx.documentfile.provider.DocumentFile.fromTreeUri(context, it)?.name
-                ?: it.lastPathSegment ?: "本地文件夹"
+                ?: it.lastPathSegment ?: context.getString(R.string.songs_local_folder)
             scope.launch { songsViewModel.addLocalFolder(it, name) }
         }
     }
@@ -191,8 +200,8 @@ fun LibraryScreen(navController: NavController? = null) {
                 selectedTabIndex = tab,
                 modifier = Modifier.weight(1f)
             ) {
-                tabs.forEachIndexed { i, label ->
-                    Tab(selected = tab == i, onClick = { tab = i }, text = { Text(label) })
+                libraryTabs().forEachIndexed { i, label ->
+                    Tab(selected = tab == i, onClick = { tab = i }, text = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) })
                 }
             }
             // 统一点击按钮：右侧 MoreVert 下拉菜单（全局搜索/添加源/选择），并入 Tab 栏同一行
@@ -201,7 +210,7 @@ fun LibraryScreen(navController: NavController? = null) {
                 IconButton(onClick = { menuExpanded = true }, modifier = Modifier.size(40.dp)) {
                     Icon(
                         Icons.Default.MoreVert,
-                        contentDescription = "更多",
+                        contentDescription = stringResource(R.string.nav_more),
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -211,17 +220,17 @@ fun LibraryScreen(navController: NavController? = null) {
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("全局搜索") },
+                        text = { Text(stringResource(R.string.action_global_search)) },
                         leadingIcon = { Icon(Icons.Default.TravelExplore, contentDescription = null) },
                         onClick = { menuExpanded = false; onGlobalSearch() }
                     )
                     DropdownMenuItem(
-                        text = { Text("添加源") },
+                        text = { Text(stringResource(R.string.action_add_source)) },
                         leadingIcon = { Icon(Icons.Default.Add, contentDescription = null) },
                         onClick = { menuExpanded = false; onAdd() }
                     )
                     DropdownMenuItem(
-                        text = { Text(if (selectionMode) "退出选择" else "选择") },
+                        text = { Text(stringResource(if (selectionMode) R.string.action_exit_selection else R.string.action_select)) },
                         leadingIcon = { Icon(Icons.Default.Checklist, contentDescription = null) },
                         onClick = {
                             menuExpanded = false
@@ -419,18 +428,18 @@ private fun SongsPane(
         if (selectionMode) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.selected_count_songs, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == filtered.size) emptySet() else filtered.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == filtered.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { onSelectionChange(false) }) { Text("完成") }
+                }) { Text(stringResource(if (selectedIds.size == filtered.size) R.string.action_deselect_all else R.string.action_select_all)) }
+                OutlinedButton(onClick = { onSelectionChange(false) }) { Text(stringResource(R.string.action_done)) }
             }
         } else {
             Text(
-                "${filtered.size} 首",
+                stringResource(R.string.count_songs, filtered.size),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
             )
@@ -474,10 +483,10 @@ private fun SongsPane(
         if (selectionMode && selectedIds.isNotEmpty()) {
             HorizontalDivider()
             Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { actionsViewModel.playAll(selectedSongs) }, modifier = Modifier.weight(1f)) { Text("播放全部") }
-                OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) { Text("停止") }
-                OutlinedButton(onClick = { showPlaylistPicker = true }, modifier = Modifier.weight(1f)) { Text("加入歌单") }
-                TextButton(onClick = { showDeleteConfirm = true }, modifier = Modifier.weight(1f)) { Text("删除") }
+                OutlinedButton(onClick = { actionsViewModel.playAll(selectedSongs) }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_play_all), maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_stop), maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                OutlinedButton(onClick = { showPlaylistPicker = true }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_add_to_playlist), maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                TextButton(onClick = { showDeleteConfirm = true }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_delete), maxLines = 1, overflow = TextOverflow.Ellipsis) }
             }
         }
     }
@@ -486,7 +495,7 @@ private fun SongsPane(
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${selectedSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, selectedSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, selectedSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, selectedSongs) }; showPlaylistPicker = false }
@@ -501,11 +510,11 @@ private fun SongsPane(
                     onSelectionChange(false)
                     selectedIds = emptySet()
                     scope.launch { actionsViewModel.deleteSongs(selectedSongs) }
-                }) { Text("删除") }
+                }) { Text(stringResource(R.string.action_delete)) }
             },
-            dismissButton = { TextButton(onClick = { showDeleteConfirm = false }) { Text("取消") } },
-            title = { Text("删除曲目") },
-            text = { Text("确定从曲库删除选中的 ${selectedSongs.size} 首曲目？") }
+            dismissButton = { TextButton(onClick = { showDeleteConfirm = false }) { Text(stringResource(R.string.action_cancel)) } },
+            title = { Text(stringResource(R.string.delete_songs_title)) },
+            text = { Text(stringResource(R.string.delete_songs_confirm, selectedSongs.size)) }
         )
     }
 }
@@ -536,11 +545,17 @@ private fun AlbumsPane(
         selectedIds = if (album.id in selectedIds) selectedIds - album.id else selectedIds + album.id
     }
 
+    val sortLabels = listOf(
+        stringResource(R.string.sort_by_name) to AlbumsViewModel.SORT_NAME,
+        stringResource(R.string.sort_by_year) to AlbumsViewModel.SORT_YEAR,
+        stringResource(R.string.sort_by_artist) to AlbumsViewModel.SORT_ARTIST
+    )
+    val unknownYearText = stringResource(R.string.unknown_year)
+
     Column(Modifier.fillMaxSize()) {
         HorizontalDivider()
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)) {
-            listOf("名称" to AlbumsViewModel.SORT_NAME, "年代" to AlbumsViewModel.SORT_YEAR, "艺术家" to AlbumsViewModel.SORT_ARTIST)
-                .forEach { (label, value) ->
+            sortLabels.forEach { (label, value) ->
                     val selected = sortMode == value
                     Text(
                         label,
@@ -560,14 +575,14 @@ private fun AlbumsPane(
         if (selectionMode) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "已选 ${selectedIds.size} 张",
+                    stringResource(R.string.selected_count_albums, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == filtered.size) emptySet() else filtered.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == filtered.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { onSelectionChange(false) }) { Text("完成") }
+                }) { Text(stringResource(if (selectedIds.size == filtered.size) R.string.action_deselect_all else R.string.action_select_all)) }
+                OutlinedButton(onClick = { onSelectionChange(false) }) { Text(stringResource(R.string.action_done)) }
             }
         }
         val gridState = rememberLazyGridState()
@@ -579,7 +594,7 @@ private fun AlbumsPane(
                 contentPadding = PaddingValues(end = 44.dp)
             ) {
                 if (sortMode == AlbumsViewModel.SORT_YEAR) {
-                    filtered.groupBy { it.year?.toString() ?: "未知年代" }.forEach { (year, list) ->
+                    filtered.groupBy { it.year?.toString() ?: unknownYearText }.forEach { (year, list) ->
                         item(key = "year-$year", span = { GridItemSpan(maxLineSpan) }) {
                             Text(
                                 year, style = MaterialTheme.typography.titleSmall,
@@ -639,7 +654,7 @@ private fun AlbumsPane(
                 OutlinedButton(
                     onClick = { scope.launch { actionsViewModel.playAll(viewModel.songsFor(selectedAlbums)) } },
                     modifier = Modifier.weight(1f)
-                ) { Text("播放全部") }
+                ) { Text(stringResource(R.string.action_play_all)) }
                 OutlinedButton(
                     onClick = {
                         scope.launch {
@@ -648,7 +663,7 @@ private fun AlbumsPane(
                         }
                     },
                     modifier = Modifier.weight(1f)
-                ) { Text("加入歌单") }
+                ) { Text(stringResource(R.string.action_add_to_playlist)) }
             }
         }
     }
@@ -656,7 +671,7 @@ private fun AlbumsPane(
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${pendingSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, pendingSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, pendingSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, pendingSongs) }; showPlaylistPicker = false }
@@ -715,14 +730,14 @@ private fun ArtistsPane(
         if (selectionMode) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "已选 ${selectedIds.size} 位",
+                    stringResource(R.string.selected_count_artist, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == filtered.size) emptySet() else filtered.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == filtered.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { onSelectionChange(false) }) { Text("完成") }
+                }) { Text(stringResource(if (selectedIds.size == filtered.size) R.string.action_deselect_all else R.string.action_select_all)) }
+                OutlinedButton(onClick = { onSelectionChange(false) }) { Text(stringResource(R.string.action_done)) }
             }
         }
         Row(Modifier.weight(1f).fillMaxWidth()) {
@@ -764,7 +779,7 @@ private fun ArtistsPane(
                 OutlinedButton(
                     onClick = { scope.launch { actionsViewModel.playAll(viewModel.songsFor(selectedArtists)) } },
                     modifier = Modifier.weight(1f)
-                ) { Text("播放全部") }
+                ) { Text(stringResource(R.string.action_play_all)) }
                 OutlinedButton(
                     onClick = {
                         scope.launch {
@@ -773,7 +788,7 @@ private fun ArtistsPane(
                         }
                     },
                     modifier = Modifier.weight(1f)
-                ) { Text("加入歌单") }
+                ) { Text(stringResource(R.string.action_add_to_playlist)) }
             }
         }
     }
@@ -781,7 +796,7 @@ private fun ArtistsPane(
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${pendingSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, pendingSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, pendingSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, pendingSongs) }; showPlaylistPicker = false }

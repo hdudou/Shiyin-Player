@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.AddToPlaylistDialog
 import com.shiyinplayer.ui.common.SongActionsViewModel
@@ -78,22 +80,22 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == results.songs.size) emptySet() else results.songs.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == results.songs.size && results.songs.isNotEmpty()) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == results.songs.size && results.songs.isNotEmpty()) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             }
         } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text("搜索", modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                Text(stringResource(R.string.action_search), modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         OutlinedTextField(
@@ -102,12 +104,12 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            placeholder = { Text("搜索歌曲、专辑、艺术家") },
+            placeholder = { Text(stringResource(R.string.search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { viewModel.setQuery("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = "清空")
+                        Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.action_clear))
                     }
                 }
             },
@@ -125,7 +127,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 com.shiyinplayer.data.model.SearchField.entries.forEach { t ->
                     FilterChip(
                         onClick = { viewModel.setType(t) },
-                        label = { Text(t.label, maxLines = 1) },
+                        label = { Text(searchFieldLabel(t), maxLines = 1) },
                         selected = t == tv
                     )
                 }
@@ -134,7 +136,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 SongSourceFilter.entries.forEach { s ->
                     FilterChip(
                         onClick = { viewModel.setSource(s) },
-                        label = { Text(s.label, maxLines = 1) },
+                        label = { Text(sourceLabel(s), maxLines = 1) },
                         selected = s == source
                     )
                 }
@@ -143,7 +145,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 DurationFilter.entries.forEach { d ->
                     FilterChip(
                         onClick = { viewModel.setDuration(d) },
-                        label = { Text(d.label, maxLines = 1) },
+                        label = { Text(durationLabel(d), maxLines = 1) },
                         selected = d == duration
                     )
                 }
@@ -156,12 +158,12 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
             ) {
                 Icon(Icons.Default.History, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
-                    "最近搜索",
+                    stringResource(R.string.search_recent),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
-                TextButton(onClick = { viewModel.clearHistory() }) { Text("清空") }
+                TextButton(onClick = { viewModel.clearHistory() }) { Text(stringResource(R.string.action_clear)) }
             }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -180,7 +182,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
         }
         LazyColumn(state = listState) {
             if (results.artists.isNotEmpty()) {
-                item { SectionTitle("艺术家") }
+                item { SectionTitle(stringResource(R.string.tab_artists)) }
                 items(results.artists, key = { "a${it.id}" }) { artist ->
                     ArtistRow(artist = artist, onClick = {
                         navController?.navigate(Screen.ArtistDetail.createRoute(artist.name))
@@ -188,7 +190,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 }
             }
             if (results.albums.isNotEmpty()) {
-                item { SectionTitle("专辑") }
+                item { SectionTitle(stringResource(R.string.tab_albums)) }
                 items(results.albums, key = { "b${it.id}" }) { album ->
                     Column(
                         modifier = Modifier
@@ -206,7 +208,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                 }
             }
             if (results.songs.isNotEmpty()) {
-                item { SectionTitle("歌曲") }
+                item { SectionTitle(stringResource(R.string.tab_songs)) }
                 items(results.songs, key = { "s${it.id}" }) { song ->
                     SongRow(
                         song = song,
@@ -227,10 +229,10 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         OutlinedButton(onClick = { actionsViewModel.playAll(selectedSongs) }, modifier = Modifier.weight(1f)) {
-                            Text("立即播放")
+                            Text(stringResource(R.string.action_play_now))
                         }
                         OutlinedButton(onClick = { showPlaylistPicker = true }, modifier = Modifier.weight(1f)) {
-                            Text("加入歌单")
+                            Text(stringResource(R.string.action_add_to_playlist))
                         }
                     }
                 }
@@ -240,7 +242,7 @@ fun SearchScreen(navController: NavController? = null, viewModel: SearchViewMode
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = actionsViewModel.playlists.collectAsStateWithLifecycle().value,
-            subtitle = "将 ${selectedSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, selectedSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, selectedSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, selectedSongs) }; showPlaylistPicker = false }
@@ -262,4 +264,27 @@ private fun SectionTitle(title: String) {
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
     )
+}
+
+@Composable
+private fun searchFieldLabel(f: com.shiyinplayer.data.model.SearchField): String = when (f) {
+    com.shiyinplayer.data.model.SearchField.ALL -> stringResource(R.string.search_field_all)
+    com.shiyinplayer.data.model.SearchField.TITLE -> stringResource(R.string.tab_songs)
+    com.shiyinplayer.data.model.SearchField.ARTIST -> stringResource(R.string.tab_artists)
+    com.shiyinplayer.data.model.SearchField.ALBUM -> stringResource(R.string.tab_albums)
+    com.shiyinplayer.data.model.SearchField.FILENAME -> stringResource(R.string.file_info_filename)
+}
+
+@Composable
+private fun sourceLabel(s: SongSourceFilter): String = when (s) {
+    SongSourceFilter.ALL -> stringResource(R.string.search_source_all)
+    SongSourceFilter.LOCAL -> stringResource(R.string.search_source_local)
+    SongSourceFilter.NETWORK -> stringResource(R.string.search_source_network)
+}
+
+@Composable
+private fun durationLabel(d: DurationFilter): String = when (d) {
+    DurationFilter.ALL -> stringResource(R.string.search_duration_all)
+    DurationFilter.SHORT -> stringResource(R.string.search_duration_short)
+    DurationFilter.LONG -> stringResource(R.string.search_duration_long)
 }

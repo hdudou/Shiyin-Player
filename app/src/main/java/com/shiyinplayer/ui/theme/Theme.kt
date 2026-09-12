@@ -7,6 +7,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.annotation.StringRes
+import com.shiyinplayer.R
 
 /**
  * 主题偏好：mode 0=跟随系统 / 1=浅色 / 2=深色；accent 为强调色索引（见 [ACCENT_COLORS]）；
@@ -58,6 +60,22 @@ val THEME_STYLES: List<ThemeStyle> = listOf(
     ThemeStyle("citrus", "金乌曜曦", 0xFFF0C23A, 0xFF1D1A10, 0xFF272315, 0xFF302A18, 0xFF191403, 0xFFFDF6DD, 0xFFCDBE8A, 0xFF3D351F),
     ThemeStyle("wine", "绛雾醺夜", 0xFFD0576F, 0xFF1D1013, 0xFF28151A, 0xFF331A21, 0xFF1D0810, 0xFFFCEEF1, 0xFFD9A9B3, 0xFF432129)
 )
+
+/** THEME_STYLES 下标 → 主题风格字符串资源 id（供 UI 展示当前语言名称）。 */
+@StringRes
+fun themeStyleLabelRes(index: Int): Int = when (index) {
+    0 -> R.string.theme_style_gold
+    1 -> R.string.theme_style_azure
+    2 -> R.string.theme_style_emerald
+    3 -> R.string.theme_style_violet
+    4 -> R.string.theme_style_lava
+    5 -> R.string.theme_style_rose
+    6 -> R.string.theme_style_silver
+    7 -> R.string.theme_style_retro
+    8 -> R.string.theme_style_citrus
+    9 -> R.string.theme_style_wine
+    else -> R.string.theme_style_gold
+}
 
 private fun lighten(color: Long, ratio: Float): Long {
     val r = (color shr 16) and 0xFF

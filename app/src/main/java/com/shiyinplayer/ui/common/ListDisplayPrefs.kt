@@ -24,7 +24,7 @@ data class ListDisplayPrefs(
         return when (trackFormat) {
             "{album} – {title}" -> song.albumName
             else -> song.artistName
-        } ?: "未知艺术家"
+        }
     }
 }
 

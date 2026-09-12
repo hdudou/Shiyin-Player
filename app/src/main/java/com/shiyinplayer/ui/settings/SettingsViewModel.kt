@@ -2,6 +2,8 @@ package com.shiyinplayer.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.annotation.StringRes
+import com.shiyinplayer.R
 import com.shiyinplayer.data.metasync.MetadataSyncManager
 import com.shiyinplayer.data.metasync.ManualSyncProgress
 import com.shiyinplayer.data.metadata.MetadataSource
@@ -19,6 +21,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** 维护操作结果：携带字符串资源 id 与格式化参数，由界面按当前语言渲染。 */
+class MaintenanceResult(@StringRes val resId: Int, vararg args: Any) {
+    val args: Array<out Any> = args
+}
+
 /** 设置 ViewModel（T11 / SETTINGS_SPEC §8）：聚合各偏好为可观察 StateFlow，并暴露写入方法。 */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -33,26 +40,26 @@ class SettingsViewModel @Inject constructor(
     /** 公开 SettingsRepository 供导航图访问（模式切换等）。 */
     val settingsRepository: SettingsRepository get() = repo
 
-    private val _maintenanceResult = MutableStateFlow<String?>(null)
-    val maintenanceResult: StateFlow<String?> = _maintenanceResult
+    private val _maintenanceResult = MutableStateFlow<MaintenanceResult?>(null)
+    val maintenanceResult: StateFlow<MaintenanceResult?> = _maintenanceResult
 
     // ===== P3 维护操作 =====
 
     fun clearMetadataCache() = viewModelScope.launch {
         runCatching { metadataRepo.clearCache() }
-        _maintenanceResult.value = "已清空歌词与封面缓存"
+        _maintenanceResult.value = MaintenanceResult(R.string.set_maintenance_cache_cleared)
     }
 
     fun pruneOldCache() = viewModelScope.launch {
         runCatching { metadataRepo.pruneCache(7) }
-        _maintenanceResult.value = "已清理 7 天前的过期缓存"
+        _maintenanceResult.value = MaintenanceResult(R.string.set_maintenance_old_cache_cleared)
     }
 
     fun pruneMissingSongs() = viewModelScope.launch {
         // F1-3：本地失效文件 + 已删除网络源遗留的孤儿曲目（脏数据）一并清理
         val local = runCatching { libraryRepo.pruneMissingLocal() }.getOrDefault(0)
         val orphan = runCatching { libraryRepo.pruneMissingNetworkOrphans() }.getOrDefault(0)
-        _maintenanceResult.value = "已清理 ${local + orphan} 首失效曲目"
+        _maintenanceResult.value = MaintenanceResult(R.string.set_maintenance_stale_cleared, local + orphan)
     }
 
     fun clearMaintenanceResult() {

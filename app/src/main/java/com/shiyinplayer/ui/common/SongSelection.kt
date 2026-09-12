@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import kotlinx.coroutines.launch
 
@@ -44,13 +46,13 @@ fun SongSelectionBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedButton(onClick = { actionsViewModel.playAll(selectedSongs) }, modifier = Modifier.weight(1f)) {
-                Text("播放全部")
+                Text(stringResource(R.string.action_play_all))
             }
             OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) {
-                Text("停止")
+                Text(stringResource(R.string.action_stop))
             }
             OutlinedButton(onClick = { showPicker = true }, modifier = Modifier.weight(1f)) {
-                Text("加入歌单")
+                Text(stringResource(R.string.action_add_to_playlist))
             }
         }
     }
@@ -58,7 +60,7 @@ fun SongSelectionBar(
     if (showPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${selectedSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, selectedSongs.size),
             onDismiss = { showPicker = false },
             onCreate = { name ->
                 scope.launch { actionsViewModel.createAndAddMany(name, selectedSongs) }

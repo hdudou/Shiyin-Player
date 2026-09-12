@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.Build
+import com.shiyinplayer.R
 
 /**
  * 锁屏解锁辅助：调用系统原生解锁验证界面。
@@ -29,7 +30,10 @@ object LockScreenUnlockHelper {
             })
         } else {
             try {
-                val intent = km.createConfirmDeviceCredentialIntent("解锁设备", "请验证设备凭据以继续")
+                val intent = km.createConfirmDeviceCredentialIntent(
+                    activity.getString(R.string.lockscreen_unlock_title),
+                    activity.getString(R.string.lockscreen_unlock_subtitle)
+                )
                 if (intent != null) {
                     activity.startActivityForResult(intent, 1001)
                 } else {

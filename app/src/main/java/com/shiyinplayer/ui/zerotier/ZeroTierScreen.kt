@@ -18,9 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.data.network.zerotier.ZtStatus
 
 
@@ -36,29 +38,29 @@ fun ZeroTierScreen(viewModel: ZeroTierViewModel = hiltViewModel()) {
     var text by remember(networkId) { mutableStateOf(networkId ?: "") }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("ZeroTier 虚拟网络", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.zerotier_title), style = MaterialTheme.typography.titleLarge)
         OutlinedTextField(
             value = text,
             onValueChange = { text = it },
-            label = { Text("Network ID") },
+            label = { Text(stringResource(R.string.zerotier_network_id)) },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { viewModel.join(text) }) { Text("加入网络") }
-            Button(onClick = viewModel::leave) { Text("离开") }
+            Button(onClick = { viewModel.join(text) }) { Text(stringResource(R.string.zerotier_join)) }
+            Button(onClick = viewModel::leave) { Text(stringResource(R.string.zerotier_leave)) }
         }
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("启动自动连接 / 掉线自动重连", modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.zerotier_auto_reconnect), modifier = Modifier.weight(1f))
             Switch(checked = autoReconnect, onCheckedChange = viewModel::setAutoReconnect)
         }
-        Text("状态：${status.name}", modifier = Modifier.padding(top = 8.dp))
-        ip?.let { Text("虚拟 IP：$it") }
+        Text(stringResource(R.string.zerotier_status, status.name), modifier = Modifier.padding(top = 8.dp))
+        ip?.let { Text(stringResource(R.string.zerotier_virtual_ip, it)) }
         error?.let {
             Text(
-                "错误：$it",
+                stringResource(R.string.zerotier_error, it),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 8.dp)
@@ -66,13 +68,13 @@ fun ZeroTierScreen(viewModel: ZeroTierViewModel = hiltViewModel()) {
         }
         if (status == ZtStatus.CONNECTING) {
             Text(
-                "连接中…若长时间未变为「已连接」，请确认已在 ZeroTier 控制台批准本节点，并确认 libzt 原生库已正确打包。",
+                stringResource(R.string.zerotier_connecting_hint),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 8.dp)
             )
         } else if (status != ZtStatus.CONNECTED && error == null) {
             Text(
-                "提示：需在 ZeroTier 控制台批准本节点；libzt 原生库缺失时功能不可用（降级模式）。",
+                stringResource(R.string.zerotier_disconnected_hint),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 8.dp)
             )

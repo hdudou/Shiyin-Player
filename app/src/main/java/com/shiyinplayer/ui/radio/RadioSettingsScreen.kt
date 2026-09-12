@@ -55,6 +55,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import com.shiyinplayer.R
 import com.shiyinplayer.ui.theme.ACCENT_COLORS
 import com.shiyinplayer.ui.theme.THEME_STYLES
 
@@ -95,10 +98,10 @@ fun RadioSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("电台设置") },
+                title = { Text(stringResource(R.string.radio_settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -115,33 +118,33 @@ fun RadioSettingsScreen(
                 .padding(16.dp)
         ) {
             // ---- 界面设计子页面 ----
-            SectionHeader("界面设计")
+            SectionHeader(stringResource(R.string.radio_settings_sec_interface))
             SubPageCard(
                 icon = { Icon(Icons.Default.Palette, contentDescription = null) },
-                title = "界面设计",
-                description = "主题风格、显示模式、防息屏、通知与系统、音频焦点",
+                title = stringResource(R.string.radio_settings_sec_interface),
+                description = stringResource(R.string.radio_settings_interface_desc),
                 onClick = onNavigateToInterface
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // ---- 声音引擎子页面 ----
-            SectionHeader("声音引擎")
+            SectionHeader(stringResource(R.string.radio_settings_sec_sound))
             SubPageCard(
                 icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                title = "声音引擎",
-                description = "输出路由、低延迟、缓冲、处理精度、音量曲线、均衡器",
+                title = stringResource(R.string.radio_settings_sec_sound),
+                description = stringResource(R.string.radio_settings_sound_desc),
                 onClick = onNavigateToSound
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // ---- 播放与定时 ----
-            SectionHeader("播放与定时")
+            SectionHeader(stringResource(R.string.radio_settings_sec_playback))
 
             SettingSwitch(
-                title = "启用睡眠定时",
-                description = "设定时间后自动停止播放",
+                title = stringResource(R.string.radio_settings_sleep_enable),
+                description = stringResource(R.string.radio_settings_sleep_enable_desc),
                 checked = sleepTimerEnabled,
                 onCheckedChange = { viewModel.setSleepTimerEnabled(it) }
             )
@@ -151,7 +154,7 @@ fun RadioSettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("定时时长", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.radio_settings_sleep_duration), style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.weight(1f))
                     DropdownMenu(
                         expanded = sleepTimerExpanded,
@@ -163,7 +166,7 @@ fun RadioSettingsScreen(
                                     viewModel.setSleepTimerMinutes(minutes)
                                     sleepTimerExpanded = false
                                 },
-                                text = { Text("${minutes} 分钟") }
+                                text = { Text(stringResource(R.string.setting_minutes, minutes)) }
                             )
                         }
                     }
@@ -171,8 +174,8 @@ fun RadioSettingsScreen(
             }
 
             SettingSwitch(
-                title = "启用闹钟",
-                description = "到点自动播放上次收听的电台",
+                title = stringResource(R.string.radio_settings_alarm_enable),
+                description = stringResource(R.string.radio_settings_alarm_enable_desc),
                 checked = alarmEnabled,
                 onCheckedChange = { viewModel.setAlarmEnabled(it) }
             )
@@ -183,7 +186,7 @@ fun RadioSettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("闹钟时间", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.radio_settings_alarm_time), style = MaterialTheme.typography.bodyMedium)
                     TextButton(onClick = { showTimePicker = true }) {
                         Text(
                             text = String.format("%02d:%02d", alarmHour, alarmMinute),
@@ -197,11 +200,11 @@ fun RadioSettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // ---- 连接与数据 ----
-            SectionHeader("连接与数据")
+            SectionHeader(stringResource(R.string.radio_settings_sec_connection))
 
             SettingSwitch(
-                title = "启用自动重连",
-                description = "断流后自动尝试重新连接",
+                title = stringResource(R.string.radio_settings_auto_reconnect),
+                description = stringResource(R.string.radio_settings_auto_reconnect_desc),
                 checked = autoReconnect,
                 onCheckedChange = { viewModel.setAutoReconnect(it) }
             )
@@ -210,35 +213,35 @@ fun RadioSettingsScreen(
                 var sliderValue by remember { mutableFloatStateOf(maxRetryCount.toFloat()) }
                 LaunchedEffect(maxRetryCount) { sliderValue = maxRetryCount.toFloat() }
                 SettingSlider(
-                    title = "最大重试次数",
+                    title = stringResource(R.string.radio_settings_max_retries),
                     value = sliderValue,
                     onValueChange = { sliderValue = it },
                     onValueChangeFinished = { viewModel.setMaxRetryCount(sliderValue.toInt()) },
                     valueRange = 1f..10f,
-                    valueText = "${sliderValue.toInt()} 次"
+                    valueText = stringResource(R.string.setting_times, sliderValue.toInt())
                 )
                 var delaySlider by remember { mutableFloatStateOf(retryDelaySeconds.toFloat()) }
                 LaunchedEffect(retryDelaySeconds) { delaySlider = retryDelaySeconds.toFloat() }
                 SettingSlider(
-                    title = "重试间隔",
+                    title = stringResource(R.string.radio_settings_retry_delay),
                     value = delaySlider,
                     onValueChange = { delaySlider = it },
                     onValueChangeFinished = { viewModel.setRetryDelaySeconds(delaySlider.toInt()) },
                     valueRange = 1f..30f,
-                    valueText = "${delaySlider.toInt()} 秒"
+                    valueText = stringResource(R.string.setting_seconds, delaySlider.toInt())
                 )
             }
 
             SettingSwitch(
-                title = "仅 Wi-Fi 下播放",
-                description = "移动数据下不自动播放网络电台",
+                title = stringResource(R.string.radio_settings_wifi_only),
+                description = stringResource(R.string.radio_settings_wifi_only_desc),
                 checked = wifiOnly,
                 onCheckedChange = { viewModel.setWifiOnly(it) }
             )
             if (wifiOnly) {
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "提示：移动数据下打开电台时会提示您切换到 Wi-Fi。",
+                    stringResource(R.string.radio_settings_wifi_only_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -247,11 +250,11 @@ fun RadioSettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // ---- 显示与信息 ----
-            SectionHeader("显示与信息")
+            SectionHeader(stringResource(R.string.radio_settings_sec_display))
 
             SettingSwitch(
-                title = "显示节目信息",
-                description = "在播放页和通知栏显示当前节目名称（ICY 元数据）",
+                title = stringResource(R.string.radio_settings_show_program),
+                description = stringResource(R.string.radio_settings_show_program_desc),
                 checked = showProgramInfo,
                 onCheckedChange = { viewModel.setShowProgramInfo(it) }
             )
@@ -259,34 +262,34 @@ fun RadioSettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // ---- 耳机与蓝牙 ----
-            SectionHeader("耳机与蓝牙")
+            SectionHeader(stringResource(R.string.radio_settings_sec_headset))
             SettingSwitch(
-                title = "耳机断开时暂停",
-                description = "拔下有线耳机时自动暂停播放",
+                title = stringResource(R.string.radio_settings_headset_pause),
+                description = stringResource(R.string.radio_settings_headset_pause_desc),
                 checked = headsetPause,
                 onCheckedChange = { viewModel.setHeadsetPause(it) }
             )
             SettingSwitch(
-                title = "蓝牙断开时暂停",
-                description = "蓝牙耳机断开连接时自动暂停",
+                title = stringResource(R.string.radio_settings_bt_disconnect),
+                description = stringResource(R.string.radio_settings_bt_disconnect_desc),
                 checked = btDisconnectPause,
                 onCheckedChange = { viewModel.setBtDisconnectPause(it) }
             )
             SettingSwitch(
-                title = "蓝牙重连时恢复",
-                description = "蓝牙耳机重新连接后自动恢复播放",
+                title = stringResource(R.string.radio_settings_bt_reconnect),
+                description = stringResource(R.string.radio_settings_bt_reconnect_desc),
                 checked = btReconnectResume,
                 onCheckedChange = { viewModel.setBtReconnectResume(it) }
             )
             SettingSwitch(
-                title = "耳机按键控制",
-                description = "用有线/蓝牙耳机按键控制播放与切歌",
+                title = stringResource(R.string.radio_settings_headset_button),
+                description = stringResource(R.string.radio_settings_headset_button_desc),
                 checked = headsetButtonControl,
                 onCheckedChange = { viewModel.setHeadsetButtonControl(it) }
             )
             SettingSwitch(
-                title = "锁屏控制",
-                description = "在锁屏界面显示播放控制",
+                title = stringResource(R.string.radio_settings_lockscreen),
+                description = stringResource(R.string.radio_settings_lockscreen_desc),
                 checked = lockscreenControl,
                 onCheckedChange = { viewModel.setLockscreenControl(it) }
             )
@@ -294,9 +297,9 @@ fun RadioSettingsScreen(
             Spacer(Modifier.height(24.dp))
 
             // ---- 关于 ----
-            SectionHeader("关于")
+            SectionHeader(stringResource(R.string.radio_settings_sec_about))
             Text(
-                "电台数据来自 RadioBrowser 开放目录。仅供聚合播放使用，不缓存不录制。",
+                stringResource(R.string.radio_settings_about_text),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -313,7 +316,7 @@ fun RadioSettingsScreen(
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showTimePicker = false },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("设置闹钟时间") },
+            title = { Text(stringResource(R.string.radio_settings_alarm_pick_title)) },
             text = {
                 androidx.compose.material3.TimePicker(state = timePickerState)
             },
@@ -321,10 +324,10 @@ fun RadioSettingsScreen(
                 androidx.compose.material3.TextButton(onClick = {
                     viewModel.setAlarmTime(timePickerState.hour, timePickerState.minute)
                     showTimePicker = false
-                }) { Text("确定") }
+                }) { Text(stringResource(R.string.action_confirm)) }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showTimePicker = false }) { Text("取消") }
+                androidx.compose.material3.TextButton(onClick = { showTimePicker = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -352,10 +355,10 @@ fun RadioInterfaceSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("界面设计") },
+                title = { Text(stringResource(R.string.radio_settings_sec_interface)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -372,35 +375,43 @@ fun RadioInterfaceSettingsScreen(
                 .padding(16.dp)
         ) {
             // ---- 主题风格（与音乐模式完全一致） ----
-            SectionLabel("主题风格")
+            SectionLabel(stringResource(R.string.radio_settings_theme_style))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StyleChip("玄素映彩", themeStyle == 0) { viewModel.setThemeStyle(0) }
-                THEME_STYLES.forEachIndexed { idx, style ->
+                StyleChip(stringResource(R.string.theme_zaicai), themeStyle == 0) { viewModel.setThemeStyle(0) }
+                THEME_STYLES.forEachIndexed { idx, _ ->
                     val value = idx + 1
-                    StyleChip(style.label, themeStyle == value) { viewModel.setThemeStyle(value) }
+                    StyleChip(stringResource(radioThemeStyleLabelRes(idx)), themeStyle == value) { viewModel.setThemeStyle(value) }
                 }
             }
             if (themeStyle == 0) {
                 Spacer(Modifier.height(12.dp))
-                SectionLabel("明暗模式")
+                SectionLabel(stringResource(R.string.radio_settings_appearance_mode))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("跟随系统" to 0, "浅色" to 1, "深色" to 2).forEach { (label, value) ->
+                    listOf(
+                        R.string.set_theme_follow_system to 0,
+                        R.string.set_theme_light to 1,
+                        R.string.set_theme_dark to 2
+                    ).forEach { (labelRes, value) ->
                         FilterChip(
                             selected = themeMode == value,
                             onClick = { viewModel.setThemeMode(value) },
-                            label = { Text(label, style = MaterialTheme.typography.labelSmall) }
+                            label = { Text(stringResource(labelRes), style = MaterialTheme.typography.labelSmall) }
                         )
                     }
                 }
                 if (themeMode == 0) {
-                    Text("「跟随系统」配合系统的浅色/深色模式。", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.radio_settings_follow_system_hint), style = MaterialTheme.typography.bodySmall)
                 }
                 Spacer(Modifier.height(12.dp))
-                SectionLabel("强调色")
-                SwitchRow("动态取色（Material You）", "Android 12+ 跟随系统壁纸自动生成主题色（仅玄素映彩风格生效）", dynamicColors) { viewModel.setDynamicColors(it) }
+                SectionLabel(stringResource(R.string.radio_settings_accent_color))
+                SwitchRow(
+                    stringResource(R.string.radio_settings_dynamic_color),
+                    stringResource(R.string.radio_settings_dynamic_color_desc),
+                    dynamicColors
+                ) { viewModel.setDynamicColors(it) }
                 if (!dynamicColors) {
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         ACCENT_COLORS.forEachIndexed { idx, color ->
@@ -423,7 +434,7 @@ fun RadioInterfaceSettingsScreen(
             } else {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "已启用整套「${THEME_STYLES.getOrNull(themeStyle - 1)?.label}」风格，明暗与强调色仅在「玄素映彩」下生效。",
+                    stringResource(R.string.set_theme_active_hint, stringResource(radioThemeStyleLabelRes((themeStyle - 1).coerceIn(0, THEME_STYLES.size - 1)))),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -431,42 +442,62 @@ fun RadioInterfaceSettingsScreen(
             Spacer(Modifier.height(12.dp))
 
             // ---- 显示模式 ----
-            SectionLabel("显示模式")
+            SectionLabel(stringResource(R.string.set_sec_display_mode))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("自动" to "auto", "竖屏" to "portrait", "横屏" to "landscape").forEach { (label, value) ->
+                listOf(
+                    R.string.set_display_auto to "auto",
+                    R.string.set_display_portrait to "portrait",
+                    R.string.set_display_landscape to "landscape"
+                ).forEach { (labelRes, value) ->
                     FilterChip(
                         selected = displayMode == value,
                         onClick = { viewModel.setDisplayMode(value) },
-                        label = { Text(label, style = MaterialTheme.typography.labelSmall) }
+                        label = { Text(stringResource(labelRes), style = MaterialTheme.typography.labelSmall) }
                     )
                 }
             }
-            Text("「自动」随手机旋转切换竖/横 UI；「竖屏/横屏」固定屏幕方向。", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.set_display_mode_hint), style = MaterialTheme.typography.bodySmall)
 
             Spacer(Modifier.height(12.dp))
 
             // ---- 防息屏 ----
-            SectionLabel("防息屏")
-            SwitchRow("前台保持屏幕常亮", "播放器在前台显示时屏幕不自动息屏", keepScreenOn) { viewModel.setKeepScreenOn(it) }
+            SectionLabel(stringResource(R.string.radio_settings_sec_keep_screen))
+            SwitchRow(
+                stringResource(R.string.radio_settings_keep_screen_on),
+                stringResource(R.string.radio_settings_keep_screen_on_desc),
+                keepScreenOn
+            ) { viewModel.setKeepScreenOn(it) }
 
             Spacer(Modifier.height(12.dp))
 
             // ---- 通知与系统 ----
-            SectionLabel("通知与系统")
-            SwitchRow("播放通知", "显示前台播放通知（媒体播放服务需要）", notifyEnabled) { viewModel.setNotifyEnabled(it) }
-            SwitchRow("锁屏媒体控制", "锁屏界面显示媒体控制", lockscreenControl) { viewModel.setLockscreenControl(it) }
-            SwitchRow("迷你播放条", "底部显示迷你播放条", miniBarEnabled) { viewModel.setMiniBarEnabled(it) }
+            SectionLabel(stringResource(R.string.set_sec_notify_system))
+            SwitchRow(
+                stringResource(R.string.set_notify_enabled),
+                stringResource(R.string.set_notify_enabled_summary),
+                notifyEnabled
+            ) { viewModel.setNotifyEnabled(it) }
+            SwitchRow(
+                stringResource(R.string.set_lockscreen_control),
+                stringResource(R.string.set_lockscreen_control_summary),
+                lockscreenControl
+            ) { viewModel.setLockscreenControl(it) }
+            SwitchRow(
+                stringResource(R.string.set_mini_bar),
+                stringResource(R.string.set_mini_bar_summary),
+                miniBarEnabled
+            ) { viewModel.setMiniBarEnabled(it) }
 
             Spacer(Modifier.height(12.dp))
 
             // ---- 音频焦点 ----
-            SectionLabel("音频焦点")
+            SectionLabel(stringResource(R.string.set_sec_audio_focus))
             SwitchRow(
-                "被抢占时自动跳下一曲",
-                "系统永久占用音频焦点（如来电/其它播放器）时自动跳到下一曲；关闭则暂停后保留当前曲",
+                stringResource(R.string.set_focus_loss_autoskip),
+                stringResource(R.string.set_focus_loss_autoskip_summary),
                 focusLossAutoSkip
             ) { viewModel.setFocusLossAutoSkip(it) }
-            Text("更改即时生效。", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.radio_settings_immediate_effect), style = MaterialTheme.typography.bodySmall)
         }
     }
 }
@@ -489,10 +520,10 @@ fun RadioSoundSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("声音引擎") },
+                title = { Text(stringResource(R.string.radio_settings_sec_sound)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -509,19 +540,24 @@ fun RadioSoundSettingsScreen(
                 .padding(16.dp)
         ) {
             // 输出
-            SectionHeader("输出")
+            SectionHeader(stringResource(R.string.radio_settings_sec_output))
             SelectRow(
-                listOf("自动" to "auto", "扬声器" to "speaker", "蓝牙" to "bt", "有线耳机" to "wired"),
+                listOf(
+                    R.string.set_display_auto to "auto",
+                    R.string.radio_settings_output_speaker to "speaker",
+                    R.string.radio_settings_output_bt to "bt",
+                    R.string.radio_settings_output_wired to "wired"
+                ).map { (r, v) -> stringResource(r) to v },
                 audioRoute
             ) { viewModel.setAudioRoute(it) }
             SettingSwitch(
-                title = "低延迟音频",
-                description = "使用 AAudio 低延迟路径",
+                title = stringResource(R.string.radio_settings_low_latency),
+                description = stringResource(R.string.radio_settings_low_latency_desc),
                 checked = lowLatency,
                 onCheckedChange = { viewModel.setLowLatency(it) }
             )
             SettingSlider(
-                title = "音频缓冲",
+                title = stringResource(R.string.set_audio_buffer),
                 value = bufferMs.toFloat(),
                 onValueChange = {},
                 onValueChangeFinished = {},
@@ -532,10 +568,10 @@ fun RadioSoundSettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // 处理精度
-            SectionHeader("处理精度")
+            SectionHeader(stringResource(R.string.radio_settings_sec_precision))
             SettingSwitch(
-                title = "32 位浮点处理",
-                description = "音频链上使用 float PCM 处理",
+                title = stringResource(R.string.radio_settings_float32),
+                description = stringResource(R.string.radio_settings_float32_desc),
                 checked = float32,
                 onCheckedChange = { viewModel.setFloat32Processing(it) }
             )
@@ -543,28 +579,35 @@ fun RadioSoundSettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // 音量
-            SectionHeader("音量")
+            SectionHeader(stringResource(R.string.set_sec_volume))
             SelectRow(
-                listOf("对数" to "log", "响度补偿" to "loudness"),
+                listOf(
+                    R.string.radio_settings_vol_log to "log",
+                    R.string.radio_settings_vol_loudness to "loudness"
+                ).map { (r, v) -> stringResource(r) to v },
                 volumeCurve
             ) { viewModel.setVolumeCurve(it) }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             // 声道平衡
-            SectionHeader("声道平衡")
+            SectionHeader(stringResource(R.string.radio_settings_channel_balance))
             SettingSlider(
-                title = "声道平衡",
+                title = stringResource(R.string.radio_settings_channel_balance),
                 value = channelBalance,
                 onValueChange = {},
                 onValueChangeFinished = { viewModel.setChannelBalance(channelBalance) },
                 valueRange = -1f..1f,
-                valueText = if (channelBalance == 0f) "居中" else if (channelBalance < 0f) "偏左 %.0f%%".format(-channelBalance * 100) else "偏右 %.0f%%".format(channelBalance * 100)
+                valueText = when {
+                    channelBalance == 0f -> stringResource(R.string.radio_settings_balance_center)
+                    channelBalance < 0f -> stringResource(R.string.radio_settings_balance_left, (-channelBalance * 100).toInt())
+                    else -> stringResource(R.string.radio_settings_balance_right, (channelBalance * 100).toInt())
+                }
             )
 
             Spacer(Modifier.height(12.dp))
             Text(
-                "混音（淡入淡出/静音消除）和音量归一化仅在音乐模式生效。",
+                stringResource(R.string.radio_settings_mix_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -773,4 +816,20 @@ private fun SelectRow(
             )
         }
     }
+}
+
+/** 10 套主题风格中文名 → 字符串资源 id（与 THEME_STYLES 下标一一对应）。 */
+@StringRes
+private fun radioThemeStyleLabelRes(index: Int): Int = when (index) {
+    0 -> R.string.theme_style_gold
+    1 -> R.string.theme_style_azure
+    2 -> R.string.theme_style_emerald
+    3 -> R.string.theme_style_violet
+    4 -> R.string.theme_style_lava
+    5 -> R.string.theme_style_rose
+    6 -> R.string.theme_style_silver
+    7 -> R.string.theme_style_retro
+    8 -> R.string.theme_style_citrus
+    9 -> R.string.theme_style_wine
+    else -> R.string.theme_style_gold
 }

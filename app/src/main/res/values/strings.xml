@@ -3,9 +3,6 @@
     <string name="app_name">拾音</string>
 
     <!-- 底部导航 -->
-    <string name="tab_songs">歌曲</string>
-    <string name="tab_albums">专辑</string>
-    <string name="tab_artists">艺术家</string>
     <string name="tab_playlists">播放列表</string>
     <string name="tab_more">更多</string>
 
@@ -38,6 +35,12 @@
     <string name="zerotier_network_id">Network ID</string>
     <string name="zerotier_join">加入网络</string>
     <string name="zerotier_leave">离开网络</string>
+    <string name="zerotier_auto_reconnect">启动自动连接 / 掉线自动重连</string>
+    <string name="zerotier_status">状态：%1$s</string>
+    <string name="zerotier_virtual_ip">虚拟 IP：%1$s</string>
+    <string name="zerotier_error">错误：%1$s</string>
+    <string name="zerotier_connecting_hint">连接中…若长时间未变为「已连接」，请确认已在 ZeroTier 控制台批准本节点，并确认 libzt 原生库已正确打包。</string>
+    <string name="zerotier_disconnected_hint">提示：需在 ZeroTier 控制台批准本节点；libzt 原生库缺失时功能不可用（降级模式）。</string>
 
     <!-- 通知 -->
     <string name="notification_channel_name">播放控制</string>
@@ -46,4 +49,868 @@
     <string name="notification_action_play">播放</string>
     <string name="notification_action_pause">暂停</string>
     <string name="notification_action_next">下一首</string>
+<string name="toast_corrupt_file">文件损坏或非音频文件</string>
+<string name="toast_unsupported_decode">本设备不支持 %1$s 解码</string>
+<string name="toast_unplayable_retry">该曲无法播放，请重试或切换</string>
+<string name="toast_play_failed_stopped">播放失败，已停止</string>
+<string name="sync_channel_name">元数据同步</string>
+<string name="sync_notify_title">正在同步音乐元数据</string>
+<string name="sync_notify_text">后台读取/联网补充歌曲信息，兼顾保活</string>
+<string name="overlay_permission_title">开启悬浮窗权限</string>
+<string name="overlay_permission_body_xiaomi">小米/HyperOS 需要手动开启「显示悬浮窗」权限。\n\n步骤：设置 → 应用设置 → 应用管理 → ShiyinPlayer → 权限 → 显示悬浮窗 → 开启\n\n未开启时将降级为通知栏控制。</string>
+<string name="overlay_permission_body_huawei">华为/荣耀 EMUI 需要手动开启「悬浮窗」权限。\n\n步骤：设置 → 应用和服务 → 权限管理 → ShiyinPlayer → 悬浮窗 → 允许\n\n未开启时将降级为通知栏控制。</string>
+<string name="overlay_permission_body_oppo">OPPO/OnePlus/Realme 需要手动开启「悬浮窗」权限。\n\n步骤：设置 → 应用管理 → ShiyinPlayer → 权限管理 → 悬浮窗 → 允许\n\n未开启时将降级为通知栏控制。</string>
+<string name="overlay_permission_body_vivo">vivo/iQOO 需要手动开启「悬浮窗」权限。\n\n步骤：设置 → 应用与权限 → 权限管理 → ShiyinPlayer → 悬浮窗 → 允许\n\n未开启时将降级为通知栏控制。</string>
+<string name="overlay_permission_body_samsung">三星需要手动开启「在其他应用上层显示」权限。\n\n步骤：设置 → 应用 → ShiyinPlayer → 允许在其他应用上层显示 → 开启\n\n未开启时将降级为通知栏控制。</string>
+<string name="overlay_permission_body_unknown">您的设备需要手动开启「显示在其他应用上层」权限。\n\n请在系统设置中找到 ShiyinPlayer 的权限设置，开启悬浮窗/显示在其他应用上层。\n\n未开启时将降级为通知栏控制。</string>
+<string name="lockscreen_go_settings">去设置开启</string>
+<string name="lockscreen_cancel_downgrade">取消（降级到通知栏控制）</string>
+<string name="lockscreen_unlock_title">解锁设备</string>
+<string name="lockscreen_unlock_subtitle">请验证设备凭据以继续</string>
+<!-- 通用动作 -->
+    <string name="action_play_all">播放全部</string>
+    <string name="action_stop">停止</string>
+    <string name="action_add_to_playlist">加入歌单</string>
+    <string name="action_select">选择</string>
+    <string name="action_select_all">全选</string>
+    <string name="action_deselect_all">取消全选</string>
+    <string name="action_done">完成</string>
+    <string name="action_list">列表</string>
+    <string name="action_group">分组</string>
+    <string name="action_add_folder">添加文件夹</string>
+    <string name="action_add_song">添加歌曲</string>
+
+    <!-- 歌曲页 -->
+    <string name="songs_local_folder">本地文件夹</string>
+    <string name="songs_selected_count">已选 %1$d 首</string>
+    <string name="unknown_album">未知专辑</string>
+    <string name="unknown_artist">未知艺术家</string>
+    <string name="unknown_folder">未知文件夹</string>
+    <string name="unknown_title">未知标题</string>
+
+    <!-- 通用补充 -->
+    <string name="action_back">返回</string>
+    <string name="action_close">关闭</string>
+    <string name="action_exit_selection">退出选择</string>
+    <string name="album_cover">专辑封面</string>
+
+    <!-- 文件夹页 -->
+    <string name="folder_select_source">选择来源</string>
+    <string name="folder_other_source">其他来源</string>
+    <string name="folder_unmatched">未能匹配到源的曲目</string>
+    <string name="folder_no_sources">暂无来源，请先在「音乐库来源」中添加</string>
+    <string name="folder_empty">此目录为空</string>
+    <string name="folder_back_up">返回上一级</string>
+    <string name="folder_song_count">%1$d 首</string>
+    <string name="folder_attachment_cover">专辑封面</string>
+    <string name="folder_attachment_desc">专辑说明</string>
+    <string name="folder_attachment_load_failed">无法加载该附件</string>
+
+    <!-- 专辑页 -->
+    <string name="albums_selected_count">已选 %1$d 项</string>
+    <string name="albums_sort_name">名称</string>
+    <string name="albums_sort_year">年代</string>
+    <string name="albums_sort_artist">艺术家</string>
+    <string name="unknown_year">未知年代</string>
+    <string name="album_play_all_count">播放全部（%1$d）</string>
+    <string name="album_year_suffix">（%1$s）</string>
+
+    <!-- 通用增强 -->
+    <string name="action_rename">重命名</string>
+    <string name="action_remove">移除</string>
+    <string name="count_songs">%1$d 首</string>
+
+    <!-- 艺术家页 -->
+    <string name="artists_switch_list">切换到列表</string>
+    <string name="artists_switch_grid">切换到图片墙</string>
+    <string name="artist_avatar">歌手头像</string>
+    <string name="artist_discography_count">作品年表（%1$d 张专辑）</string>
+    <string name="artist_songs_count">曲目（%1$d 首）</string>
+    <string name="artist_album_song_count"> · %1$d 首</string>
+
+    <!-- 歌单页 -->
+    <string name="playlists_my_playlists">我的歌单</string>
+    <string name="smart_playlists">智能播放列表</string>
+    <string name="smart_recent">最近播放</string>
+    <string name="smart_most">最常播放</string>
+    <string name="smart_random">随机播放</string>
+    <string name="playlist_global_search">全局搜索</string>
+    <string name="playlist_create">新建</string>
+    <string name="playlist_menu_play">播放当前歌单</string>
+    <string name="playlist_menu_rename">重命名歌单</string>
+    <string name="playlist_menu_delete">删除歌单</string>
+    <string name="playlist_create_title">新建播放列表</string>
+    <string name="playlist_rename_title">重命名播放列表</string>
+    <string name="playlist_delete_title">删除播放列表</string>
+    <string name="playlist_delete_confirm">确定删除「%1$s」？此操作不可撤销。</string>
+    <string name="playlist_name_label">播放列表名称</string>
+    <string name="smart_no_data">暂无数据</string>
+
+    <!-- 播放页 -->
+    <string name="nowplaying_not_playing">未在播放</string>
+    <string name="action_timer">定时</string>
+    <string name="song_file_info">文件信息</string>
+    <string name="lock_screen_effect">锁屏动态效果</string>
+    <string name="song_release_year">发行年份：%1$d</string>
+    <string name="lyrics_loading">歌词加载中…</string>
+    <string name="lyrics_none">暂无歌词</string>
+    <string name="lyrics_not_found">未找到歌词</string>
+    <string name="lyrics_fetch_failed">歌词获取失败</string>
+    <string name="lyrics_search_no_match">未找到匹配歌词，可尝试调整搜索词</string>
+    <string name="lyrics_source">歌词来源：%1$s</string>
+    <string name="lyrics_refresh">重新获取歌词</string>
+    <string name="lyrics_translation">译文</string>
+    <string name="lyrics_original">原词</string>
+    <string name="desktop_lyrics">桌面歌词</string>
+    <string name="desktop_lyrics_close">关闭桌面</string>
+    <string name="lyrics_adjust">歌词校正</string>
+    <string name="online_match">在线匹配</string>
+    <string name="search_lyrics">查找歌词</string>
+    <!-- 曲库搜索 -->
+    <string name="search_placeholder">搜索歌曲、专辑、艺术家</string>
+    <string name="search_recent">最近搜索</string>
+    <string name="search_field_all">全部</string>
+    <string name="search_source_all">全部来源</string>
+    <string name="search_source_local">本地</string>
+    <string name="search_source_network">网络</string>
+    <string name="search_duration_all">全部时长</string>
+    <string name="search_duration_short">3 分钟以内</string>
+    <string name="search_duration_long">3 分钟以上</string>
+    <string name="action_clear">清空</string>
+    <string name="action_play_now">立即播放</string>
+    <string name="repeat_off">循环关闭</string>
+    <string name="repeat_all">全部循环</string>
+    <string name="repeat_one">单曲循环</string>
+    <string name="shuffle_on">随机开启</string>
+    <string name="shuffle_off">随机关闭</string>
+    <string name="action_previous">上一首</string>
+    <string name="action_play_pause">播放/暂停</string>
+    <string name="action_next">下一首</string>
+    <string name="sleep_timer">睡眠定时</string>
+    <string name="sleep_remaining">剩余 %1$d 分 %2$d 秒后停止</string>
+    <string name="minutes_text">%1$d 分</string>
+    <string name="alarm_play">定时播放</string>
+    <string name="alarm_enable">启用闹钟</string>
+    <string name="lyrics_modify">修改歌词</string>
+    <string name="lyrics_search_label">搜索词（标题 歌手）</string>
+    <string name="lyrics_candidates">共 %1$d 条候选，点击应用：</string>
+    <string name="lyrics_candidate_item">%1$s · %2$s（%3$s）</string>
+    <string name="unknown_short">未知</string>
+
+    <!-- 更多分类入头 -->
+    <string name="more_title">更多</string>
+    <string name="more_interface">界面设置</string>
+    <string name="more_interface_summary">主题、配色、显示模式与列表外观</string>
+    <string name="more_library">音乐库设置</string>
+    <string name="more_library_summary">扫描、缓存、文件夹、歌单管理</string>
+    <string name="more_playback">回放设置</string>
+    <string name="more_playback_summary">启动续播、循环、无缝、耳机控制</string>
+    <string name="more_sources">音乐来源设置</string>
+    <string name="more_sources_summary">音乐库来源、网络源、ZeroTier</string>
+    <string name="more_metadata">元数据设置</string>
+    <string name="more_metadata_summary">内嵌/在线歌词、元数据获取</string>
+    <string name="more_equalizer">均衡器</string>
+    <string name="more_equalizer_summary">10 段图形均衡器与预设</string>
+    <string name="more_sound">声音引擎设置</string>
+    <string name="more_sound_summary">输出路由、缓冲、音量、音频处理</string>
+    <string name="more_stats">播放统计</string>
+    <string name="more_stats_summary">总播放概览与最常播放 Top 10</string>
+    <!-- 播放统计 -->
+    <string name="stats_title">播放统计</string>
+    <string name="stats_total_songs">曲库曲目</string>
+    <string name="stats_total_plays">累计播放</string>
+    <string name="stats_played_songs">播放过</string>
+    <string name="stats_top10">最常播放 TOP 10</string>
+    <string name="stats_no_record">暂无播放记录，去播放几首吧</string>
+    <string name="stats_no_recent">暂无最近播放</string>
+    <string name="stats_count_wan">%.1f 万</string>
+    <!-- 网络来源管理 -->
+    <string name="network_title">音乐库来源管理</string>
+    <string name="network_add">添加来源</string>
+    <string name="network_empty">暂无网络来源。点击「添加来源」添加 SMB、WebDAV 或 HTTP 直链，扫描后即可在曲库中播放。</string>
+    <string name="network_scanning_suffix">（扫描中…）</string>
+    <string name="network_disabled_suffix">（已禁用）</string>
+    <string name="network_progress_update">已更新 %1$d 首，已新增 %2$d 首</string>
+    <string name="network_progress_added">已新增 %1$d 首</string>
+    <string name="network_type_http">HTTP 直链</string>
+    <string name="network_type_folder">文件夹</string>
+    <string name="network_delete_title">删除网络来源</string>
+    <string name="network_delete_body">确定删除「%1$s」吗？\n\n将同时：\n① 删除本机保存的该源的连接信息；\n② 删除本机曲库中该源的音乐文件条目及其元数据。\n\n若同一音乐在多个源存在，仅删除该源的条目，其它源保留；仅当某音乐只有这一个来源时，才会连同其元数据和整个条目一并删除。</string>
+    <string name="network_scan_title">扫描「%1$s」</string>
+    <string name="network_scan_choose">请选择本次扫描方式：</string>
+    <string name="network_scan_newonly">只扫描新增内容</string>
+    <string name="network_scan_full">全部扫描并更新已有内容</string>
+    <string name="network_perm_title">需要「所有文件访问」权限</string>
+    <string name="network_perm_body">本机文件夹来源通过绝对路径扫描本机音乐，需要「所有文件访问」权限。请前往系统设置授予，否则该文件夹将无法扫描。</string>
+    <string name="network_go_grant">去授权</string>
+    <string name="network_later">暂不</string>
+    <string name="network_save_edit">保存修改</string>
+    <string name="network_add_title">添加来源</string>
+    <string name="network_edit_src">修改来源</string>
+    <string name="network_name">名称（可选）</string>
+    <string name="network_url_hint_smb">地址，如 smb://192.168.1.10/Music</string>
+    <string name="network_url_hint_webdav">地址，如 https://dav.example.com/dav</string>
+    <string name="network_url_hint_http">播放列表/索引地址，如 https://example.com/playlist.m3u</string>
+    <string name="network_url_hint_local">文件夹路径，如 /storage/emulated/0/Music</string>
+    <string name="network_browse_lan">浏览局域网</string>
+    <string name="network_browse_folder">浏览文件夹</string>
+    <string name="network_user">用户名（可选）</string>
+    <string name="network_pass">密码</string>
+    <string name="network_pass_edit">密码（留空则不修改）</string>
+    <string name="network_note_local">本机文件夹直接扫描文件系统，无需账号密码；需已授予「所有文件访问」权限。</string>
+    <string name="network_note_http">HTTP 直链无需账号密码；扫描将抓取该地址并导入其中的音频链接。</string>
+    <string name="network_smb_title">浏览局域网主机 / 共享</string>
+    <string name="network_smb_manual_host">自动发现无结果时，输入主机 IP</string>
+    <string name="network_use_dir">使用此目录</string>
+    <string name="action_edit">修改</string>
+    <string name="action_open">打开</string>
+    <string name="action_up">上一级</string>
+    <string name="action_browse">浏览</string>
+    <string name="action_scanning">扫描中</string>
+    <string name="network_sync">同步</string>
+    <string name="network_type_smb">SMB</string>
+    <string name="network_type_webdav">WebDAV</string>
+    <string name="network_browse_failed">浏览失败：%1$s</string>
+    <string name="network_scanning_full">正在全量更新「%1$s」…</string>
+    <string name="network_scanning_sync">正在同步「%1$s」…</string>
+    <string name="network_scan_done_full">全量更新「%1$s」完成</string>
+    <string name="network_scan_done_sync">同步「%1$s」完成</string>
+    <string name="network_scan_result_update">%1$s：已更新 %2$d 首，已新增 %3$d 首</string>
+    <string name="network_scan_result_added">%1$s：新增 %2$d 首</string>
+    <string name="network_scan_result_errors">%1$s，但有 %2$d 个来源错误。\n%3$s</string>
+    <string name="network_scan_failed">扫描「%1$s」失败：%2$s</string>
+    <string name="more_integration">系统集成</string>
+    <string name="more_integration_summary">默认播放器、外部打开、播放队列</string>
+    <string name="more_export">导出数据</string>
+    <string name="more_export_summary">导出设置、曲库与歌单（可选密码）</string>
+    <string name="more_import">导入数据</string>
+    <string name="more_import_summary">从备份文件恢复设置、曲库与歌单</string>
+    <string name="more_about">关于</string>
+    <string name="more_about_summary">版本信息与开源许可</string>
+
+    <!-- 设置子屏：通用 -->
+    <string name="action_execute">执行</string>
+    <string name="action_move_up">上移</string>
+    <string name="action_move_down">下移</string>
+    <string name="action_authorize">授权</string>
+    <string name="action_seconds">%1$d 秒</string>
+
+        <!-- 通用控件：导航 Tab -->
+        <string name="nav_library">曲库</string>
+        <string name="nav_playlists">歌单</string>
+        <string name="nav_queue">队列</string>
+        <string name="nav_more">更多</string>
+        <string name="nav_play_toggle">播放/切换</string>
+
+        <!-- 通用控件：曲库 Tab -->
+        <string name="tab_songs">歌曲</string>
+        <string name="tab_folders">文件夹</string>
+        <string name="tab_albums">专辑</string>
+        <string name="tab_artists">艺术家</string>
+
+        <!-- 通用控件：按钮 -->
+        <string name="action_save">保存</string>
+        <string name="action_create_add">新建并添加</string>
+        <string name="action_global_search">全局搜索</string>
+        <string name="action_add_source">添加源</string>
+        <string name="action_searching">搜索中…</string>
+        <string name="label_title">标题</string>
+        <string name="label_artist">艺术家</string>
+        <string name="label_album">专辑</string>
+        <string name="label_song_name">歌名</string>
+        <string name="label_artist_optional">歌手（可空）</string>
+
+        <!-- 通用控件：无障碍描述 -->
+        <string name="content_back">返回</string>
+        <string name="content_cover">封面</string>
+        <string name="content_album_cover">专辑封面</string>
+
+        <!-- 通用控件：歌曲操作菜单 -->
+        <string name="song_play_next">下一首播放</string>
+        <string name="song_play_later">稍后播放</string>
+        <string name="song_add_playlist">加入播放列表</string>
+        <string name="song_edit_metadata">编辑元数据</string>
+        <string name="song_online_match">在线查找元数据</string>
+        <string name="song_view_file_info">查看文件信息</string>
+        <string name="song_view_album">查看专辑</string>
+        <string name="song_view_artist">查看艺术家</string>
+        <string name="song_remove_from_playlist">从歌单移除</string>
+        <string name="song_delete_from_library">从曲库删除</string>
+
+        <!-- 通用控件：歌曲操作对话框 -->
+        <string name="playlist_picker_empty">暂无播放列表</string>
+<string name="add_to_playlist_count">将 %1$d 首曲目加入播放列表</string>
+        <string name="playlist_new_name_label">新建播放列表名称</string>
+        <string name="edit_info_title">编辑歌曲信息</string>
+        <string name="online_match_title">在线匹配元数据</string>
+        <string name="online_match_hint">输入歌名/歌手后点击「搜索」</string>
+        <string name="file_info_title">文件信息</string>
+        <string name="file_info_song_name">歌曲名</string>
+        <string name="file_info_genre">歌曲风格</string>
+        <string name="file_info_type">歌曲类型</string>
+        <string name="file_info_release_year">发行年份</string>
+        <string name="file_info_duration">时长</string>
+        <string name="file_info_samplerate">采样率</string>
+        <string name="file_info_source">来源</string>
+        <string name="file_info_filename">文件名</string>
+        <string name="file_info_alt_sources">备用来源（%1$d 个）</string>
+<string name="file_source_prefix">来源：%1$s</string>
+<string name="file_uri_prefix">URI：%1$s</string>
+<string name="file_name_prefix">文件名：%1$s</string>
+<string name="online_match_row">%1$s · %2$s%3$s · %4$s</string>
+<string name="file_name_with_size">%1$s（%2$s）</string>
+
+        <!-- 通用控件：来源类型 -->
+        <string name="type_http">HTTP 直链</string>
+        <string name="type_folder">文件夹</string>
+
+        <!-- 通用控件：队列 -->
+        <string name="queue_title">播放队列</string>
+        <string name="queue_total">共 %1$d 首</string>
+        <string name="action_clear_queue">清空队列</string>
+        <string name="action_drag_sort">拖拽排序</string>
+        <string name="clear_queue_confirm">确定要清空整个播放队列（%1$d 首）吗？此操作不可撤销。</string>
+
+        <!-- 通用控件：曲库选择栏 -->
+        <string name="delete_songs_title">删除曲目</string>
+        <string name="delete_songs_confirm">确定从曲库删除选中的 %1$d 首曲目？</string>
+        <string name="selected_count_songs">已选 %1$d 首</string>
+        <string name="selected_count_albums">已选 %1$d 张</string>
+        <string name="selected_count_artist">已选 %1$d 位</string>
+        <string name="sort_by_name">名称</string>
+        <string name="sort_by_year">年代</string>
+        <string name="sort_by_artist">艺术家</string>
+
+        <!-- 通用控件：Toast -->
+        <string name="toast_cannot_access_file">无法访问该本地音频文件</string>
+        <string name="toast_no_permission_audio">无权限访问该音频</string>
+        <string name="toast_unsupported_source">不支持的音频来源</string>
+        <string name="external_audio">外部音频</string>
+    <string name="theme_zaicai">玄素映彩</string>
+    <string name="set_theme_follow_system">跟随系统</string>
+    <string name="set_theme_light">浅色</string>
+    <string name="set_theme_dark">深色</string>
+    <string name="set_display_auto">自动</string>
+    <string name="set_display_portrait">竖屏</string>
+    <string name="set_display_landscape">横屏</string>
+    <string name="set_language_zh">简体中文</string>
+    <string name="set_language_en">English</string>
+    <string name="set_density_compact">紧凑</string>
+    <string name="set_density_standard">标准</string>
+    <string name="set_density_relaxed">宽松</string>
+    <string name="set_out_auto">自动</string>
+    <string name="set_out_speaker">扬声器</string>
+    <string name="set_out_bt">蓝牙</string>
+    <string name="set_out_wired">有线耳机</string>
+    <string name="set_replaygain_off">禁用</string>
+    <string name="set_replaygain_track">按曲目</string>
+    <string name="set_replaygain_album">按专辑</string>
+    <string name="set_replaygain_smart">智能</string>
+    <string name="set_curve_log">对数</string>
+    <string name="set_curve_loudness">响度补偿</string>
+    <string name="set_startup_none">无操作</string>
+    <string name="set_startup_play">继续播放</string>
+    <string name="set_startup_resume">恢复上次</string>
+    <string name="set_repeat_off">顺序</string>
+    <string name="set_repeat_all">列表循环</string>
+    <string name="set_repeat_one">单曲循环</string>
+
+    <!-- 设置子屏：界面 -->
+    <string name="set_interface">界面设置</string>
+    <string name="set_sec_theme">主题风格</string>
+    <string name="set_sec_light_dark">明暗模式</string>
+    <string name="set_follow_system_hint">「跟随系统」配合系统的浅色/深色模式。</string>
+    <string name="set_sec_accent">强调色</string>
+    <string name="set_accent_dynamic">动态取色（Material You）</string>
+    <string name="set_accent_dynamic_summary">Android 12+ 跟随系统壁纸自动生成主题色（仅玄素映彩风格生效）</string>
+    <string name="set_theme_active_hint">已启用整套「%1$s」风格，明暗与强调色仅在「玄素映彩」下生效。</string>
+    <string name="set_sec_display_mode">显示模式</string>
+    <string name="set_display_mode_hint">「自动」随手机旋转切换竖/横 UI；「竖屏/横屏」固定屏幕方向。</string>
+    <string name="set_sec_screen">防息屏</string>
+    <string name="set_keep_screen_on">前台保持屏幕常亮</string>
+    <string name="set_keep_screen_on_summary">播放器在前台显示时屏幕不自动息屏</string>
+    <string name="set_sec_auto_hide">全屏自动隐藏</string>
+    <string name="set_auto_hide_controls">全屏页自动隐藏控件</string>
+    <string name="set_auto_hide_controls_summary">音乐/收音机正在播放页无操作后自动隐藏控制按钮</string>
+    <string name="set_auto_hide_hint">无操作达到选定时长后隐藏控制按钮，点击屏幕任意处恢复。</string>
+    <string name="set_sec_car_bt">车载蓝牙</string>
+    <string name="set_car_bt_lyrics">车载蓝牙歌词</string>
+    <string name="set_car_bt_lyrics_summary">车载设备屏幕同步显示当前歌词</string>
+    <string name="set_sec_language">语言</string>
+    <string name="set_sec_cover_list">封面与列表外观</string>
+    <string name="set_show_embed_art">显示内嵌封面</string>
+    <string name="set_show_embed_art_summary">曲库与播放页显示内嵌专辑封面</string>
+    <string name="set_list_show_art">列表封面缩略图</string>
+    <string name="set_list_show_art_summary">列表项显示小封面</string>
+    <string name="set_list_two_line">双行显示</string>
+    <string name="set_list_two_line_summary">列表项显示「标题 + 艺术家」</string>
+    <string name="set_sec_notify_system">通知与系统</string>
+    <string name="set_notify_enabled">播放通知</string>
+    <string name="set_notify_enabled_summary">显示前台播放通知（媒体播放服务需要）</string>
+    <string name="set_lockscreen_control">锁屏媒体控制</string>
+    <string name="set_lockscreen_control_summary">锁屏界面显示媒体控制</string>
+    <string name="set_mini_bar">迷你播放条</string>
+    <string name="set_mini_bar_summary">底部显示迷你播放条</string>
+    <string name="set_sec_audio_focus">音频焦点</string>
+    <string name="set_focus_loss_autoskip">被抢占时自动跳下一曲</string>
+    <string name="set_focus_loss_autoskip_summary">系统永久占用音频焦点（如来电/其它播放器）时自动跳到下一曲；关闭则暂停后保留当前曲</string>
+    <string name="set_changes_immediate">更改即时生效。</string>
+
+    <!-- 设置子屏：音乐库 -->
+    <string name="set_library">音乐库设置</string>
+    <string name="set_sec_browse_playlist">浏览与歌单</string>
+    <string name="set_playlist_autosave">退出时自动保存</string>
+    <string name="set_playlist_autosave_summary">关闭时持久化全部歌单与当前队列</string>
+    <string name="set_sec_scan">扫描</string>
+    <string name="set_watch_folders">实时监控文件夹变化</string>
+    <string name="set_watch_folders_summary">监听本机媒体变更并增量更新曲库</string>
+    <string name="set_scan_hidden">扫描隐藏文件</string>
+    <string name="set_scan_hidden_summary">包含以点开头的文件/目录</string>
+    <string name="set_hide_short_clips">隐藏短音频</string>
+    <string name="set_hide_short_clips_summary">过滤短于 30 秒的片段（如铃声）</string>
+    <string name="set_sec_scan_types">扫描文件类型</string>
+    <string name="set_sec_maintenance">维护</string>
+    <string name="set_maintenance_cache_cleared">已清空歌词与封面缓存</string>
+    <string name="set_maintenance_old_cache_cleared">已清理 7 天前的过期缓存</string>
+    <string name="set_maintenance_stale_cleared">已清理 %1$d 首失效曲目</string>
+    <string name="set_action_prune_stale">清理失效曲目</string>
+    <string name="set_action_prune_stale_summary">删除本地文件已不存在的曲目</string>
+    <string name="set_nav_duplicates">重复曲目清理</string>
+    <string name="set_nav_duplicates_summary">一键找出重复曲目并按需合并</string>
+
+    <!-- 设置子屏：回放 -->
+    <string name="set_playback">回放设置</string>
+    <string name="set_sec_startup">启动</string>
+    <string name="set_auto_resume">自动续播</string>
+    <string name="set_auto_resume_summary">打开应用时继续上次的播放</string>
+    <string name="set_remember_position">记忆播放位置</string>
+    <string name="set_remember_position_summary">关闭前保存进度以便续播</string>
+    <string name="set_sec_play_mode">播放模式</string>
+    <string name="set_gapless">无缝播放</string>
+    <string name="set_gapless_summary">曲目之间无间隙切换</string>
+    <string name="set_skip_on_error">解码失败跳下一首</string>
+    <string name="set_skip_on_error_summary">出错时自动跳到下一首</string>
+    <string name="set_sec_hw_timer">硬件与定时</string>
+    <string name="set_headset_pause">耳机断开时暂停</string>
+    <string name="set_headset_pause_summary">拔下耳机/蓝牙音频时自动暂停</string>
+    <string name="set_sec_headset_focus">耳机与音频焦点</string>
+    <string name="set_headset_button_control">耳机按键控制</string>
+    <string name="set_headset_button_control_summary">用有线/蓝牙耳机按键控制播放与切歌</string>
+    <string name="set_bt_disconnect_pause">蓝牙断开时暂停</string>
+    <string name="set_bt_disconnect_pause_summary">蓝牙耳机断开连接时自动暂停播放</string>
+    <string name="set_bt_reconnect_resume">蓝牙重连时恢复</string>
+    <string name="set_bt_reconnect_resume_summary">蓝牙耳机重新连接时自动恢复播放</string>
+    <string name="set_play_requires_focus">仅持音频焦点播放</string>
+    <string name="set_play_requires_focus_summary">获取系统音频焦点才允许播放，切走时自动暂停</string>
+
+    <!-- 设置子屏：音乐来源 -->
+    <string name="set_sources">音乐来源设置</string>
+    <string name="set_sec_source_mgmt">来源管理</string>
+    <string name="set_nav_source_mgmt">音乐库来源管理</string>
+    <string name="set_nav_source_mgmt_summary">添加本地 / SMB / WebDAV 来源并扫描</string>
+    <string name="set_nav_zerotier">ZeroTier 虚拟网络</string>
+    <string name="set_nav_zerotier_summary">加入虚拟网络访问局域网外音源</string>
+    <string name="set_sources_hint">音乐来源统一在此分为本地存储与网络源；网络源（SMB/WebDAV）与 ZeroTier 虚拟接入在此集中管理。</string>
+
+    <!-- 设置子屏：元数据 -->
+    <string name="set_metadata">元数据设置</string>
+    <string name="set_sec_lyrics">歌词</string>
+    <string name="set_read_embed_lyrics">读取内嵌歌词</string>
+    <string name="set_read_embed_lyrics_summary">优先读取音频标签中的歌词</string>
+    <string name="set_online_lyrics">在线歌词</string>
+    <string name="set_online_lyrics_summary">播放页显示来自在线数据源的滚动歌词</string>
+    <string name="set_sec_meta_fetch">元数据获取</string>
+    <string name="set_online_metadata">在线元数据</string>
+    <string name="set_online_metadata_summary">获取专辑封面 / 歌手头像与简介</string>
+    <string name="set_nav_metadata_sources">元数据来源</string>
+    <string name="set_nav_metadata_sources_summary">选择在线歌词/元数据获取源并设置优先级</string>
+    <string name="set_data_saver">流量保护</string>
+    <string name="set_data_saver_summary">连接移动网络时不联网获取元数据/歌词，仅 WiFi 下自动同步</string>
+    <string name="set_metadata_hint">在线歌词与元数据优先使用歌曲已抓取的内嵌标签；缺失部分联网补充。</string>
+    <string name="set_metadata_sources">元数据来源</string>
+    <string name="set_metadata_sources_hint">点击开关仅启用/禁用对应源，不改变排列顺序；播放器按下方顺序从上到下获取并跳过关闭的源。如需调整优先级请使用每个源的 ▲/▼ 按钮。</string>
+    <string name="set_source_disabled">（关）</string>
+    <string name="set_reset_sources">恢复默认（网易云 / QQ / 酷我 三源及官方排列顺序）</string>
+    <string name="set_metadata_sources_hint2">默认仅启用 网易云 / QQ / 酷我 三个中文源，其余源关闭以节省流量与请求；可按需点击开关启用，并用 ▲/▼ 调整排列顺序。</string>
+    <string name="set_auto_sync_metadata">自动同步音乐元数据</string>
+    <string name="set_sync_running">运行中</string>
+    <string name="set_sync_idle">待机（每 %1$d 分钟自动同步）</string>
+    <string name="set_auto_sync_summary">自动读取本地音频标签 / 在线补充缺失的歌曲信息；每轮最多匹配 %1$d 首（独立线程，不影响播放）</string>
+    <string name="set_manual_sync_metadata">批量同步元数据</string>
+    <string name="set_manual_sync_summary">手动批量更新全库（任意来源）曲目缺失的元数据；多线程并发多源采集，全程限速不打挂在线服务器。</string>
+    <string name="set_stop_sync">停止同步</string>
+    <string name="set_start">开始</string>
+    <string name="set_manual_progress">正在同步，已同步%1$d首，剩余%2$d首</string>
+    <string name="set_manual_scanning">正在扫描缺失曲目…</string>
+    <string name="set_manual_confirm_title">开启批量同步元数据？</string>
+    <string name="set_manual_confirm_body">启用后将在同步期间暂停后台自动同步与播放时自动匹配歌词，且会有较密集的网络请求，可能影响歌曲的正常播放。建议在空闲、不播放歌曲时进行此操作。</string>
+    <string name="set_start_sync">开始同步</string>
+    <string name="set_battery_keepalive">后台同步保活</string>
+    <string name="set_battery_config_on">已开启：后台也能持续同步元数据，不易被系统终止</string>
+    <string name="set_battery_config_off">未开启：后台同步可能被系统终止，建议授权</string>
+    <string name="set_battery_authorized">已授权</string>
+    <string name="set_cap_lyric">歌词</string>
+    <string name="set_cap_cover">封面</string>
+    <string name="set_cap_year">年份</string>
+    <string name="set_cap_artist">歌手信息</string>
+    <string name="set_cap_fallback">仅作兜底</string>
+    <string name="set_cap_support">支持：%1$s</string>
+    <string name="set_phase_native">原生（ExoPlayer 内置）</string>
+    <string name="set_phase_p0">P0 系统直通</string>
+    <string name="set_phase_p2a">P2A libffmpeg_all 解码</string>
+    <string name="set_pending_delivery">待 %1$s 交付</string>
+    <string name="set_scan_no_limit">当前未勾选限制，扫描全部已交付格式。勾选任一格式后将仅扫描勾选集合。</string>
+    <string name="set_scan_limited">已限制扫描为勾选的 %1$d 个格式。取消全部勾选恢复扫描全部。</string>
+
+    <!-- 设置子屏：声音引擎 -->
+    <string name="set_sound">声音引擎设置</string>
+    <string name="set_sec_output">输出</string>
+    <string name="set_low_latency">低延迟音频</string>
+    <string name="set_low_latency_summary">使用 AAudio 低延迟路径</string>
+    <string name="set_audio_buffer">音频缓冲</string>
+    <string name="set_sec_precision">处理精度</string>
+    <string name="set_float32">32 位浮点处理</string>
+    <string name="set_float32_summary">音频链上使用 float PCM 处理</string>
+    <string name="set_sec_volume">音量</string>
+    <string name="set_volume_normalize">音量归一化</string>
+    <string name="set_volume_normalize_summary">按峰值归一化音量</string>
+    <string name="set_sec_mix">混音</string>
+    <string name="set_fade_in_out">淡入淡出</string>
+    <string name="set_silence_remover">静音消除</string>
+    <string name="set_silence_remover_summary">自动跳过首尾静音段</string>
+    <string name="set_sound_core_hint">播放内核基于 AndroidX Media3 ExoPlayer；高规格无损与扩展格式经 media3-exoplayer-ffmpeg 解码。</string>
+
+    <!-- 设置子屏：系统集成 -->
+    <string name="set_integration">系统集成</string>
+    <string name="set_sec_system_default">系统默认</string>
+    <string name="set_default_player">设为默认播放器</string>
+    <string name="set_default_player_summary">请求系统「音乐与音频」默认角色（Android 9+）</string>
+    <string name="set_accept_external">接收外部打开</string>
+    <string name="set_accept_external_summary">从文件管理器/其他 App 打开音频直接播放</string>
+    <string name="set_integration_hint">本播放器已在系统「默认应用 / 打开方式」中注册音频类型，可从文件管理器或其它应用直接「用本播放器打开」音频。</string>
+    <string name="set_return">返回</string>
+    <!-- 收音机：对话框 -->
+    <string name="radio_edit_station">修改电台</string>
+    <string name="radio_name_label">名称</string>
+    <string name="radio_lines_multi_hint">线路（可添加多条）</string>
+    <string name="radio_line_label">线路 %1$d</string>
+    <string name="radio_line_item">线路%1$d</string>
+    <string name="radio_remove_line">移除线路</string>
+    <string name="radio_add_line">+ 添加线路</string>
+    <string name="radio_category">分类</string>
+    <string name="radio_region">地区</string>
+    <string name="radio_province">省份</string>
+    <string name="radio_select_province">请选择省份</string>
+    <string name="radio_city">城市</string>
+    <string name="radio_select_city">请选择城市</string>
+    <string name="radio_sub_region">子类地区</string>
+    <string name="radio_select_sub_region">请选择子类地区</string>
+    <string name="radio_country">所属国家</string>
+    <string name="radio_country_placeholder">例如：葡萄牙、日本、美国</string>
+    <!-- 收音机：状态/播放条 -->
+    <string name="radio_now_playing">正在播放</string>
+    <string name="radio_unknown_station">未知电台</string>
+    <string name="radio_buffering">缓冲中…</string>
+    <string name="radio_fallback_subtitle">FM Radio</string>
+    <!-- 收音机：移动网络提示/底部导航 -->
+    <string name="radio_mobile_data_title">移动网络提示</string>
+    <string name="radio_mobile_data_text">当前处于移动数据网络，且「仅 WiFi 播放电台」设置已开启。是否允许在移动网络下收听该电台？允许后将自动关闭「仅 WiFi」开关。</string>
+    <string name="action_allow">允许</string>
+    <string name="radio_tab_list">列表</string>
+    <string name="radio_tab_favorites">收藏</string>
+    <!-- 收音机：搜索 -->
+    <string name="radio_search_title">搜索电台</string>
+    <string name="radio_list_title">电台列表 · %1$d 台</string>
+    <string name="radio_import">导入</string>
+    <string name="radio_settings">设置</string>
+    <string name="radio_genre_label">分类</string>
+    <string name="radio_selected_count">已选 %1$d</string>
+    <string name="radio_clear_selection">✕ 清除</string>
+    <string name="radio_search_placeholder">搜索电台名称…</string>
+    <string name="radio_search_meta">%1$s · %2$s kbps · %3$d 票</string>
+    <string name="radio_play">播放</string>
+    <string name="radio_favorite">收藏</string>
+    <string name="radio_favorited">已收藏</string>
+    <!-- 收音机：收藏页 -->
+    <string name="radio_import_pick_title">选择导入方式</string>
+    <string name="radio_import_from_file">从文件导入</string>
+    <string name="radio_import_format_hint">支持 M3U / PLS / TXT 格式</string>
+    <string name="radio_import_manual_url">手动输入 URL</string>
+    <string name="radio_import_manual_hint">输入电台名称和流地址</string>
+    <string name="radio_import_list_title">文件导入 · %1$d 个电台</string>
+    <string name="radio_import_parse_empty">文件解析成功但未识别到任何电台条目</string>
+    <string name="radio_import_parse_fail">文件解析失败：%1$s</string>
+    <string name="radio_import_added">已添加：%1$s</string>
+    <string name="radio_import_all_done">所有电台已添加完成</string>
+    <string name="radio_import_parsed_count">共 %1$d 个电台，可逐个添加或批量添加</string>
+    <string name="radio_import_title">导入电台</string>
+    <string name="radio_import_success">成功导入 %1$d 个电台</string>
+    <string name="radio_import_fail_empty">导入失败或文件为空</string>
+    <string name="radio_export_success">导出成功，请查看下载目录</string>
+    <string name="radio_favorites_title">电台收藏 · %1$d 台</string>
+    <string name="radio_export_opml">导出 OPML</string>
+    <string name="radio_import_opml">导入 OPML</string>
+    <string name="radio_fav_empty_title">还没有收藏电台</string>
+    <string name="radio_fav_empty_hint">去电台列表添加喜欢的电台吧</string>
+    <string name="radio_lines_count">%1$d 个线路</string>
+    <string name="radio_line_count_short">%1$d 线路</string>
+    <string name="radio_view_info">查看电台信息</string>
+    <string name="radio_unfavorite">取消收藏</string>
+    <string name="radio_edit">修改</string>
+    <string name="radio_station_info">电台信息</string>
+    <string name="radio_uncategorized">未分类</string>
+    <string name="radio_yes">是</string>
+    <string name="radio_no">否</string>
+    <string name="radio_recent">最近收听</string>
+    <string name="radio_no_match">没有找到匹配的电台</string>
+    <string name="radio_add_favorite">加入收藏</string>
+    <string name="radio_add_all">全部添加</string>
+    <string name="radio_add_station">添加此电台</string>
+    <string name="radio_placeholder_province">省份（可选）</string>
+    <string name="radio_placeholder_city">城市（可选）</string>
+    <string name="radio_collapse">收起</string>
+    <string name="radio_expand">展开</string>
+    <string name="radio_count_station">%1$d 台</string>
+    <string name="radio_line_total_label">线路数</string>
+    <string name="radio_source">来源</string>
+    <string name="radio_delete_station_title">删除电台</string>
+    <string name="radio_delete_station_confirm">确定要删除「%1$s」吗？此操作不可恢复。</string>
+    <string name="radio_delete_station_confirm_multi">确定要删除「%1$s」（共 %2$d 个线路）吗？此操作不可恢复。</string>
+    <string name="radio_delete_station_suffix">（共 %1$d 个线路）</string>
+
+    <!-- 关于页 -->
+    <string name="about_version_build">版本 %1$s · 构建 %2$d</string>
+    <string name="about_view_changelog">查看版本更新内容</string>
+    <string name="about_third_party_title">第三方依赖库</string>
+    <string name="about_third_party_desc">播放器当前使用的第三方依赖（与构建配置对齐）。详见各库官方许可证。</string>
+    <string name="about_purpose_prefix">用途: %1$s</string>
+    <string name="about_license_prefix">许可证: %1$s</string>
+    <string name="about_oss_title">开源库许可声明</string>
+    <string name="about_oss_desc">本应用使用了以下开源库。LGPL 库按实际链接方式遵循合规（动态可替换 / 静态可再链接），完整声明见文末。</string>
+    <string name="about_source_prefix">源码: %1$s</string>
+    <string name="about_lgpl_dynamic">⚠ LGPL — 动态链接，可替换库文件。</string>
+    <string name="about_lgpl_static">⚠ LGPL — 静态链接，可再链接替换（见文末完整合规声明）。</string>
+    <string name="about_assets_title">内置资源</string>
+    <string name="about_asset_license_path">许可证: %1$s | 路径: %2$s</string>
+    <string name="about_consistency_warn">⚠ 一致性校验警告</string>
+    <string name="about_compliance_title">完整开源合规声明</string>
+    <string name="about_changelog_title">版本更新内容</string>
+    <string name="about_changelog_empty">暂无更新记录</string>
+    <string name="about_purpose_player">播放内核 / MediaSession</string>
+    <string name="about_purpose_ui">UI</string>
+    <string name="about_purpose_coroutines">协程</string>
+    <string name="about_purpose_db">数据库</string>
+    <string name="about_purpose_settings">设置 / 续播持久化</string>
+    <string name="about_purpose_coil">专辑封面加载</string>
+    <string name="about_purpose_hilt">依赖注入</string>
+    <string name="about_purpose_nav">页面导航</string>
+    <string name="about_purpose_lifecycle">生命周期</string>
+    <string name="about_purpose_okhttp">WebDAV / HTTP 直链</string>
+    <string name="about_purpose_smb">SMB 网络源</string>
+    <string name="about_purpose_security">凭据加密</string>
+    <string name="about_purpose_documentfile">媒体库 SAF 扫描</string>
+    <string name="about_purpose_media">媒体通知</string>
+    <string name="about_purpose_ffmpeg">稀有格式解码</string>
+
+    <!-- 数据导入导出 -->
+    <string name="transfer_export_title">导出数据</string>
+    <string name="transfer_export_desc">可将系统设置（含网络和源设置、开关状态与登录凭据）、曲库歌曲条目（含元数据）与保存的歌单导出为单个数据文件。</string>
+    <string name="transfer_export_settings">系统设置</string>
+    <string name="transfer_export_settings_sub">含网络和源设置、开关状态、网络源登录凭据</string>
+    <string name="transfer_export_songs">曲库歌曲条目</string>
+    <string name="transfer_export_songs_sub">含歌曲元数据（标题/歌手/专辑/年份等）</string>
+    <string name="transfer_export_playlists">保存的歌单</string>
+    <string name="transfer_export_playlists_sub">含各歌单及其中曲目</string>
+    <string name="transfer_password_protect">密码保护</string>
+    <string name="transfer_password_protect_sub">加密导出的数据文件，导入时需输入此密码</string>
+    <string name="transfer_export_password_label">导出密码</string>
+    <string name="transfer_export_password_confirm">确认密码</string>
+    <string name="transfer_exporting">正在导出…</string>
+    <string name="transfer_export">导出</string>
+    <string name="transfer_export_password_hint">请输入导出密码</string>
+    <string name="transfer_password_mismatch">两次输入的密码不一致</string>
+    <string name="transfer_import_title">导入数据</string>
+    <string name="transfer_import_desc">可选择导出的数据文件恢复：系统设置（含网络和源设置、开关状态与登录凭据）、曲库歌曲条目（含元数据）与保存的歌单。</string>
+    <string name="transfer_import_overwrite_hint">导入将覆盖本机已有的对应数据，导入前请确认。</string>
+    <string name="transfer_import_processing">处理中…</string>
+    <string name="transfer_import_select">选择数据文件导入</string>
+    <string name="transfer_importing">正在导入，请稍候…</string>
+    <string name="transfer_confirm_title">确认导入</string>
+    <string name="transfer_confirm_continue">继续导入</string>
+    <string name="transfer_confirm_text">导入将会覆盖本机已有的相应数据，是否继续？</string>
+    <string name="transfer_import_password_dialog_title">输入密码</string>
+    <string name="transfer_import_password_dialog_text">该数据文件已启用密码保护，请输入导出时设置的密码以解密导入。</string>
+    <string name="transfer_import_password_label">导入密码</string>
+    <string name="transfer_import_password_decrypt">解密导入</string>
+    <string name="transfer_part_settings">系统设置：%1$s</string>
+    <string name="transfer_part_setting">设置 %1$d 项</string>
+    <string name="transfer_part_source">音乐源 %1$d 个（含网络和源设置）</string>
+    <string name="transfer_part_credential">登录凭据 %1$d 项</string>
+    <string name="transfer_part_songs">曲库歌曲：%1$s</string>
+    <string name="transfer_part_song">歌曲 %1$d 首</string>
+    <string name="transfer_part_album">专辑 %1$d 张</string>
+    <string name="transfer_part_artist">艺术家 %1$d 位</string>
+    <string name="transfer_part_playlist_many">保存的歌单：%1$d 个（共 %2$d 条曲目）</string>
+    <string name="transfer_part_playlist">保存的歌单：%1$d 个</string>
+    <string name="transfer_list_sep">、</string>
+    <string name="transfer_msg_export_done">导出完成</string>
+    <string name="transfer_msg_export_failed">导出失败：%1$s</string>
+    <string name="transfer_msg_import_done">导入完成</string>
+    <string name="transfer_msg_import_invalid">导入文件无效：%1$s</string>
+    <string name="transfer_msg_import_failed">导入失败：%1$s</string>
+    <string name="transfer_msg_no_data">所选文件不含可导入的数据</string>
+    <string name="transfer_msg_enter_password">请输入密码</string>
+    <string name="transfer_msg_password_error">密码错误或文件损坏：%1$s</string>
+    <string name="transfer_msg_no_file">未读取到导入文件，请重新选择</string>
+    <string name="transfer_err_need_credentials">导出数据包含网络源登录凭据，必须设置密码保护后才能导出（或取消勾选系统设置）</string>
+    <string name="transfer_err_version">数据包版本(%1$d)高于当前应用支持版本(%2$d)，请升级应用后再导入</string>
+    <string name="transfer_err_write_file">无法写入导出文件</string>
+    <string name="transfer_err_read_file">无法读取所选文件</string>
+
+    <!-- 电台设置 -->
+    <string name="radio_settings_title">电台设置</string>
+    <string name="radio_settings_sec_interface">界面设计</string>
+    <string name="radio_settings_interface_desc">主题风格、显示模式、防息屏、通知与系统、音频焦点</string>
+    <string name="radio_settings_sec_sound">声音引擎</string>
+    <string name="radio_settings_sound_desc">输出路由、低延迟、缓冲、处理精度、音量曲线、均衡器</string>
+    <string name="radio_settings_sec_playback">播放与定时</string>
+    <string name="radio_settings_sleep_enable">启用睡眠定时</string>
+    <string name="radio_settings_sleep_enable_desc">设定时间后自动停止播放</string>
+    <string name="radio_settings_sleep_duration">定时时长</string>
+    <string name="setting_minutes">%1$d 分钟</string>
+    <string name="radio_settings_alarm_enable">启用闹钟</string>
+    <string name="radio_settings_alarm_enable_desc">到点自动播放上次收听的电台</string>
+    <string name="radio_settings_alarm_time">闹钟时间</string>
+    <string name="radio_settings_alarm_pick_title">设置闹钟时间</string>
+    <string name="radio_settings_sec_connection">连接与数据</string>
+    <string name="radio_settings_auto_reconnect">启用自动重连</string>
+    <string name="radio_settings_auto_reconnect_desc">断流后自动尝试重新连接</string>
+    <string name="radio_settings_max_retries">最大重试次数</string>
+    <string name="setting_times">%1$d 次</string>
+    <string name="radio_settings_retry_delay">重试间隔</string>
+    <string name="setting_seconds">%1$d 秒</string>
+    <string name="radio_settings_wifi_only">仅 Wi-Fi 下播放</string>
+    <string name="radio_settings_wifi_only_desc">移动数据下不自动播放网络电台</string>
+    <string name="radio_settings_wifi_only_hint">提示：移动数据下打开电台时会提示您切换到 Wi-Fi。</string>
+    <string name="radio_settings_sec_display">显示与信息</string>
+    <string name="radio_settings_show_program">显示节目信息</string>
+    <string name="radio_settings_show_program_desc">在播放页和通知栏显示当前节目名称（ICY 元数据）</string>
+    <string name="radio_settings_sec_headset">耳机与蓝牙</string>
+    <string name="radio_settings_headset_pause">耳机断开时暂停</string>
+    <string name="radio_settings_headset_pause_desc">拔下有线耳机时自动暂停播放</string>
+    <string name="radio_settings_bt_disconnect">蓝牙断开时暂停</string>
+    <string name="radio_settings_bt_disconnect_desc">蓝牙耳机断开连接时自动暂停</string>
+    <string name="radio_settings_bt_reconnect">蓝牙重连时恢复</string>
+    <string name="radio_settings_bt_reconnect_desc">蓝牙耳机重新连接后自动恢复播放</string>
+    <string name="radio_settings_headset_button">耳机按键控制</string>
+    <string name="radio_settings_headset_button_desc">用有线/蓝牙耳机按键控制播放与切歌</string>
+    <string name="radio_settings_lockscreen">锁屏控制</string>
+    <string name="radio_settings_lockscreen_desc">在锁屏界面显示播放控制</string>
+    <string name="radio_settings_sec_about">关于</string>
+    <string name="radio_settings_about_text">电台数据来自 RadioBrowser 开放目录。仅供聚合播放使用，不缓存不录制。</string>
+    <string name="radio_settings_sec_output">输出</string>
+    <string name="radio_settings_output_speaker">扬声器</string>
+    <string name="radio_settings_output_bt">蓝牙</string>
+    <string name="radio_settings_output_wired">有线耳机</string>
+    <string name="radio_settings_low_latency">低延迟音频</string>
+    <string name="radio_settings_low_latency_desc">使用 AAudio 低延迟路径</string>
+    <string name="radio_settings_sec_precision">处理精度</string>
+    <string name="radio_settings_float32">32 位浮点处理</string>
+    <string name="radio_settings_float32_desc">音频链上使用 float PCM 处理</string>
+    <string name="radio_settings_vol_log">对数</string>
+    <string name="radio_settings_vol_loudness">响度补偿</string>
+    <string name="radio_settings_channel_balance">声道平衡</string>
+    <string name="radio_settings_balance_center">居中</string>
+    <string name="radio_settings_balance_left">偏左 %1$d%%</string>
+    <string name="radio_settings_balance_right">偏右 %1$d%%</string>
+    <string name="radio_settings_mix_hint">混音（淡入淡出/静音消除）和音量归一化仅在音乐模式生效。</string>
+    <string name="radio_settings_theme_style">主题风格</string>
+    <string name="radio_settings_appearance_mode">明暗模式</string>
+    <string name="radio_settings_follow_system_hint">「跟随系统」配合系统的浅色/深色模式。</string>
+    <string name="radio_settings_accent_color">强调色</string>
+    <string name="radio_settings_dynamic_color">动态取色（Material You）</string>
+    <string name="radio_settings_dynamic_color_desc">Android 12+ 跟随系统壁纸自动生成主题色（仅玄素映彩风格生效）</string>
+    <string name="radio_settings_sec_keep_screen">防息屏</string>
+    <string name="radio_settings_keep_screen_on">前台保持屏幕常亮</string>
+    <string name="radio_settings_keep_screen_on_desc">播放器在前台显示时屏幕不自动息屏</string>
+    <string name="radio_settings_immediate_effect">更改即时生效。</string>
+    <string name="theme_style_gold">鎏金玄夜</string>
+    <string name="theme_style_azure">沧溟湛澜</string>
+    <string name="theme_style_emerald">翠微森罗</string>
+    <string name="theme_style_violet">霞蔚霓紫</string>
+    <string name="theme_style_lava">熔金夕照</string>
+    <string name="theme_style_rose">绯樱凝霞</string>
+    <string name="theme_style_silver">霜月流银</string>
+    <string name="theme_style_retro">沉香遗韵</string>
+    <string name="theme_style_citrus">金乌曜曦</string>
+    <string name="theme_style_wine">绛雾醺夜</string>
+
+    <!-- 电台播放页 -->
+    <string name="radio_timer">定时</string>
+    <string name="radio_lockscreen_effect">锁屏动态效果</string>
+    <string name="radio_line_switch">线路 %1$d/%2$d · 点击切换</string>
+    <string name="radio_timer_sleep">睡眠定时</string>
+    <string name="radio_timer_cancel">取消定时</string>
+    <string name="radio_timer_remaining_min">当前定时：%1$d 分钟后关闭</string>
+    <string name="radio_timer_remaining_soon">当前定时：即将关闭</string>
+    <string-array name="radio_effect_names">
+        <item>声波 + 光晕</item>
+        <item>唱片旋转</item>
+        <item>粒子浮动</item>
+        <item>频谱条</item>
+        <item>纯光晕</item>
+    </string-array>
+
+    <!-- 均衡器 -->
+    <string name="eq_enable">启用均衡器</string>
+    <string name="eq_preset_hint">选择预设后各频段增益立即生效；拖动滑杆后进入自定义。</string>
+    <string name="eq_preset_label">预设风格：%1$s</string>
+    <string name="eq_expand_list">展开列表</string>
+    <string name="eq_selected">已选中</string>
+    <string name="eq_auto_by_genre">按流派套用预设</string>
+    <string name="eq_channel_balance">声道平衡</string>
+    <string name="eq_balance_left">左</string>
+    <string name="eq_balance_right">右</string>
+    <string name="eq_balance_center">中</string>
+    <string name="eq_balance_left_lean">偏左</string>
+    <string name="eq_balance_right_lean">偏右</string>
+    <string name="eq_band_title">图形均衡器 10 段增益</string>
+    <string name="eq_reset_default">恢复默认值</string>
+    <string name="eq_preset_flat">标准（平直）</string>
+    <string name="eq_preset_pop">流行</string>
+    <string name="eq_preset_rock">摇滚</string>
+    <string name="eq_preset_classical">古典</string>
+    <string name="eq_preset_jazz">爵士</string>
+    <string name="eq_preset_blues">蓝调</string>
+    <string name="eq_preset_hiphop">嘻哈</string>
+    <string name="eq_preset_electronic">电子</string>
+    <string name="eq_preset_dance">舞曲</string>
+    <string name="eq_preset_metal">金属</string>
+    <string name="eq_preset_reggae">雷鬼</string>
+    <string name="eq_preset_latin">拉丁</string>
+    <string name="eq_preset_acoustic">原声</string>
+    <string name="eq_preset_vocal">人声</string>
+    <string name="eq_preset_live">现场</string>
+    <string name="eq_preset_ska">斯卡</string>
+    <string name="eq_preset_softrock">轻摇滚</string>
+    <string name="eq_preset_custom">自定义</string>
+
+    <!-- 冷启动 / 外部打开 -->
+    <string name="external_open_deny_file">无法访问该本地音频文件</string>
+    <string name="external_open_deny_permission">无权限访问该音频</string>
+    <string name="external_open_deny_scheme">不支持的音频来源</string>
+    <string name="external_open_fallback_title">外部音频</string>
+    <string name="splash_updating">版本更新中…</string>
+    <string name="splash_reindex">正在重新优化曲库数据，请稍候</string>
+    <string name="splash_logo_desc">拾音 Logo</string>
+
+    <!-- 重复曲目清理 -->
+    <string name="dup_title">重复曲目清理</string>
+    <string name="dup_empty">未发现重复曲目。\n按「标题 + 歌手 + 时长（2 秒内）」判定，合并后歌单引用自动改指向保留项。</string>
+    <string name="dup_group_count">%1$d 个重复项 · 点击成员选定保留</string>
+    <string name="dup_merge_keep">合并到保留项（移除其余 %1$d 个）</string>
+    <string name="dup_keep">保留</string>
+    <string name="dup_merge_done">已合并「%1$s」，保留 1 个，移除 %2$d 个重复项</string>
+    <string name="dup_merge_failed">合并失败：%1$s</string>
+
 </resources>

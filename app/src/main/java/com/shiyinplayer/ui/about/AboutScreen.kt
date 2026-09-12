@@ -14,34 +14,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.util.AppVersion
 import com.shiyinplayer.player.decoder.OpenSourceLibraryRegistry
 import org.json.JSONObject
 
 /** 当前实际使用的第三方依赖库（与 app/build.gradle.kts 对齐），用于「关于」页开源使用情况展示。
  * 许可证与版本以对应 Maven 中央仓库 / 官方发布为准。 */
-private data class ThirdPartyLibrary(val name: String, val version: String, val license: String, val purpose: String)
+private data class ThirdPartyLibrary(val name: String, val version: String, val license: String, val purposeRes: Int)
 
 private val thirdPartyLibraries = listOf(
-    ThirdPartyLibrary("Media3 (ExoPlayer)", "1.4.1", "Apache-2.0", "播放内核 / MediaSession"),
-    ThirdPartyLibrary("Jetpack Compose (Material3)", "BOM 2024.08", "Apache-2.0", "UI"),
-    ThirdPartyLibrary("Kotlinx Coroutines", "1.8.1", "Apache-2.0", "协程"),
-    ThirdPartyLibrary("Room", "2.6.1", "Apache-2.0", "数据库"),
-    ThirdPartyLibrary("DataStore", "1.1.1", "Apache-2.0", "设置 / 续播持久化"),
-    ThirdPartyLibrary("Coil", "2.7.0", "Apache-2.0", "专辑封面加载"),
-    ThirdPartyLibrary("Hilt (Dagger)", "2.51.1", "Apache-2.0", "依赖注入"),
-    ThirdPartyLibrary("Navigation Compose", "2.7.7", "Apache-2.0", "页面导航"),
-    ThirdPartyLibrary("Lifecycle", "2.8.4", "Apache-2.0", "生命周期"),
-    ThirdPartyLibrary("OkHttp", "4.12.0", "Apache-2.0", "WebDAV / HTTP 直链"),
-    ThirdPartyLibrary("jcifs-ng", "2.1.9", "LGPL-2.1", "SMB 网络源"),
-    ThirdPartyLibrary("AndroidX Security-Crypto", "1.1.0-alpha06", "Apache-2.0", "凭据加密"),
-    ThirdPartyLibrary("AndroidX DocumentFile", "1.0.1", "Apache-2.0", "媒体库 SAF 扫描"),
-    ThirdPartyLibrary("AndroidX Media", "1.7.0", "Apache-2.0", "媒体通知"),
-    ThirdPartyLibrary("FFmpeg (软解库)", "6.1.1", "LGPL-2.1", "稀有格式解码")
+    ThirdPartyLibrary("Media3 (ExoPlayer)", "1.4.1", "Apache-2.0", R.string.about_purpose_player),
+    ThirdPartyLibrary("Jetpack Compose (Material3)", "BOM 2024.08", "Apache-2.0", R.string.about_purpose_ui),
+    ThirdPartyLibrary("Kotlinx Coroutines", "1.8.1", "Apache-2.0", R.string.about_purpose_coroutines),
+    ThirdPartyLibrary("Room", "2.6.1", "Apache-2.0", R.string.about_purpose_db),
+    ThirdPartyLibrary("DataStore", "1.1.1", "Apache-2.0", R.string.about_purpose_settings),
+    ThirdPartyLibrary("Coil", "2.7.0", "Apache-2.0", R.string.about_purpose_coil),
+    ThirdPartyLibrary("Hilt (Dagger)", "2.51.1", "Apache-2.0", R.string.about_purpose_hilt),
+    ThirdPartyLibrary("Navigation Compose", "2.7.7", "Apache-2.0", R.string.about_purpose_nav),
+    ThirdPartyLibrary("Lifecycle", "2.8.4", "Apache-2.0", R.string.about_purpose_lifecycle),
+    ThirdPartyLibrary("OkHttp", "4.12.0", "Apache-2.0", R.string.about_purpose_okhttp),
+    ThirdPartyLibrary("jcifs-ng", "2.1.9", "LGPL-2.1", R.string.about_purpose_smb),
+    ThirdPartyLibrary("AndroidX Security-Crypto", "1.1.0-alpha06", "Apache-2.0", R.string.about_purpose_security),
+    ThirdPartyLibrary("AndroidX DocumentFile", "1.0.1", "Apache-2.0", R.string.about_purpose_documentfile),
+    ThirdPartyLibrary("AndroidX Media", "1.7.0", "Apache-2.0", R.string.about_purpose_media),
+    ThirdPartyLibrary("FFmpeg (软解库)", "6.1.1", "LGPL-2.1", R.string.about_purpose_ffmpeg)
 )
 
 /** 一条版本更新记录（对应 assets/changelog.json 中的一个版本）。 */
@@ -86,19 +88,19 @@ fun AboutScreen(navController: NavController) {
     val violations = OpenSourceLibraryRegistry.validateConsistency()
     val complianceNotice = OpenSourceLibraryRegistry.complianceNoticeText()
     val appVersion = AppVersion.displayName
-    val buildInfo = "版本 ${appVersion} · 构建 ${AppVersion.code}"
+    val buildInfo = stringResource(R.string.about_version_build, appVersion, AppVersion.code)
     val changelog = rememberChangelog()
     var showNotes by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("关于") },
+                title = { Text(stringResource(R.string.more_about)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "返回"
+                            contentDescription = stringResource(R.string.action_back)
                         )
                     }
                 }
@@ -114,7 +116,7 @@ fun AboutScreen(navController: NavController) {
         ) {
             item {
                 Text(
-                    "拾音",
+                    stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineMedium
                 )
                 Spacer(Modifier.height(4.dp))
@@ -125,18 +127,18 @@ fun AboutScreen(navController: NavController) {
                 )
                 Spacer(Modifier.height(4.dp))
                 TextButton(onClick = { showNotes = true }) {
-                    Text("查看版本更新内容")
+                    Text(stringResource(R.string.about_view_changelog))
                 }
             }
 
             item {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "第三方依赖库",
+                    stringResource(R.string.about_third_party_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    "播放器当前使用的第三方依赖（与构建配置对齐）。详见各库官方许可证。",
+                    stringResource(R.string.about_third_party_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -158,8 +160,8 @@ fun AboutScreen(navController: NavController) {
                             Text("v${lib.version}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Spacer(Modifier.height(4.dp))
-                        Text("用途: ${lib.purpose}", style = MaterialTheme.typography.bodySmall)
-                        Text("许可证: ${lib.license}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.about_purpose_prefix, stringResource(lib.purposeRes)), style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.about_license_prefix, lib.license), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -167,11 +169,11 @@ fun AboutScreen(navController: NavController) {
             item {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "开源库许可声明",
+                    stringResource(R.string.about_oss_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    "本应用使用了以下开源库。LGPL 库按实际链接方式遵循合规（动态可替换 / 静态可再链接），完整声明见文末。",
+                    stringResource(R.string.about_oss_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -201,7 +203,7 @@ fun AboutScreen(navController: NavController) {
                         }
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "许可证: ${licenseDisplayName(decl.license)}",
+                            stringResource(R.string.about_license_prefix, licenseDisplayName(decl.license)),
                             style = MaterialTheme.typography.bodySmall
                         )
                         Text(
@@ -213,7 +215,7 @@ fun AboutScreen(navController: NavController) {
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "源码: ${decl.codeUrl}",
+                            stringResource(R.string.about_source_prefix, decl.codeUrl),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             maxLines = 1,
@@ -223,9 +225,9 @@ fun AboutScreen(navController: NavController) {
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 if (decl.dynamicLinkReplaceable)
-                                    "⚠ LGPL — 动态链接，可替换库文件。"
+                                    stringResource(R.string.about_lgpl_dynamic)
                                 else
-                                    "⚠ LGPL — 静态链接，可再链接替换（见文末完整合规声明）。",
+                                    stringResource(R.string.about_lgpl_static),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.error
                             )
@@ -238,7 +240,7 @@ fun AboutScreen(navController: NavController) {
                 item {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "内置资源",
+                        stringResource(R.string.about_assets_title),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -255,7 +257,7 @@ fun AboutScreen(navController: NavController) {
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(
-                                "许可证: ${licenseDisplayName(asset.license)} | 路径: ${asset.assetPath}",
+                                stringResource(R.string.about_asset_license_path, licenseDisplayName(asset.license), asset.assetPath),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -268,7 +270,7 @@ fun AboutScreen(navController: NavController) {
                 item {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "⚠ 一致性校验警告",
+                        stringResource(R.string.about_consistency_warn),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -285,7 +287,7 @@ fun AboutScreen(navController: NavController) {
             item {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "完整开源合规声明",
+                    stringResource(R.string.about_compliance_title),
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(
@@ -313,13 +315,13 @@ fun AboutScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("版本更新内容", style = MaterialTheme.typography.titleLarge)
-                        TextButton(onClick = { showNotes = false }) { Text("关闭") }
+                        Text(stringResource(R.string.about_changelog_title), style = MaterialTheme.typography.titleLarge)
+                        TextButton(onClick = { showNotes = false }) { Text(stringResource(R.string.action_close)) }
                     }
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     if (changelog.isEmpty()) {
                         Text(
-                            "暂无更新记录",
+                            stringResource(R.string.about_changelog_empty),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 24.dp)

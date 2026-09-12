@@ -2,9 +2,12 @@ package com.shiyinplayer.ui.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.data.repository.LibraryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +27,7 @@ data class DuplicateGroupUi(
 /** F3-4：重复曲目清理——按「标题+歌手+时长(2 秒桶)」聚合重复组，允许逐组选择保留项后合并。 */
 @HiltViewModel
 class DuplicateCleanupViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repo: LibraryRepository
 ) : ViewModel() {
 
@@ -54,7 +58,7 @@ class DuplicateCleanupViewModel @Inject constructor(
                     add(
                         DuplicateGroupUi(
                             key = row.dkey,
-                            title = row.title ?: "未知标题",
+                            title = row.title ?: context.getString(R.string.unknown_title),
                             artist = row.artist ?: "",
                             members = members,
                             keepId = members.first().id
@@ -81,9 +85,9 @@ class DuplicateCleanupViewModel @Inject constructor(
             _message.value = null
             try {
                 repo.mergeDuplicateGroup(g.keepId, deleteIds)
-                _message.value = "已合并「${g.title}」，保留 1 个，移除 ${deleteIds.size} 个重复项"
+                _message.value = context.getString(R.string.dup_merge_done, g.title, deleteIds.size)
             } catch (e: Exception) {
-                _message.value = "合并失败：${e.message}"
+                _message.value = context.getString(R.string.dup_merge_failed, e.message)
             } finally {
                 refresh()
             }

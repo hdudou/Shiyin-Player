@@ -83,6 +83,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import com.shiyinplayer.R
 import com.shiyinplayer.ui.settings.SettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,15 +95,6 @@ import kotlinx.coroutines.launch
  * 支持 5 种动态效果方案，点击中央图标区域可切换。
  * 当前效果选择通过 SettingsRepository 持久化。
  */
-
-/** 5 种视觉效果的名称（用于显示） */
-private val VISUAL_EFFECT_NAMES = listOf(
-    "声波 + 光晕",
-    "唱片旋转",
-    "粒子浮动",
-    "频谱条",
-    "纯光晕"
-)
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -112,6 +106,8 @@ fun RadioPlayingScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val radioState by viewModel.radioState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    // 5 种视觉效果名称（数据字典，当前语言展示）
+    val effectNames = stringArrayResource(R.array.radio_effect_names)
 
     // 无操作（时长由界面设置 autoHideDelayMs 决定）后自动隐藏控件（仅保留动态效果与电台标题），任意点击屏幕恢复
     var idle by remember { mutableStateOf(false) }
@@ -176,12 +172,12 @@ fun RadioPlayingScreen(
         // 顶部应用栏：无操作时仅淡出，布局保持不变
         Box(Modifier.fillMaxWidth().graphicsLayer { alpha = contentAlpha }) {
         TopAppBar(
-            title = { Text(radioState.stationName ?: "未知电台") },
+            title = { Text(radioState.stationName ?: stringResource(R.string.radio_unknown_station)) },
             navigationIcon = {
                 IconButton(onClick = onBack) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "返回"
+                        contentDescription = stringResource(R.string.action_back)
                     )
                 }
             },
@@ -190,7 +186,7 @@ fun RadioPlayingScreen(
                 IconButton(onClick = { showTimerDialog = true }, modifier = Modifier.size(32.dp)) {
                     Icon(
                         Icons.Outlined.Timer,
-                        contentDescription = "定时",
+                        contentDescription = stringResource(R.string.radio_timer),
                         modifier = Modifier.size(20.dp),
                         tint = if (sleepEndAt != null || alarmEnabled) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurfaceVariant
@@ -215,7 +211,7 @@ fun RadioPlayingScreen(
                 ) {
                     Icon(
                         androidx.compose.material.icons.Icons.Filled.Lock,
-                        contentDescription = "锁屏动态效果",
+                        contentDescription = stringResource(R.string.radio_lockscreen_effect),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -237,7 +233,7 @@ fun RadioPlayingScreen(
                 modifier = Modifier
                     .size(240.dp)
                     .clickable {
-                        val next = (currentEffect + 1) % VISUAL_EFFECT_NAMES.size
+                        val next = (currentEffect + 1) % effectNames.size
                         currentEffect = next
                         showEffectLabel = true
                         scope.launch { settingsRepository.setRadioVisualEffect(next) }
@@ -267,13 +263,13 @@ fun RadioPlayingScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = VISUAL_EFFECT_NAMES[currentEffect],
+                        text = effectNames[currentEffect],
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        text = "${currentEffect + 1}/${VISUAL_EFFECT_NAMES.size}",
+                        text = "${currentEffect + 1}/${effectNames.size}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                     )
@@ -284,7 +280,7 @@ fun RadioPlayingScreen(
 
             // 台名
             Text(
-                text = radioState.stationName ?: "未知电台",
+                text = radioState.stationName ?: stringResource(R.string.radio_unknown_station),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -334,7 +330,7 @@ fun RadioPlayingScreen(
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        "线路 ${radioState.lineIndex + 1}/${radioState.lineCount} · 点击切换",
+                        stringResource(R.string.radio_line_switch, radioState.lineIndex + 1, radioState.lineCount),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -364,7 +360,8 @@ fun RadioPlayingScreen(
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    if (radioState.isFavorite) "已收藏" else "收藏",
+                    if (radioState.isFavorite) stringResource(R.string.radio_favorited)
+                    else stringResource(R.string.radio_favorite),
                     style = MaterialTheme.typography.labelMedium,
                     color = if (radioState.isFavorite) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.onSurfaceVariant
@@ -406,7 +403,7 @@ fun RadioPlayingScreen(
                 ) {
                     Icon(
                         Icons.Filled.SkipPrevious,
-                        contentDescription = "上一首",
+                        contentDescription = stringResource(R.string.action_previous),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -426,7 +423,8 @@ fun RadioPlayingScreen(
                 ) {
                     Icon(
                         if (radioState.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                        contentDescription = if (radioState.isPlaying) "暂停" else "播放",
+                        contentDescription = if (radioState.isPlaying) stringResource(R.string.notification_action_pause)
+                        else stringResource(R.string.notification_action_play),
                         modifier = Modifier.size(40.dp),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -444,7 +442,7 @@ fun RadioPlayingScreen(
                 ) {
                     Icon(
                         Icons.Filled.SkipNext,
-                        contentDescription = "下一首",
+                        contentDescription = stringResource(R.string.action_next),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -469,8 +467,8 @@ fun RadioPlayingScreen(
                 val remainingMs = sleepEndAt!! - System.currentTimeMillis()
                 if (remainingMs > 0) {
                     val mins = remainingMs / 1000 / 60
-                    "当前定时：${mins + 1} 分钟后关闭"
-                } else "当前定时：即将关闭"
+                    stringResource(R.string.radio_timer_remaining_min, mins + 1)
+                } else stringResource(R.string.radio_timer_remaining_soon)
             } else null
             val tpState = rememberTimePickerState(
                 initialHour = alarmHour, initialMinute = alarmMinute, is24Hour = true
@@ -478,13 +476,13 @@ fun RadioPlayingScreen(
             AlertDialog(
                 onDismissRequest = { showTimerDialog = false },
                 containerColor = MaterialTheme.colorScheme.surface,
-                title = { Text("定时") },
+                title = { Text(stringResource(R.string.radio_timer)) },
                 text = {
                     Column(
                         modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text("睡眠定时", style = MaterialTheme.typography.titleSmall)
+                        Text(stringResource(R.string.radio_timer_sleep), style = MaterialTheme.typography.titleSmall)
                         sleepRemainingText?.let {
                             Text(it, style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.primary)
@@ -493,19 +491,19 @@ fun RadioPlayingScreen(
                         listOf(15, 30, 60).forEach { min ->
                             TextButton(onClick = {
                                 viewModel.setRadioSleepTimer(min)
-                            }) { Text("${min} 分钟") }
+                            }) { Text(stringResource(R.string.setting_minutes, min)) }
                         }
                         if (sleepEndAt != null) {
                             TextButton(onClick = {
                                 viewModel.setRadioSleepTimer(0)
-                            }) { Text("取消定时", color = MaterialTheme.colorScheme.error) }
+                            }) { Text(stringResource(R.string.radio_timer_cancel), color = MaterialTheme.colorScheme.error) }
                         }
                         HorizontalDivider()
                         Spacer(Modifier.height(4.dp))
-                        Text("定时播放", style = MaterialTheme.typography.titleSmall)
+                        Text(stringResource(R.string.alarm_play), style = MaterialTheme.typography.titleSmall)
                         Row(verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()) {
-                            Text("启用闹钟")
+                            Text(stringResource(R.string.radio_settings_alarm_enable))
                             Spacer(Modifier.weight(1f))
                             Switch(checked = alarmEnabled, onCheckedChange = {
                                 viewModel.setAlarmEnabled(it)
@@ -519,10 +517,10 @@ fun RadioPlayingScreen(
                     TextButton(onClick = {
                         viewModel.setAlarmTime(tpState.hour, tpState.minute)
                         showTimerDialog = false
-                    }) { Text("完成") }
+                    }) { Text(stringResource(R.string.action_done)) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showTimerDialog = false }) { Text("关闭") }
+                    TextButton(onClick = { showTimerDialog = false }) { Text(stringResource(R.string.action_close)) }
                 }
             )
         }

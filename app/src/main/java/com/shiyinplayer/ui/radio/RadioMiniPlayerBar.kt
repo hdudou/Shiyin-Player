@@ -25,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 
 /**
  * 电台模式迷你播放条（仿音乐模式 BottomPlayerBar 风格）。
@@ -69,7 +71,7 @@ fun RadioMiniPlayerBar(
             if (!logoUrl.isNullOrBlank()) {
                 coil.compose.AsyncImage(
                     model = logoUrl,
-                    contentDescription = "正在播放",
+                    contentDescription = stringResource(R.string.radio_now_playing),
                     modifier = Modifier
                         .size(20.dp)
                         .clip(CircleShape),
@@ -79,7 +81,7 @@ fun RadioMiniPlayerBar(
             } else {
                 Icon(
                     Icons.Filled.Favorite,
-                    contentDescription = "正在播放",
+                    contentDescription = stringResource(R.string.radio_now_playing),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -88,15 +90,15 @@ fun RadioMiniPlayerBar(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = radioState.stationName ?: "未知电台",
+                text = radioState.stationName ?: stringResource(R.string.radio_unknown_station),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = if (radioState.isBuffering) "缓冲中…"
-                else radioState.subtitle ?: radioState.genre ?: "FM Radio",
+                text = if (radioState.isBuffering) stringResource(R.string.radio_buffering)
+                else radioState.subtitle ?: RadioDictTranslate.text(radioState.genre ?: "").ifEmpty { stringResource(R.string.radio_fallback_subtitle) },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -114,19 +116,19 @@ fun RadioMiniPlayerBar(
         IconButton(onClick = { viewModel.playPreviousFavorite() }) {
             Icon(
                 Icons.Filled.SkipPrevious,
-                contentDescription = "上一首"
+                contentDescription = stringResource(R.string.action_previous)
             )
         }
         IconButton(onClick = { viewModel.togglePlayPause() }) {
             Icon(
                 if (radioState.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                contentDescription = "播放/暂停"
+                contentDescription = stringResource(R.string.action_play_pause)
             )
         }
         IconButton(onClick = { viewModel.playNextFavorite() }) {
             Icon(
                 Icons.Filled.SkipNext,
-                contentDescription = "下一首"
+                contentDescription = stringResource(R.string.action_next)
             )
         }
     }

@@ -42,9 +42,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.player.PlayerManager
 import com.shiyinplayer.player.radio.RadioPlayer
 import com.shiyinplayer.ui.settings.SettingsRepository
@@ -124,13 +126,13 @@ fun RadioNavGraph(
         mobileGate?.let {
             AlertDialog(
                 onDismissRequest = { sharedViewModel.denyMobilePlayback() },
-                title = { Text("移动网络提示") },
-                text = { Text("当前处于移动数据网络，且「仅 WiFi 播放电台」设置已开启。\n是否允许在移动网络下收听该电台？允许后将自动关闭「仅 WiFi」开关。") },
+                title = { Text(stringResource(R.string.radio_mobile_data_title)) },
+                text = { Text(stringResource(R.string.radio_mobile_data_text)) },
                 confirmButton = {
-                    TextButton(onClick = { sharedViewModel.allowMobilePlayback() }) { Text("允许") }
+                    TextButton(onClick = { sharedViewModel.allowMobilePlayback() }) { Text(stringResource(R.string.action_allow)) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { sharedViewModel.denyMobilePlayback() }) { Text("取消") }
+                    TextButton(onClick = { sharedViewModel.denyMobilePlayback() }) { Text(stringResource(R.string.action_cancel)) }
                 }
             )
         }
@@ -282,10 +284,11 @@ private data class RadioNavItem(
     val icon: ImageVector
 )
 
-private val radioNavItems = listOf(
-    RadioNavItem(RadioTab.HOME, "列表", Icons.AutoMirrored.Filled.List),
-    RadioNavItem(RadioTab.PLAYING, "播放/切换", Icons.Filled.PlayArrow),
-    RadioNavItem(RadioTab.FAVORITES, "收藏", Icons.Filled.Favorite)
+@Composable
+private fun radioNavItems() = listOf(
+    RadioNavItem(RadioTab.HOME, stringResource(R.string.radio_tab_list), Icons.AutoMirrored.Filled.List),
+    RadioNavItem(RadioTab.PLAYING, stringResource(R.string.nav_play_toggle), Icons.Filled.PlayArrow),
+    RadioNavItem(RadioTab.FAVORITES, stringResource(R.string.radio_tab_favorites), Icons.Filled.Favorite)
 )
 
 @Composable
@@ -295,7 +298,7 @@ private fun RadioBottomBar(
     onCenterDoubleClick: () -> Unit
 ) {
     NavigationBar {
-        radioNavItems.forEachIndexed { index, item ->
+        radioNavItems().forEachIndexed { index, item ->
             if (index == 1) {
                 CenterNavButton(
                     label = item.label,

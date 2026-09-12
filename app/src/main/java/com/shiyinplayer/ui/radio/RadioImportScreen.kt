@@ -58,9 +58,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shiyinplayer.R
 import com.shiyinplayer.data.radio.RadioBrowserClient
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -119,10 +121,10 @@ fun RadioImportScreen(
                 if (pendingList.isNotEmpty()) {
                     mode = "list"
                 } else {
-                    feedback = "文件解析成功但未识别到任何电台条目"
+                    feedback = context.getString(R.string.radio_import_parse_empty)
                 }
             } catch (e: Exception) {
-                feedback = "文件解析失败：${e.message}"
+                feedback = context.getString(R.string.radio_import_parse_fail, e.message)
             }
         }
     }
@@ -150,9 +152,9 @@ fun RadioImportScreen(
             TopAppBar(
                 title = { Text(
                     when (mode) {
-                        "url" -> "手动输入 URL"
-                        "list" -> "文件导入 · ${pendingList.size} 个电台"
-                        else -> "导入电台"
+                        "url" -> stringResource(R.string.radio_import_manual_url)
+                        "list" -> stringResource(R.string.radio_import_list_title, pendingList.size)
+                        else -> stringResource(R.string.radio_import_title)
                     }
                 ) },
                 navigationIcon = {
@@ -163,7 +165,7 @@ fun RadioImportScreen(
                             else -> onBack()
                         }
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -180,7 +182,7 @@ fun RadioImportScreen(
                     onConfirm = { name, urls, genre ->
                         onAddFavorite(urls, name, genre)
                         mode = null
-                        feedback = "已添加：$name"
+                        feedback = context.getString(R.string.radio_import_added, name)
                     },
                     onCancel = { mode = null }
                 )
@@ -248,7 +250,7 @@ private fun ImportEntryPicker(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "选择导入方式",
+            stringResource(R.string.radio_import_pick_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
@@ -277,12 +279,12 @@ private fun ImportEntryPicker(
                 Spacer(Modifier.size(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "从文件导入",
+                        stringResource(R.string.radio_import_from_file),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "支持 M3U / PLS / TXT 格式",
+                        stringResource(R.string.radio_import_format_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -315,12 +317,12 @@ private fun ImportEntryPicker(
                 Spacer(Modifier.size(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "手动输入 URL",
+                        stringResource(R.string.radio_import_manual_url),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "输入电台名称和流地址",
+                        stringResource(R.string.radio_import_manual_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -378,7 +380,7 @@ private fun UrlInputMode(
                 OutlinedButton(
                     onClick = onCancel,
                     modifier = Modifier.weight(1f)
-                ) { Text("取消") }
+                ) { Text(stringResource(R.string.action_cancel)) }
                 Button(
                     onClick = {
                         if (urls.any { it.isNotBlank() }) {
@@ -389,7 +391,7 @@ private fun UrlInputMode(
                     },
                     enabled = urls.any { it.isNotBlank() },
                     modifier = Modifier.weight(1f)
-                ) { Text("添加") }
+                ) { Text(stringResource(R.string.action_add)) }
             }
         }
     }
@@ -417,7 +419,7 @@ private fun ParsedListMode(
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(Modifier.height(8.dp))
-                Text("所有电台已添加完成", style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.radio_import_all_done), style = MaterialTheme.typography.bodyLarge)
             }
         }
         return
@@ -434,12 +436,12 @@ private fun ParsedListMode(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "共 ${pendingList.size} 个电台，可逐个添加或批量添加",
+                    stringResource(R.string.radio_import_parsed_count, pendingList.size),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.weight(1f)
                 )
                 TextButton(onClick = onAddAll) {
-                    Text("全部添加", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.radio_add_all), fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -508,7 +510,7 @@ private fun PendingStationCard(
                 IconButton(onClick = onAdd) {
                     Icon(
                         Icons.Filled.Add,
-                        contentDescription = "添加此电台",
+                        contentDescription = stringResource(R.string.radio_add_station),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -586,10 +588,10 @@ private fun RegionCascadePicker(
             modifier = Modifier.weight(1f)
         ) {
             OutlinedTextField(
-                value = category,
+                value = RadioDictTranslate.text(category),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("分类", style = MaterialTheme.typography.labelSmall) },
+                label = { Text(stringResource(R.string.radio_category), style = MaterialTheme.typography.labelSmall) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(categoryExpanded) },
                 modifier = Modifier.menuAnchor(),
                 textStyle = MaterialTheme.typography.bodySmall
@@ -597,7 +599,7 @@ private fun RegionCascadePicker(
             ExposedDropdownMenu(expanded = categoryExpanded, onDismissRequest = { onCategoryExpandedChange(false) }) {
                 categories.forEach { c ->
                     DropdownMenuItem(
-                        text = { Text(c, style = MaterialTheme.typography.bodySmall) },
+                        text = { Text(RadioDictTranslate.text(c), style = MaterialTheme.typography.bodySmall) },
                         onClick = { onCategoryChange(c); onCategoryExpandedChange(false) }
                     )
                 }
@@ -609,10 +611,10 @@ private fun RegionCascadePicker(
             modifier = Modifier.weight(1f)
         ) {
             OutlinedTextField(
-                value = region,
+                value = RadioDictTranslate.text(region),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("地区", style = MaterialTheme.typography.labelSmall) },
+                label = { Text(stringResource(R.string.radio_region), style = MaterialTheme.typography.labelSmall) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(regionExpanded) },
                 modifier = Modifier.menuAnchor(),
                 textStyle = MaterialTheme.typography.bodySmall
@@ -620,7 +622,7 @@ private fun RegionCascadePicker(
             ExposedDropdownMenu(expanded = regionExpanded, onDismissRequest = { onRegionExpandedChange(false) }) {
                 regions.forEach { r ->
                     DropdownMenuItem(
-                        text = { Text(r, style = MaterialTheme.typography.bodySmall) },
+                        text = { Text(RadioDictTranslate.text(r), style = MaterialTheme.typography.bodySmall) },
                         onClick = { onRegionChange(r); onRegionExpandedChange(false) }
                     )
                 }
@@ -640,10 +642,10 @@ private fun RegionCascadePicker(
                 modifier = Modifier.weight(1f)
             ) {
                 OutlinedTextField(
-                    value = province.ifBlank { "省份（可选）" },
+                    value = if (province.isBlank()) stringResource(R.string.radio_placeholder_province) else RadioDictTranslate.text(province),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("省份", style = MaterialTheme.typography.labelSmall) },
+                    label = { Text(stringResource(R.string.radio_province), style = MaterialTheme.typography.labelSmall) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(provinceExpanded) },
                     modifier = Modifier.menuAnchor(),
                     textStyle = MaterialTheme.typography.bodySmall
@@ -651,7 +653,7 @@ private fun RegionCascadePicker(
                 ExposedDropdownMenu(expanded = provinceExpanded, onDismissRequest = { onProvinceExpandedChange(false) }) {
                     ChinaRegionData.provinces.forEach { p ->
                         DropdownMenuItem(
-                            text = { Text(p, style = MaterialTheme.typography.bodySmall) },
+                            text = { Text(RadioDictTranslate.text(p), style = MaterialTheme.typography.bodySmall) },
                             onClick = { onProvinceChange(p); onProvinceExpandedChange(false) }
                         )
                     }
@@ -664,10 +666,10 @@ private fun RegionCascadePicker(
                     modifier = Modifier.weight(1f)
                 ) {
                     OutlinedTextField(
-                        value = city.ifBlank { "城市（可选）" },
+                        value = if (city.isBlank()) stringResource(R.string.radio_placeholder_city) else RadioDictTranslate.text(city),
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("城市", style = MaterialTheme.typography.labelSmall) },
+                        label = { Text(stringResource(R.string.radio_city), style = MaterialTheme.typography.labelSmall) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(cityExpanded) },
                         modifier = Modifier.menuAnchor(),
                         textStyle = MaterialTheme.typography.bodySmall
@@ -675,7 +677,7 @@ private fun RegionCascadePicker(
                     ExposedDropdownMenu(expanded = cityExpanded, onDismissRequest = { onCityExpandedChange(false) }) {
                         availableCities.forEach { c ->
                             DropdownMenuItem(
-                                text = { Text(c, style = MaterialTheme.typography.bodySmall) },
+                                text = { Text(RadioDictTranslate.text(c), style = MaterialTheme.typography.bodySmall) },
                                 onClick = { onCityChange(c); onCityExpandedChange(false) }
                             )
                         }
@@ -691,10 +693,10 @@ private fun RegionCascadePicker(
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
-                value = province.ifBlank { "请选择子类地区" },
+                value = if (province.isBlank()) stringResource(R.string.radio_select_sub_region) else RadioDictTranslate.text(province),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("子类地区", style = MaterialTheme.typography.labelSmall) },
+                label = { Text(stringResource(R.string.radio_sub_region), style = MaterialTheme.typography.labelSmall) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(provinceExpanded) },
                 modifier = Modifier.menuAnchor(),
                 textStyle = MaterialTheme.typography.bodySmall
@@ -702,7 +704,7 @@ private fun RegionCascadePicker(
             ExposedDropdownMenu(expanded = provinceExpanded, onDismissRequest = { onProvinceExpandedChange(false) }) {
                 ChinaRegionData.hmtSubRegions.forEach { sr ->
                     DropdownMenuItem(
-                        text = { Text(sr, style = MaterialTheme.typography.bodySmall) },
+                        text = { Text(RadioDictTranslate.text(sr), style = MaterialTheme.typography.bodySmall) },
                         onClick = { onProvinceChange(sr); onProvinceExpandedChange(false) }
                     )
                 }
@@ -713,7 +715,7 @@ private fun RegionCascadePicker(
         OutlinedTextField(
             value = province,
             onValueChange = onProvinceChange,
-            label = { Text("所属国家", style = MaterialTheme.typography.labelSmall) },
+            label = { Text(stringResource(R.string.radio_country), style = MaterialTheme.typography.labelSmall) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.bodySmall

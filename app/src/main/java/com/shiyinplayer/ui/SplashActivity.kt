@@ -16,8 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import com.shiyinplayer.R
 import com.shiyinplayer.data.VersionUpgradeCoordinator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -73,9 +75,9 @@ private fun UpgradePendingScreen() {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "版本更新中…", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.splash_updating), style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "正在重新优化曲库数据，请稍候",
+                text = stringResource(R.string.splash_reindex),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
             )

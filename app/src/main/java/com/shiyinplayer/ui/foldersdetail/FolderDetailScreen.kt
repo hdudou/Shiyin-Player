@@ -26,10 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
 import com.shiyinplayer.ui.common.SongMenuHost
@@ -71,24 +73,24 @@ fun FolderDetailScreen(
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Checkbox(checked = allSelected, onCheckedChange = { toggleSelectAll() })
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
                 OutlinedButton(onClick = { toggleSelectAll() }) {
-                    Text(if (allSelected) "取消全选" else "全选")
+                    Text(if (allSelected) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all))
                 }
                 OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) {
-                    Text("完成")
+                    Text(stringResource(R.string.action_done))
                 }
             }
         } else {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "返回")
+                    Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                 }
                 Text(folderName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         HorizontalDivider()

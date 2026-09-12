@@ -2,10 +2,13 @@ package com.shiyinplayer.ui.more
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shiyinplayer.R
 import com.shiyinplayer.data.transfer.DataTransferManager
 import com.shiyinplayer.data.transfer.ImportPreview
+import com.shiyinplayer.data.transfer.TransferError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +18,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+/** 用户可见的导入/导出结果消息：携带资源 id 与参数，由界面按当前语言渲染。 */
+class TransferMessage(@StringRes val resId: Int, vararg val args: Any) {
+    val argArray: Array<out Any> = args
+}
 
 /** 播放器数据导出/导入界面状态与动作。 */
 @HiltViewModel
@@ -26,8 +34,8 @@ class DataTransferViewModel @Inject constructor(
     private val _busy = MutableStateFlow(false)
     val busy: StateFlow<Boolean> = _busy.asStateFlow()
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<TransferMessage?>(null)
+    val message: StateFlow<TransferMessage?> = _message.asStateFlow()
 
     /** 待确认的导入数据包内容（非空 = 弹出覆盖确认）。 */
     private val _preview = MutableStateFlow<ImportPreview?>(null)
@@ -45,6 +53,11 @@ class DataTransferViewModel @Inject constructor(
 
     fun consumeMessage() { _message.value = null }
 
+    /** 将失败异常映射为用户可读消息：TransferError 用其自带资源，其余用 fallback 框架包裹。 */
+    private fun failureMessage(fallbackRes: Int, e: Throwable): TransferMessage =
+        if (e is TransferError) TransferMessage(e.messageRes, *e.args)
+        else TransferMessage(fallbackRes, e.message ?: "")
+
     /** 导出到指定 SAF Uri。password 非空则启用密码保护加密。 */
     fun exportTo(
         uri: Uri,
@@ -61,12 +74,12 @@ class DataTransferViewModel @Inject constructor(
                 }
                 withContext(Dispatchers.IO) {
                     context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
-                        ?: throw IllegalStateException("无法写入导出文件")
+                        ?: throw TransferError(R.string.transfer_err_write_file)
                 }
             }.onSuccess {
-                _message.value = "导出完成"
+                _message.value = TransferMessage(R.string.transfer_msg_export_done)
             }.onFailure {
-                _message.value = "导出失败：${it.message}"
+                _message.value = failureMessage(R.string.transfer_msg_export_failed, it)
             }
             _busy.value = false
         }
@@ -79,7 +92,7 @@ class DataTransferViewModel @Inject constructor(
             runCatching {
                 withContext(Dispatchers.IO) {
                     context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-                        ?: throw IllegalStateException("无法读取所选文件")
+                        ?: throw TransferError(R.string.transfer_err_read_file)
                 }
             }.onSuccess { bytes ->
                 pendingBytes = bytes
@@ -90,7 +103,7 @@ class DataTransferViewModel @Inject constructor(
                 }
             }.onFailure {
                 pendingBytes = null
-                _message.value = "导入文件无效：${it.message}"
+                _message.value = failureMessage(R.string.transfer_msg_import_invalid, it)
             }
             _busy.value = false
         }
@@ -104,14 +117,14 @@ class DataTransferViewModel @Inject constructor(
                 .onSuccess { p ->
                     if (p.isEmpty) {
                         pendingBytes = null
-                        _message.value = "所选文件不含可导入的数据"
+                        _message.value = TransferMessage(R.string.transfer_msg_no_data)
                     } else {
                         _preview.value = p
                     }
                 }
                 .onFailure {
                     pendingBytes = null
-                    _message.value = "导入文件无效：${it.message}"
+                    _message.value = failureMessage(R.string.transfer_msg_import_invalid, it)
                 }
             _busy.value = false
         }
@@ -121,7 +134,7 @@ class DataTransferViewModel @Inject constructor(
     fun submitImportPassword(password: String) {
         val encrypted = pendingBytes ?: return
         if (password.isBlank()) {
-            _message.value = "请输入密码"
+            _message.value = TransferMessage(R.string.transfer_msg_enter_password)
             return
         }
         viewModelScope.launch {
@@ -133,7 +146,7 @@ class DataTransferViewModel @Inject constructor(
                 _needImportPassword.value = false
                 resolveImport(decrypted)
             }.onFailure {
-                _message.value = "密码错误或文件损坏：${it.message}"
+                _message.value = failureMessage(R.string.transfer_msg_password_error, it)
             }
             _busy.value = false
         }
@@ -150,7 +163,7 @@ class DataTransferViewModel @Inject constructor(
         val bytes = pendingBytes
         if (bytes == null) {
             _preview.value = null
-            _message.value = "未读取到导入文件，请重新选择"
+            _message.value = TransferMessage(R.string.transfer_msg_no_file)
             return
         }
         viewModelScope.launch {
@@ -158,13 +171,13 @@ class DataTransferViewModel @Inject constructor(
             _importing.value = true
             runCatching { withContext(Dispatchers.Default) { manager.import(bytes) } }
                 .onSuccess {
-                    _message.value = "导入完成"
+                    _message.value = TransferMessage(R.string.transfer_msg_import_done)
                     pendingBytes = null
                     _preview.value = null
                 }
                 .onFailure {
                     // 不清空 pendingBytes/preview，用户可直接再次点击「继续导入」重试
-                    _message.value = "导入失败：${it.message}"
+                    _message.value = failureMessage(R.string.transfer_msg_import_failed, it)
                 }
             _importing.value = false
             _busy.value = false

@@ -71,6 +71,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import com.shiyinplayer.R
 import com.shiyinplayer.data.local.entity.RadioStationEntity
 import com.shiyinplayer.data.radio.MergedRadioStation
 
@@ -194,20 +197,20 @@ fun RadioHomeScreen(
         TopAppBar(
             title = {
                 val total = filteredStations.size
-                Text("电台列表 · $total 台")
+                Text(stringResource(R.string.radio_list_title, total))
             },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             actions = {
                 IconButton(onClick = onNavigateToSearch) {
-                    Icon(Icons.Filled.Search, contentDescription = "搜索")
+                    Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.radio_search_title))
                 }
                 IconButton(onClick = onNavigateToImport) {
-                    Icon(Icons.Filled.Add, contentDescription = "导入电台")
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.radio_import))
                 }
                 IconButton(onClick = onNavigateToSettings) {
-                    Icon(Icons.Filled.Settings, contentDescription = "设置")
+                    Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.radio_settings))
                 }
             }
         )
@@ -216,11 +219,11 @@ fun RadioHomeScreen(
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)) {
             // 分类筛选标题行
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("分类", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.radio_genre_label), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(6.dp))
                 if (selectedGenres.isNotEmpty()) {
                     Text(
-                        "已选${selectedGenres.size}",
+                        stringResource(R.string.radio_selected_count, selectedGenres.size),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -228,7 +231,7 @@ fun RadioHomeScreen(
                 Spacer(Modifier.weight(1f))
                 if (selectedGenres.isNotEmpty()) {
                     Text(
-                        "✕ 清除",
+                        stringResource(R.string.radio_clear_selection),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.clickable { selectedGenres.clear() }
@@ -268,7 +271,7 @@ fun RadioHomeScreen(
 
             // 地区筛选
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("地区", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.radio_region), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.width(6.dp))
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(3.dp),
@@ -278,7 +281,7 @@ fun RadioHomeScreen(
                         FilterChip(
                             selected = selectedRegion == region,
                             onClick = { selectedRegion = region },
-                            label = { Text(region, style = MaterialTheme.typography.labelSmall) },
+                            label = { Text(RadioDictTranslate.text(region), style = MaterialTheme.typography.labelSmall) },
                             modifier = Modifier.height(28.dp),
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -312,7 +315,7 @@ fun RadioHomeScreen(
             if (recentStations.isNotEmpty()) {
                 item {
                     Text(
-                        "最近收听",
+                        stringResource(R.string.radio_recent),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
@@ -354,7 +357,7 @@ fun RadioHomeScreen(
                     // 省级标题
                     item(key = "prov_$province") {
                         GroupHeader(
-                            title = province,
+                            title = RadioDictTranslate.text(province),
                             count = totalInProvince,
                             isExpanded = isProvExpanded,
                             onClick = {
@@ -383,7 +386,7 @@ fun RadioHomeScreen(
                                 val isCityExpanded = cityKey in expandedGroups
                                 item(key = "city_$cityKey") {
                                     CityGroupHeader(
-                                        title = city,
+                                        title = RadioDictTranslate.text(city),
                                         count = cityStations.size,
                                         isExpanded = isCityExpanded,
                                         onClick = {
@@ -413,7 +416,7 @@ fun RadioHomeScreen(
                     val isExpanded = groupName in expandedGroups
                     item(key = "grp_$groupName") {
                         GroupHeader(
-                            title = groupName,
+                            title = RadioDictTranslate.text(groupName),
                             count = groupStations.size,
                             isExpanded = isExpanded,
                             onClick = {
@@ -443,7 +446,7 @@ fun RadioHomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "没有找到匹配的电台",
+                            stringResource(R.string.radio_no_match),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -469,7 +472,7 @@ fun RadioHomeScreen(
                 )
                 if (station.streamCount > 1) {
                     Text(
-                        "${station.streamCount} 个线路",
+                        stringResource(R.string.radio_lines_count, station.streamCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 24.dp, vertical = 2.dp)
@@ -477,7 +480,7 @@ fun RadioHomeScreen(
                 }
                 HorizontalDivider()
                 NavigationDrawerItem(
-                    label = { Text("查看电台信息") },
+                    label = { Text(stringResource(R.string.radio_view_info)) },
                     icon = { Icon(Icons.Filled.Info, contentDescription = null) },
                     selected = false,
                     onClick = {
@@ -486,7 +489,7 @@ fun RadioHomeScreen(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(if (station.isFavorite) "取消收藏" else "加入收藏") },
+                    label = { Text(stringResource(if (station.isFavorite) R.string.radio_unfavorite else R.string.radio_add_favorite)) },
                     icon = {
                         Icon(
                             if (station.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
@@ -500,7 +503,7 @@ fun RadioHomeScreen(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("修改") },
+                    label = { Text(stringResource(R.string.radio_edit)) },
                     icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
                     selected = false,
                     onClick = {
@@ -509,7 +512,7 @@ fun RadioHomeScreen(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text("删除", color = MaterialTheme.colorScheme.error) },
+                    label = { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) },
                     icon = {
                         Icon(
                             Icons.Filled.Delete,
@@ -532,50 +535,56 @@ fun RadioHomeScreen(
         AlertDialog(
             onDismissRequest = { showInfoDialog = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("电台信息") },
+            title = { Text(stringResource(R.string.radio_station_info)) },
             text = {
                 Column {
-                    InfoRow("名称", station.displayName)
-                    InfoRow("分类", station.genre?.split("/")?.firstOrNull() ?: "未分类")
-                    InfoRow("地区", station.country ?: station.genre?.split("/")?.getOrNull(1) ?: "-")
+                    InfoRow(stringResource(R.string.radio_name_label), station.displayName)
+                    InfoRow(stringResource(R.string.radio_category), RadioDictTranslate.text(station.genre?.split("/")?.firstOrNull() ?: "").ifEmpty { stringResource(R.string.radio_uncategorized) })
+                    InfoRow(stringResource(R.string.radio_region), RadioDictTranslate.text(station.country ?: station.genre?.split("/")?.getOrNull(1) ?: "-"))
                     if (station.genre?.split("/")?.getOrNull(2) != null) {
-                        InfoRow("省份", station.genre.split("/").getOrNull(2) ?: "-")
+                        InfoRow(stringResource(R.string.radio_province), RadioDictTranslate.text(station.genre.split("/").getOrNull(2) ?: "-"))
                     }
                     if (station.genre?.split("/")?.getOrNull(3) != null) {
-                        InfoRow("城市", station.genre.split("/").getOrNull(3) ?: "-")
+                        InfoRow(stringResource(R.string.radio_city), RadioDictTranslate.text(station.genre.split("/").getOrNull(3) ?: "-"))
                     }
-                    InfoRow("线路数", "${station.streamCount}")
+                    InfoRow(stringResource(R.string.radio_line_total_label), "${station.streamCount}")
                     station.streams.forEachIndexed { index, stream ->
-                        InfoRow("线路${index + 1}", stream.name)
+                        InfoRow(stringResource(R.string.radio_line_label, index + 1), stream.name)
                     }
-                    InfoRow("来源", station.source)
-                    InfoRow("收藏", if (station.isFavorite) "是" else "否")
+                    InfoRow(stringResource(R.string.radio_source), station.source)
+                    InfoRow(stringResource(R.string.radio_favorite), if (station.isFavorite) stringResource(R.string.radio_favorited) else stringResource(R.string.radio_no))
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showInfoDialog = null }) { Text("关闭") }
+                TextButton(onClick = { showInfoDialog = null }) { Text(stringResource(R.string.action_close)) }
             }
         )
     }
 
     // 删除确认对话框
     showDeleteConfirm?.let { station ->
-        val suffix = if (station.streamCount > 1) "（共 ${station.streamCount} 个线路）" else ""
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("删除电台") },
-            text = { Text("确定要删除「${station.displayName}」${suffix}吗？此操作不可恢复。") },
+            title = { Text(stringResource(R.string.radio_delete_station_title)) },
+            text = {
+                Text(
+                    if (station.streamCount > 1)
+                        stringResource(R.string.radio_delete_station_confirm_multi, station.displayName, station.streamCount)
+                    else
+                        stringResource(R.string.radio_delete_station_confirm, station.displayName)
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteStation(station)
                     showDeleteConfirm = null
                 }) {
-                    Text("删除", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = null }) { Text("取消") }
+                TextButton(onClick = { showDeleteConfirm = null }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -595,6 +604,7 @@ fun RadioHomeScreen(
 
 @Composable
 private fun GenreChip(genre: String, selectedGenres: SnapshotStateList<String>) {
+    val display = RadioDictTranslate.text(genre)
     val isSelected = genre in selectedGenres
     FilterChip(
         selected = isSelected,
@@ -602,7 +612,7 @@ private fun GenreChip(genre: String, selectedGenres: SnapshotStateList<String>) 
             if (isSelected) selectedGenres.remove(genre)
             else selectedGenres.add(genre)
         },
-        label = { Text(genre, style = MaterialTheme.typography.labelSmall, maxLines = 1) },
+        label = { Text(display, style = MaterialTheme.typography.labelSmall, maxLines = 1) },
         modifier = Modifier.height(24.dp),
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -640,14 +650,14 @@ private fun GroupHeader(
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            "${count}台",
+            stringResource(R.string.radio_count_station, count),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
         Spacer(Modifier.weight(1f))
         Icon(
             if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = if (isExpanded) "收起" else "展开",
+            contentDescription = if (isExpanded) stringResource(R.string.radio_collapse) else stringResource(R.string.radio_expand),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
@@ -684,14 +694,14 @@ private fun CityGroupHeader(
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            "${count}台",
+            stringResource(R.string.radio_count_station, count),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
         Spacer(Modifier.weight(1f))
         Icon(
             if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-            contentDescription = if (isExpanded) "收起" else "展开",
+            contentDescription = if (isExpanded) stringResource(R.string.radio_collapse) else stringResource(R.string.radio_expand),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
         )
@@ -753,7 +763,7 @@ private fun NowPlayingBar(
             Spacer(Modifier.width(8.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    stationName ?: "未知电台",
+                    stationName ?: stringResource(R.string.radio_unknown_station),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -775,7 +785,7 @@ private fun NowPlayingBar(
                 IconButton(onClick = onTogglePlay, modifier = Modifier.size(28.dp)) {
                     Icon(
                         if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                        contentDescription = if (isPlaying) "暂停" else "播放",
+                        contentDescription = if (isPlaying) stringResource(R.string.action_play_pause) else stringResource(R.string.radio_play),
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -900,8 +910,8 @@ private fun StationListItem(
             val subtitle = listOfNotNull(
                 station.genre?.split("/")?.firstOrNull(),
                 region.ifEmpty { null },
-                if (station.streamCount > 1) "${station.streamCount}线路" else null
-            ).joinToString(" · ")
+                if (station.streamCount > 1) stringResource(R.string.radio_line_count_short, station.streamCount) else null
+            ).map { RadioDictTranslate.text(it) }.joinToString(" · ")
             if (subtitle.isNotEmpty()) {
                 Text(
                     subtitle,
@@ -915,7 +925,7 @@ private fun StationListItem(
         IconButton(onClick = onFavorite, modifier = Modifier.size(28.dp)) {
             Icon(
                 if (station.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                contentDescription = if (station.isFavorite) "取消收藏" else "收藏",
+                contentDescription = if (station.isFavorite) stringResource(R.string.radio_unfavorite) else stringResource(R.string.radio_favorite),
                 tint = if (station.isFavorite) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(16.dp)

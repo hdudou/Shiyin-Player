@@ -80,6 +80,8 @@ class MusicPlayerApplication : Application() {
         // 避免整库元数据同步与曲库首屏查询在冷启/浏览时争抢 IO。不用 ProcessLifecycleOwner（lifecycle-process
         // 冷启动时状态未及时到 STARTED，且需额外依赖）。
         registerActivityLifecycleCallbacks(foregroundCallbacks)
+        // 冷启动应用运行时语言（attachBaseContext 阶段同步读取 remembered）。
+        com.shiyinplayer.util.AppLocaleManager.remembered = settingsRepository.languageSync()
         // P0-4：提前触发 SettingsRepository 依赖图构建，使内存快照（prefsCache）尽早开始
         // 后台收集 DataStore，缩短主线程同步读设置的冷启动空窗。
         settingsRepository.notifyEnabledSync()

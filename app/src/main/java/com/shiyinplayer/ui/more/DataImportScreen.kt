@@ -41,11 +41,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.transfer.ImportPreview
 
 /** 播放器数据导入界面（更多 → 播放器数据导出/导入 → 导入数据）。导入过程显示转动图标。 */
@@ -56,12 +59,13 @@ fun DataImportScreen(
     viewModel: DataTransferViewModel = hiltViewModel()
 ) {
     val snackbar = SnackbarHostState()
+    val context = LocalContext.current
     val busy by viewModel.busy.collectAsState()
     val importing by viewModel.importing.collectAsState()
 
     LaunchedEffect(viewModel.message.value) {
         viewModel.message.value?.let {
-            snackbar.showSnackbar(it)
+            snackbar.showSnackbar(context.getString(it.resId, *it.argArray))
             viewModel.consumeMessage()
         }
     }
@@ -74,15 +78,15 @@ fun DataImportScreen(
     preview?.let { p ->
         AlertDialog(
             onDismissRequest = { viewModel.cancelImport() },
-            title = { Text("确认导入") },
+            title = { Text(stringResource(R.string.transfer_confirm_title)) },
             text = { ConfirmImportText(p) },
             confirmButton = {
                 TextButton(onClick = { viewModel.performImport() }) {
-                    Text("继续导入", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.transfer_confirm_continue), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.cancelImport() }) { Text("取消") }
+                TextButton(onClick = { viewModel.cancelImport() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -92,18 +96,18 @@ fun DataImportScreen(
         var importPassword by rememberSaveable { androidx.compose.runtime.mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { viewModel.cancelImportPassword() },
-            title = { Text("输入密码") },
+            title = { Text(stringResource(R.string.transfer_import_password_dialog_title)) },
             text = {
                 Column {
                     Text(
-                        "该数据文件已启用密码保护，请输入导出时设置的密码以解密导入。",
+                        stringResource(R.string.transfer_import_password_dialog_text),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
                         value = importPassword,
                         onValueChange = { importPassword = it },
-                        label = { Text("导入密码") },
+                        label = { Text(stringResource(R.string.transfer_import_password_label)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
@@ -112,11 +116,11 @@ fun DataImportScreen(
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.submitImportPassword(importPassword) }) {
-                    Text("解密导入", color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.transfer_import_password_decrypt), color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.cancelImportPassword() }) { Text("取消") }
+                TextButton(onClick = { viewModel.cancelImportPassword() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -126,10 +130,10 @@ fun DataImportScreen(
             snackbarHost = { SnackbarHost(snackbar) },
             topBar = {
                 TopAppBar(
-                    title = { Text("导入数据") },
+                    title = { Text(stringResource(R.string.transfer_import_title)) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                         }
                     }
                 )
@@ -144,7 +148,7 @@ fun DataImportScreen(
             ) {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "可选择导出的数据文件恢复：系统设置（含网络和源设置、开关状态与登录凭据）、曲库歌曲条目（含元数据）与保存的歌单。",
+                    stringResource(R.string.transfer_import_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -159,7 +163,7 @@ fun DataImportScreen(
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        "导入将覆盖本机已有的对应数据，导入前请确认。",
+                        stringResource(R.string.transfer_import_overwrite_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -171,7 +175,7 @@ fun DataImportScreen(
                     enabled = !busy,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(if (busy) "处理中…" else "选择数据文件导入")
+                    Text(if (busy) stringResource(R.string.transfer_import_processing) else stringResource(R.string.transfer_import_select))
                 }
                 Spacer(Modifier.height(24.dp))
             }
@@ -189,7 +193,7 @@ fun DataImportScreen(
                     CircularProgressIndicator()
                     Spacer(Modifier.height(14.dp))
                     Text(
-                        "正在导入，请稍候…",
+                        stringResource(R.string.transfer_importing),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.surface,
                         textAlign = TextAlign.Center
@@ -202,26 +206,27 @@ fun DataImportScreen(
 
 @Composable
 private fun ConfirmImportText(p: ImportPreview) {
+    val sep = stringResource(R.string.transfer_list_sep)
     Column {
-        Text("导入将会覆盖本机已有的相应数据，是否继续？", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.transfer_confirm_text), style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.height(10.dp))
         val lines = mutableListOf<String>()
         if (p.hasSettings) {
             val parts = mutableListOf<String>()
-            if (p.settingCount > 0) parts += "设置 ${p.settingCount} 项"
-            if (p.sourceCount > 0) parts += "音乐源 ${p.sourceCount} 个（含网络和源设置）"
-            if (p.credentialCount > 0) parts += "登录凭据 ${p.credentialCount} 项"
-            lines += "系统设置：${parts.joinToString("、")}"
+            if (p.settingCount > 0) parts += stringResource(R.string.transfer_part_setting, p.settingCount)
+            if (p.sourceCount > 0) parts += stringResource(R.string.transfer_part_source, p.sourceCount)
+            if (p.credentialCount > 0) parts += stringResource(R.string.transfer_part_credential, p.credentialCount)
+            lines += stringResource(R.string.transfer_part_settings, parts.joinToString(sep))
         }
         if (p.songCount > 0) {
-            val a = listOf("歌曲 ${p.songCount} 首") +
-                (if (p.albumCount > 0) listOf("专辑 ${p.albumCount} 张") else emptyList()) +
-                (if (p.artistCount > 0) listOf("艺术家 ${p.artistCount} 位") else emptyList())
-            lines += "曲库歌曲：${a.joinToString("、")}"
+            val a = listOf(stringResource(R.string.transfer_part_song, p.songCount)) +
+                (if (p.albumCount > 0) listOf(stringResource(R.string.transfer_part_album, p.albumCount)) else emptyList()) +
+                (if (p.artistCount > 0) listOf(stringResource(R.string.transfer_part_artist, p.artistCount)) else emptyList())
+            lines += stringResource(R.string.transfer_part_songs, a.joinToString(sep))
         }
         if (p.playlistCount > 0) {
-            lines += if (p.itemCount > 0) "保存的歌单：${p.playlistCount} 个（共 ${p.itemCount} 条曲目）"
-            else "保存的歌单：${p.playlistCount} 个"
+            lines += if (p.itemCount > 0) stringResource(R.string.transfer_part_playlist_many, p.playlistCount, p.itemCount)
+            else stringResource(R.string.transfer_part_playlist, p.playlistCount)
         }
         lines.forEach { l ->
             Text("• $l", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)

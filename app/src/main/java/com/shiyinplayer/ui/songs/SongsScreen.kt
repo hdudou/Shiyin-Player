@@ -1,5 +1,6 @@
 package com.shiyinplayer.ui.songs
 
+import com.shiyinplayer.R
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -36,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,7 +84,7 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
                 )
             }
             val name = androidx.documentfile.provider.DocumentFile.fromTreeUri(context, it)?.name
-                ?: it.lastPathSegment ?: "本地文件夹"
+                ?: it.lastPathSegment ?: context.getString(R.string.songs_local_folder)
             scope.launch { viewModel.addLocalFolder(it, name) }
         }
     }
@@ -119,25 +122,25 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
         ) {
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == songs.size) emptySet() else songs.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == songs.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == songs.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
-                Text("歌曲", modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
-                OutlinedButton(onClick = { grouped = !grouped }) { Text(if (grouped) "列表" else "分组") }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                Text(stringResource(R.string.tab_songs), modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
+                OutlinedButton(onClick = { grouped = !grouped }) { Text(if (grouped) stringResource(R.string.action_list) else stringResource(R.string.action_group)) }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
                 Button(onClick = { folderPicker.launch(null) }) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("添加文件夹")
+                    Text(stringResource(R.string.action_add_folder))
                 }
                 Button(onClick = { picker.launch(arrayOf("audio/*")) }) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("添加歌曲")
+                    Text(stringResource(R.string.action_add_song))
                 }
             }
         }
@@ -148,9 +151,9 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
             if (mode != "none" && !selectionMode) {
                 songs.groupBy {
                     when (mode) {
-                        "album" -> it.albumName ?: "未知专辑"
-                        "artist" -> it.artistName ?: "未知艺术家"
-                        "folder" -> it.path?.substringBeforeLast('/') ?: "未知文件夹"
+                        "album" -> it.albumName ?: context.getString(R.string.unknown_album)
+                        "artist" -> it.artistName ?: context.getString(R.string.unknown_artist)
+                        "folder" -> it.path?.substringBeforeLast('/') ?: context.getString(R.string.unknown_folder)
                         else -> groupKey(it.title)
                     }
                 }.toSortedMap()
@@ -199,16 +202,16 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = { actionsViewModel.playAll(selectedSongs) }, modifier = Modifier.weight(1f)) {
-                    Text("播放全部")
+                    Text(stringResource(R.string.action_play_all), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) {
-                    Text("停止")
+                    Text(stringResource(R.string.action_stop), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 OutlinedButton(onClick = { showPlaylistPicker = true }, modifier = Modifier.weight(1f)) {
-                    Text("加入歌单")
+                    Text(stringResource(R.string.action_add_to_playlist), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Button(onClick = { showDeleteConfirm = true }, modifier = Modifier.weight(1f)) {
-                    Text("删除")
+                    Text(stringResource(R.string.action_delete), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
@@ -224,7 +227,7 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${selectedSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, selectedSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, selectedSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, selectedSongs) }; showPlaylistPicker = false }
@@ -241,11 +244,11 @@ fun SongsScreen(viewModel: SongsViewModel = hiltViewModel()) {
                     selectionMode = false
                     selectedIds = emptySet()
                     scope.launch { actionsViewModel.deleteSongs(selectedSongs) }
-                }) { Text("删除") }
+                }) { Text(stringResource(R.string.action_delete)) }
             },
-            dismissButton = { TextButton(onClick = { showDeleteConfirm = false }) { Text("取消") } },
-            title = { Text("删除曲目") },
-            text = { Text("确定从曲库删除选中的 ${selectedSongs.size} 首曲目？") }
+            dismissButton = { TextButton(onClick = { showDeleteConfirm = false }) { Text(stringResource(R.string.action_cancel)) } },
+            title = { Text(stringResource(R.string.delete_songs_title)) },
+            text = { Text(stringResource(R.string.delete_songs_confirm, selectedSongs.size)) }
         )
     }
 }

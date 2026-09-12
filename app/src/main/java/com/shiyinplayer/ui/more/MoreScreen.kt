@@ -49,27 +49,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.ui.navigation.Screen
 
 private data class MoreCategory(val label: String, val summary: String, val icon: ImageVector, val route: String)
 
 /** 更多 = 9 分类入口（P3 需求 12/13）：设置门户拆散，各分类直达对应子屏。 */
-private val categories = listOf(
-    MoreCategory("界面设置", "主题、配色、显示模式与列表外观", Icons.Default.Palette, Screen.SettingsInterface.route),
-    MoreCategory("音乐库设置", "扫描、缓存、文件夹、歌单管理", Icons.Default.LibraryMusic, Screen.SettingsLibrary.route),
-    MoreCategory("回放设置", "启动续播、循环、无缝、耳机控制", Icons.Default.PlayCircle, Screen.SettingsPlayback.route),
-    MoreCategory("音乐来源设置", "音乐库来源、网络源、ZeroTier", Icons.Default.NetworkCheck, Screen.SettingsSources.route),
-    MoreCategory("元数据设置", "内嵌/在线歌词、元数据获取", Icons.Default.Tune, Screen.SettingsMetadata.route),
-    MoreCategory("均衡器", "10 段图形均衡器与预设", Icons.Default.Equalizer, Screen.Equalizer.route),
-    MoreCategory("声音引擎设置", "输出路由、缓冲、音量、音频处理", Icons.Default.Hearing, Screen.SettingsSound.route),
-    MoreCategory("播放统计", "总播放概览与最常播放 Top 10", Icons.Default.BarChart, Screen.Stats.route),
-    MoreCategory("系统集成", "默认播放器、外部打开、播放队列", Icons.Default.SettingsInputComponent, Screen.SettingsIntegration.route),
-    MoreCategory("导出数据", "导出设置、曲库与歌单（可选密码）", Icons.Default.FileDownload, Screen.DataExport.route),
-    MoreCategory("导入数据", "从备份文件恢复设置、曲库与歌单", Icons.Default.FileUpload, Screen.DataImport.route),
-    MoreCategory("关于", "版本信息与开源许可", Icons.Default.Info, Screen.About.route)
+@Composable
+private fun moreCategories(): List<MoreCategory> = listOf(
+    MoreCategory(stringResource(R.string.more_interface), stringResource(R.string.more_interface_summary), Icons.Default.Palette, Screen.SettingsInterface.route),
+    MoreCategory(stringResource(R.string.more_library), stringResource(R.string.more_library_summary), Icons.Default.LibraryMusic, Screen.SettingsLibrary.route),
+    MoreCategory(stringResource(R.string.more_playback), stringResource(R.string.more_playback_summary), Icons.Default.PlayCircle, Screen.SettingsPlayback.route),
+    MoreCategory(stringResource(R.string.more_sources), stringResource(R.string.more_sources_summary), Icons.Default.NetworkCheck, Screen.SettingsSources.route),
+    MoreCategory(stringResource(R.string.more_metadata), stringResource(R.string.more_metadata_summary), Icons.Default.Tune, Screen.SettingsMetadata.route),
+    MoreCategory(stringResource(R.string.more_equalizer), stringResource(R.string.more_equalizer_summary), Icons.Default.Equalizer, Screen.Equalizer.route),
+    MoreCategory(stringResource(R.string.more_sound), stringResource(R.string.more_sound_summary), Icons.Default.Hearing, Screen.SettingsSound.route),
+    MoreCategory(stringResource(R.string.more_stats), stringResource(R.string.more_stats_summary), Icons.Default.BarChart, Screen.Stats.route),
+    MoreCategory(stringResource(R.string.more_integration), stringResource(R.string.more_integration_summary), Icons.Default.SettingsInputComponent, Screen.SettingsIntegration.route),
+    MoreCategory(stringResource(R.string.more_export), stringResource(R.string.more_export_summary), Icons.Default.FileDownload, Screen.DataExport.route),
+    MoreCategory(stringResource(R.string.more_import), stringResource(R.string.more_import_summary), Icons.Default.FileUpload, Screen.DataImport.route),
+    MoreCategory(stringResource(R.string.more_about), stringResource(R.string.more_about_summary), Icons.Default.Info, Screen.About.route)
 )
 
 @Composable
@@ -86,10 +89,11 @@ fun MoreScreen(navController: NavController) {
 /** 竖屏纵向分类列表（与竖屏一致）。 */
 @Composable
 private fun PortraitMoreList(navController: NavController) {
+    val categories = moreCategories()
     LazyColumn(Modifier.fillMaxSize()) {
         item {
             Text(
-                "更多",
+                stringResource(R.string.more_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
@@ -123,6 +127,9 @@ private fun PortraitMoreList(navController: NavController) {
             }
             HorizontalDivider()
         }
+        item {
+            HorizontalDivider()
+        }
     }
 }
 
@@ -132,6 +139,7 @@ private fun PortraitMoreList(navController: NavController) {
  */
 @Composable
 private fun LandscapeMoreGrid(navController: NavController) {
+    val categories = moreCategories()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 220.dp),
         modifier = Modifier.fillMaxSize(),
@@ -141,7 +149,7 @@ private fun LandscapeMoreGrid(navController: NavController) {
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Text(
-                "更多",
+                stringResource(R.string.more_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 6.dp)
             )
@@ -183,6 +191,9 @@ private fun LandscapeMoreGrid(navController: NavController) {
                     }
                 }
             }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
         }
     }
 }

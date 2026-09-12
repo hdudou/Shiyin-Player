@@ -361,6 +361,9 @@ class SettingsRepository @Inject constructor(
     suspend fun setThemeStyle(v: Int) = dataStore.edit { it[THEME_STYLE] = v }
     suspend fun setDynamicColors(v: Boolean) = dataStore.edit { it[DYNAMIC_COLORS] = v }
     suspend fun setLanguage(v: String) = dataStore.edit { it[LANGUAGE] = v }
+
+    /** 语言同步读（attachBaseContext 等构建期阶段用）：从内存快照取，未缓存则跟随系统。 */
+    fun languageSync(): String = prefsCache[LANGUAGE] ?: "system"
     suspend fun setAppMode(v: String) = dataStore.edit { it[APP_MODE] = v }
     suspend fun setMusicWasPlaying(v: Boolean) = dataStore.edit { it[MUSIC_WAS_PLAYING] = v }
     fun musicWasPlayingSync(): Boolean = prefsCache[MUSIC_WAS_PLAYING] ?: false

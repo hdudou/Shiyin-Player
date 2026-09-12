@@ -6,6 +6,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import java.io.File
+import com.shiyinplayer.R
 import com.shiyinplayer.data.media.SmbBrowser
 import com.shiyinplayer.data.media.SmbCredentialStore
 import com.shiyinplayer.data.media.ScanMode
@@ -246,7 +247,7 @@ class NetworkViewModel @Inject constructor(
             } catch (t: Throwable) {
                 // 认证失败 / 连接失败不再静默显示空目录，而是明确提示原因
                 _entries.value = emptyList()
-                _scanResult.value = "浏览失败：${t.message}"
+                _scanResult.value = context.getString(R.string.network_browse_failed, t.message)
                 return@launch
             }
             _entries.value = list.sortedWith(compareBy({ !it.isDir }, { it.name.lowercase() }))
@@ -261,15 +262,20 @@ class NetworkViewModel @Inject constructor(
      * 独立协程执行单源扫描；与其它源互不影响（扫描器单源模式跳过失效清理，避免误删同类型其它源歌曲）。
      */
     fun scanSource(src: MusicSource, mode: ScanMode = ScanMode.NEW_ONLY) {
-        val verb = if (mode == ScanMode.FULL_UPDATE) "全量更新" else "同步"
-        _scanResult.value = "正在$verb「${src.name}」…"
+        _scanResult.value = if (mode == ScanMode.FULL_UPDATE)
+            context.getString(R.string.network_scanning_full, src.name)
+        else
+            context.getString(R.string.network_scanning_sync, src.name)
         repo.scanSources(listOf(src), singleSourceId = src.id, mode = mode) { res ->
             _scanResult.value = res.fold(
                 {
-                    val prefix = if (mode == ScanMode.FULL_UPDATE) "全量更新「${src.name}」完成" else "同步「${src.name}」完成"
+                    val prefix = if (mode == ScanMode.FULL_UPDATE)
+                        context.getString(R.string.network_scan_done_full, src.name)
+                    else
+                        context.getString(R.string.network_scan_done_sync, src.name)
                     scanMessage(prefix, it, mode)
                 },
-                { "扫描「${src.name}」失败：${it.message}" }
+                { context.getString(R.string.network_scan_failed, src.name, it.message) }
             )
         }
     }
@@ -278,11 +284,11 @@ class NetworkViewModel @Inject constructor(
     private fun scanMessage(prefix: String, res: ScanResult, mode: ScanMode = ScanMode.NEW_ONLY): String {
         // 计数区分模式：仅新增扫描只答新增；全量更新答「已更新 X 首，已新增 Y 首」
         val head = if (mode == ScanMode.FULL_UPDATE) {
-            "$prefix：已更新 ${res.updated} 首，已新增 ${res.added} 首"
+            context.getString(R.string.network_scan_result_update, prefix, res.updated, res.added)
         } else {
-            "$prefix：新增 ${res.added} 首"
+            context.getString(R.string.network_scan_result_added, prefix, res.added)
         }
-        return if (res.errors.isEmpty()) head else "$head，但有 ${res.errors.size} 个来源错误。\n${res.errors.first()}"
+        return if (res.errors.isEmpty()) head else context.getString(R.string.network_scan_result_errors, head, res.errors.size, res.errors.first())
     }
 
     /** 本机文件夹目录浏览：列出子目录与音频文件（目录可继续进入）。 */

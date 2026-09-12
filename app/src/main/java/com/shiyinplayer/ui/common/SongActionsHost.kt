@@ -42,9 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.shiyinplayer.R
 import com.shiyinplayer.util.TimeUtils
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.shiyinplayer.data.metadata.SongMatch
@@ -79,20 +82,20 @@ fun SongActionsSheet(
                 .padding(start = 24.dp, end = 24.dp, bottom = 96.dp)
         ) {
             Text(song.title, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-            Text(song.artistName ?: "未知艺术家", style = MaterialTheme.typography.bodySmall, maxLines = 1)
+            Text(song.artistName ?: stringResource(R.string.unknown_artist), style = MaterialTheme.typography.bodySmall, maxLines = 1)
             Spacer(Modifier.height(12.dp))
-            ActionItem("下一首播放", Icons.Default.PlaylistPlay) { onPlayNext(); onDismiss() }
+            ActionItem(stringResource(R.string.song_play_next), Icons.Default.PlaylistPlay) { onPlayNext(); onDismiss() }
             // F2-1：新增「稍后播放」（追加到队尾）
-            ActionItem("稍后播放", Icons.Default.QueueMusic) { onEnqueueTail(); onDismiss() }
-            ActionItem("加入播放列表", Icons.Default.PlaylistAdd) { onAddToPlaylist() }
+            ActionItem(stringResource(R.string.song_play_later), Icons.Default.QueueMusic) { onEnqueueTail(); onDismiss() }
+            ActionItem(stringResource(R.string.song_add_playlist), Icons.Default.PlaylistAdd) { onAddToPlaylist() }
             // 2026-08-19：文案改名（编辑元数据 / 在线查找元数据），新增「查看文件信息」
-            ActionItem("编辑元数据", Icons.Default.Edit) { onEditInfo(); onDismiss() }
-            ActionItem("在线查找元数据", Icons.Default.Search) { onOnlineMatch(); onDismiss() }
-            ActionItem("查看文件信息", Icons.Default.Info) { onFileInfo(); onDismiss() }
-            onViewAlbum?.let { ActionItem("查看专辑", Icons.Default.Album) { it(); onDismiss() } }
-            onViewArtist?.let { ActionItem("查看艺术家", Icons.Default.Person) { it(); onDismiss() } }
-            onRemoveFromPlaylist?.let { ActionItem("从歌单移除", Icons.Default.RemoveCircleOutline) { it(); onDismiss() } }
-            onDelete?.let { ActionItem("从曲库删除", Icons.Default.Delete, destructive = true) { it(); onDismiss() } }
+            ActionItem(stringResource(R.string.song_edit_metadata), Icons.Default.Edit) { onEditInfo(); onDismiss() }
+            ActionItem(stringResource(R.string.song_online_match), Icons.Default.Search) { onOnlineMatch(); onDismiss() }
+            ActionItem(stringResource(R.string.song_view_file_info), Icons.Default.Info) { onFileInfo(); onDismiss() }
+            onViewAlbum?.let { ActionItem(stringResource(R.string.song_view_album), Icons.Default.Album) { it(); onDismiss() } }
+            onViewArtist?.let { ActionItem(stringResource(R.string.song_view_artist), Icons.Default.Person) { it(); onDismiss() } }
+            onRemoveFromPlaylist?.let { ActionItem(stringResource(R.string.song_remove_from_playlist), Icons.Default.RemoveCircleOutline) { it(); onDismiss() } }
+            onDelete?.let { ActionItem(stringResource(R.string.song_delete_from_library), Icons.Default.Delete, destructive = true) { it(); onDismiss() } }
         }
     }
 }
@@ -139,8 +142,8 @@ fun AddToPlaylistDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
-        title = { Text("加入播放列表") },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+        title = { Text(stringResource(R.string.song_add_playlist)) },
         text = {
             Column {
                 subtitle?.let {
@@ -154,13 +157,13 @@ fun AddToPlaylistDialog(
                         ) { Text(pl.name) }
                     }
                     if (playlists.isEmpty()) {
-                        item { Text("暂无播放列表", style = MaterialTheme.typography.bodySmall) }
+                        item { Text(stringResource(R.string.playlist_picker_empty), style = MaterialTheme.typography.bodySmall) }
                     }
                 }
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     name, { name = it },
-                    label = { Text("新建播放列表名称") },
+                    label = { Text(stringResource(R.string.playlist_new_name_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -169,7 +172,7 @@ fun AddToPlaylistDialog(
                     enabled = name.isNotBlank(),
                     onClick = { onCreate(name.trim()) },
                     modifier = Modifier.fillMaxWidth()
-                ) { Text("新建并添加") }
+                ) { Text(stringResource(R.string.action_create_add)) }
             }
         }
     )
@@ -194,17 +197,17 @@ fun EditMetadataDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: (
                     album.trim().ifBlank { null }
                 )
                 onDismiss()
-            }) { Text("保存") }
+            }) { Text(stringResource(R.string.action_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
-        title = { Text("编辑歌曲信息") },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+        title = { Text(stringResource(R.string.edit_info_title)) },
         text = {
             Column {
-                OutlinedTextField(title, { title = it }, label = { Text("标题") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(title, { title = it }, label = { Text(stringResource(R.string.label_title)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(artist, { artist = it }, label = { Text("艺术家") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(artist, { artist = it }, label = { Text(stringResource(R.string.label_artist)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(album, { album = it }, label = { Text("专辑") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(album, { album = it }, label = { Text(stringResource(R.string.label_album)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
         }
     )
@@ -223,21 +226,21 @@ fun OnlineMatchDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: ()
     val scope = rememberCoroutineScope()
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
-        title = { Text("在线匹配元数据") },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } },
+        title = { Text(stringResource(R.string.online_match_title)) },
         text = {
             Column {
                 // 当前文件信息（输入框上方，作匹配参考）—— 来源 + 文件名，多行显示
                 val sources by viewModel.musicSources.collectAsStateWithLifecycle()
                 val info = remember(song, sources) { buildFileInfo(song, sources) }
                 Text(
-                    "来源：${info.sourceName ?: typeLabel(song.source)}",
+                    stringResource(R.string.file_source_prefix, info.sourceName ?: typeLabel(song.source)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "文件名：${info.fileName ?: song.title}",
+                    stringResource(R.string.file_name_prefix, info.fileName ?: song.title),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -245,14 +248,14 @@ fun OnlineMatchDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: ()
                 // 双维度：歌名（固定高度略降输入框高度）
                 OutlinedTextField(
                     titleQuery, { titleQuery = it },
-                    label = { Text("歌名") }, singleLine = true,
+                    label = { Text(stringResource(R.string.label_song_name)) }, singleLine = true,
                     modifier = Modifier.fillMaxWidth().height(56.dp)
                 )
                 Spacer(Modifier.height(8.dp))
                 // 双维度：歌手（可空）
                 OutlinedTextField(
                     artistQuery, { artistQuery = it },
-                    label = { Text("歌手（可空）") }, singleLine = true,
+                    label = { Text(stringResource(R.string.label_artist_optional)) }, singleLine = true,
                     modifier = Modifier.fillMaxWidth().height(56.dp)
                 )
                 Spacer(Modifier.height(8.dp))
@@ -262,7 +265,7 @@ fun OnlineMatchDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: ()
                         results = viewModel.searchMatches(titleQuery, artistQuery.ifBlank { null })
                         loading = false
                     }
-                }, modifier = Modifier.fillMaxWidth()) { Text(if (loading) "搜索中…" else "搜索") }
+                }, modifier = Modifier.fillMaxWidth()) { Text(if (loading) stringResource(R.string.action_searching) else stringResource(R.string.action_search)) }
                 Spacer(Modifier.height(8.dp))
                 LazyColumn(Modifier.heightIn(max = 300.dp)) {
                     items(results, key = { "${it.source}|${it.id}" }) { m ->
@@ -285,10 +288,10 @@ fun OnlineMatchDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: ()
                                     m.title, style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold, maxLines = 1
                                 )
-                                // 结果行：歌手 · 专辑 · 年份（可选） · 来源
+                                // 结果行：歌手 · 专辑（可未知） · 年份（可选） · 来源
                                 val yearPart = m.year?.let { " · $it" } ?: ""
                                 Text(
-                                    "${m.artist} · ${m.album ?: "未知专辑"}$yearPart · ${m.source}",
+                                    stringResource(R.string.online_match_row, m.artist, m.album ?: stringResource(R.string.unknown_album), yearPart, m.source),
                                     style = MaterialTheme.typography.bodySmall,
                                     maxLines = 1
                                 )
@@ -296,7 +299,7 @@ fun OnlineMatchDialog(song: Song, viewModel: SongActionsViewModel, onDismiss: ()
                         }
                     }
                     if (results.isEmpty() && !loading) {
-                        item { Text("输入歌名/歌手后点击「搜索」", style = MaterialTheme.typography.bodySmall) }
+                        item { Text(stringResource(R.string.online_match_hint), style = MaterialTheme.typography.bodySmall) }
                     }
                 }
             }
@@ -322,45 +325,45 @@ fun SongFileInfoDialog(
     val fileInfo = remember(song, sources) { buildFileInfo(song, sources) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { TextButton(onClick = onDismiss) { Text("关闭") } },
-        title = { Text("文件信息") },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } },
+        title = { Text(stringResource(R.string.file_info_title)) },
         text = {
             Column {
                 // 2026-08-24：与正在播放界面文件信息统一——歌曲名/艺术家/专辑/类型/风格/年份/时长/采样率/MIME/文件名+大小/来源/URI
                 // （URI 与文件名已 URL 解码，避免网络源 %XX 乱码）
                 val fileType = (fileInfo.fileName ?: "").substringAfterLast('.', "")
-                    .takeIf { it.isNotBlank() } ?: "未知"
+                    .takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown_short)
                 val sourceLabel = fileInfo.sourceName ?: typeLabel(song.source)
                 val rows = listOf(
-                    "歌曲名" to (song.title.ifBlank { "—" }),
-                    "艺术家" to (song.artistName?.ifBlank { null } ?: "—"),
-                    "专辑" to (song.albumName?.ifBlank { null } ?: "—"),
-                    "歌曲类型" to fileType,
-                    "歌曲风格" to (song.genre?.takeIf { it.isNotBlank() } ?: "未知"),
-                    "发行年份" to (song.year?.toString() ?: "—"),
-                    "时长" to TimeUtils.formatDuration(song.durationMs),
-                    "采样率" to "—",
+                    stringResource(R.string.file_info_song_name) to (song.title.ifBlank { "—" }),
+                    stringResource(R.string.label_artist) to (song.artistName?.ifBlank { null } ?: "—"),
+                    stringResource(R.string.label_album) to (song.albumName?.ifBlank { null } ?: "—"),
+                    stringResource(R.string.file_info_type) to fileType,
+                    stringResource(R.string.file_info_genre) to (song.genre?.takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown_short)),
+                    stringResource(R.string.file_info_release_year) to (song.year?.toString() ?: "—"),
+                    stringResource(R.string.file_info_duration) to TimeUtils.formatDuration(song.durationMs),
+                    stringResource(R.string.file_info_samplerate) to "—",
                     "MIME" to (song.mimeType?.ifBlank { null } ?: "—")
                 )
                 rows.forEach { (k, v) ->
                     Row(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                        Text("$k", modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("$k", modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(v, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
                 HorizontalDivider(Modifier.padding(vertical = 6.dp))
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Text("文件名", modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("${fileInfo.fileName ?: "未知"}（${formatBytes(song.sizeBytes)}）", modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.file_info_filename), modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(stringResource(R.string.file_name_with_size, fileInfo.fileName ?: stringResource(R.string.unknown_short), formatBytes(song.sizeBytes)), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 }
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Text("来源", modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.file_info_source), modifier = Modifier.width(72.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(sourceLabel, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 }
-                Text("URI：${fileInfo.displayUri}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.file_uri_prefix, fileInfo.displayUri), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (song.altUris.isNotEmpty()) {
                     Spacer(Modifier.height(12.dp))
-                    Text("备用来源（${song.altUris.size} 个）", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.file_info_alt_sources, song.altUris.size), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                     song.altUris.forEach { alt ->
                         val altInfo = buildFileInfo(song.copy(uri = alt, path = alt), sources)
                         Text(
@@ -383,11 +386,12 @@ private data class FileInfoDisplay(
     val displayUri: String
 )
 
+@Composable
 private fun typeLabel(t: MediaSourceType): String = when (t) {
     MediaSourceType.SMB -> "SMB"
     MediaSourceType.WEBDAV -> "WebDAV"
-    MediaSourceType.HTTP -> "HTTP 直链"
-    MediaSourceType.LOCAL -> "文件夹"
+    MediaSourceType.HTTP -> stringResource(R.string.type_http)
+    MediaSourceType.LOCAL -> stringResource(R.string.type_folder)
 }
 
 private fun formatBytes(bytes: Long): String {

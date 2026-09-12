@@ -21,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.shiyinplayer.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -43,17 +45,17 @@ fun BottomPlayerBar(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(song.title, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
-            Text(song.artistName ?: "未知艺术家", style = MaterialTheme.typography.bodySmall, maxLines = 1)
+            Text(song.artistName ?: stringResource(R.string.unknown_artist), style = MaterialTheme.typography.bodySmall, maxLines = 1)
             LinearProgressIndicator(
                 progress = { if (state.durationMs > 0) state.positionMs.toFloat() / state.durationMs else 0f },
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        IconButton(onClick = viewModel::prev) { Icon(Icons.Default.SkipPrevious, contentDescription = "上一首") }
+        IconButton(onClick = viewModel::prev) { Icon(Icons.Default.SkipPrevious, contentDescription = stringResource(R.string.action_previous)) }
         IconButton(onClick = viewModel::togglePlay) {
-            Icon(if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = "播放/暂停")
+            Icon(if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = stringResource(R.string.action_play_pause))
         }
-        IconButton(onClick = viewModel::stop) { Icon(Icons.Default.Stop, contentDescription = "停止") }
-        IconButton(onClick = viewModel::next) { Icon(Icons.Default.SkipNext, contentDescription = "下一首") }
+        IconButton(onClick = viewModel::stop) { Icon(Icons.Default.Stop, contentDescription = stringResource(R.string.action_stop)) }
+        IconButton(onClick = viewModel::next) { Icon(Icons.Default.SkipNext, contentDescription = stringResource(R.string.action_next)) }
     }
 }

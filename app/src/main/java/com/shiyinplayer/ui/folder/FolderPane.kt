@@ -62,6 +62,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import androidx.compose.ui.res.stringResource
+import com.shiyinplayer.R
 import com.shiyinplayer.data.local.entity.FolderAttachmentEntity
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
@@ -121,7 +123,7 @@ fun FolderPane(
         FolderSourcePicker(sources, hasUnmatched) { viewModel.selectSource(it) }
     } else {
         val sourceName = sources.firstOrNull { it.id == sourceId }?.name
-            ?: (if (sourceId == -1L) "其他来源" else "来源${'#'}$sourceId")
+            ?: (if (sourceId == -1L) stringResource(R.string.folder_other_source) else "来源${'#'}$sourceId")
 
         Column(Modifier.fillMaxSize()) {
             // ===== 第一行：返回键 + 当前路径（完整显示） =====
@@ -131,7 +133,7 @@ fun FolderPane(
             ) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "返回上一级",
+                    contentDescription = stringResource(R.string.folder_back_up),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .clickable { if (segments.isEmpty()) viewModel.backToSources() else viewModel.goUp() }
@@ -172,7 +174,7 @@ fun FolderPane(
                             )
                             Text(dir.display, style = MaterialTheme.typography.bodyLarge, maxLines = 1, modifier = Modifier.weight(1f))
                             Text(
-                                "${dir.songCount} 首",
+                                stringResource(R.string.folder_song_count, dir.songCount),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(start = 4.dp, end = 8.dp)
@@ -196,7 +198,7 @@ fun FolderPane(
                     if (filteredDirs.isEmpty() && filteredFiles.isEmpty() && filteredAtts.isEmpty()) {
                         item {
                             Text(
-                                "此目录为空",
+                                stringResource(R.string.folder_empty),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth().padding(16.dp)
@@ -258,7 +260,8 @@ private fun AttachmentRow(att: FolderAttachmentEntity, onClick: () -> Unit) {
         Column(Modifier.weight(1f)) {
             Text(att.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
             Text(
-                if (att.isCover) "专辑封面" else "专辑说明",
+                if (att.isCover) stringResource(R.string.folder_attachment_cover)
+                else stringResource(R.string.folder_attachment_desc),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -282,7 +285,7 @@ private fun AttachmentPreviewDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("关闭") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) }
         },
         title = { Text(att.name, style = MaterialTheme.typography.titleSmall, maxLines = 1) },
         text = {
@@ -294,7 +297,7 @@ private fun AttachmentPreviewDialog(
                 }
                 data == null -> {
                     Text(
-                        "无法加载该附件",
+                        stringResource(R.string.folder_attachment_load_failed),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
@@ -330,7 +333,7 @@ private fun FolderSourcePicker(
     LazyColumn(Modifier.fillMaxSize()) {
         item {
             Text(
-                "选择来源",
+                stringResource(R.string.folder_select_source),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
@@ -341,13 +344,17 @@ private fun FolderSourcePicker(
         }
         if (hasUnmatched) {
             item {
-                SourceRow(name = "其他来源", subtitle = "未能匹配到源的曲目", onClick = { onSelect(-1) })
+                SourceRow(
+                    name = stringResource(R.string.folder_other_source),
+                    subtitle = stringResource(R.string.folder_unmatched),
+                    onClick = { onSelect(-1) }
+                )
             }
         }
         if (sources.isEmpty() && !hasUnmatched) {
             item {
                 Text(
-                    "暂无来源，请先在「音乐库来源」中添加",
+                    stringResource(R.string.folder_no_sources),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth().padding(16.dp)

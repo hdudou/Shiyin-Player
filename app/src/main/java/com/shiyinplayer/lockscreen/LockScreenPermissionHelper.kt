@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import com.shiyinplayer.R
 
 /**
  * 厂商 ROM 检测 + SYSTEM_ALERT_WINDOW 权限检查。
@@ -49,44 +50,16 @@ object LockScreenPermissionHelper {
     }
 
     /** 获取厂商特定的权限引导提示文案 */
-    fun getPermissionGuideText(vendor: Vendor): Pair<String, String> {
-        return when (vendor) {
-            Vendor.Xiaomi -> Pair(
-                "开启悬浮窗权限",
-                "小米/HyperOS 需要手动开启「显示悬浮窗」权限。\n\n" +
-                    "步骤：设置 → 应用设置 → 应用管理 → ShiyinPlayer → 权限 → 显示悬浮窗 → 开启\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
-            Vendor.Huawei -> Pair(
-                "开启悬浮窗权限",
-                "华为/荣耀 EMUI 需要手动开启「悬浮窗」权限。\n\n" +
-                    "步骤：设置 → 应用和服务 → 权限管理 → ShiyinPlayer → 悬浮窗 → 允许\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
-            Vendor.Oppo -> Pair(
-                "开启悬浮窗权限",
-                "OPPO/OnePlus/Realme 需要手动开启「悬浮窗」权限。\n\n" +
-                    "步骤：设置 → 应用管理 → ShiyinPlayer → 权限管理 → 悬浮窗 → 允许\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
-            Vendor.Vivo -> Pair(
-                "开启悬浮窗权限",
-                "vivo/iQOO 需要手动开启「悬浮窗」权限。\n\n" +
-                    "步骤：设置 → 应用与权限 → 权限管理 → ShiyinPlayer → 悬浮窗 → 允许\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
-            Vendor.Samsung -> Pair(
-                "开启悬浮窗权限",
-                "三星需要手动开启「在其他应用上层显示」权限。\n\n" +
-                    "步骤：设置 → 应用 → ShiyinPlayer → 允许在其他应用上层显示 → 开启\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
-            Vendor.Unknown -> Pair(
-                "开启悬浮窗权限",
-                "您的设备需要手动开启「显示在其他应用上层」权限。\n\n" +
-                    "请在系统设置中找到 ShiyinPlayer 的权限设置，开启悬浮窗/显示在其他应用上层。\n\n" +
-                    "未开启时将降级为通知栏控制。"
-            )
+    fun getPermissionGuideText(context: Context, vendor: Vendor): Pair<String, String> {
+        val title = context.getString(R.string.overlay_permission_title)
+        val bodyRes = when (vendor) {
+            Vendor.Xiaomi -> R.string.overlay_permission_body_xiaomi
+            Vendor.Huawei -> R.string.overlay_permission_body_huawei
+            Vendor.Oppo -> R.string.overlay_permission_body_oppo
+            Vendor.Vivo -> R.string.overlay_permission_body_vivo
+            Vendor.Samsung -> R.string.overlay_permission_body_samsung
+            Vendor.Unknown -> R.string.overlay_permission_body_unknown
         }
+        return title to context.getString(bodyRes)
     }
 }

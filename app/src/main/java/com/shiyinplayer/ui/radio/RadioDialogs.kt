@@ -35,7 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shiyinplayer.R
 import com.shiyinplayer.data.radio.MergedRadioStation
 
 /**
@@ -52,7 +55,9 @@ fun InfoRow(label: String, value: String) {
             "$label：",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(56.dp)
+            modifier = Modifier.width(56.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
             value,
@@ -94,7 +99,7 @@ fun EditStationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
-        title = { Text("修改电台") },
+        title = { Text(stringResource(R.string.radio_edit_station)) },
         text = {
             Column(
                 modifier = Modifier
@@ -124,10 +129,10 @@ fun EditStationDialog(
             TextButton(onClick = {
                 val newGenre = ChinaRegionData.buildGenre(category, region, sub, city)
                 onSave(name.trim().ifBlank { station.displayName }, urls.toList(), newGenre)
-            }) { Text("保存") }
+            }) { Text(stringResource(R.string.action_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }
@@ -163,13 +168,13 @@ internal fun StationEditorFields(
     OutlinedTextField(
         value = name,
         onValueChange = onNameChange,
-        label = { Text("名称") },
+        label = { Text(stringResource(R.string.radio_name_label)) },
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(8.dp))
 
-    Text("线路（可添加多条）", style = MaterialTheme.typography.labelSmall)
+    Text(stringResource(R.string.radio_lines_multi_hint), style = MaterialTheme.typography.labelSmall)
     urls.forEachIndexed { index, u ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -178,13 +183,13 @@ internal fun StationEditorFields(
             OutlinedTextField(
                 value = u,
                 onValueChange = { urls[index] = it },
-                label = { Text("线路 ${index + 1}") },
+                label = { Text(stringResource(R.string.radio_line_label, index + 1)) },
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
             if (urls.size > 1) {
                 IconButton(onClick = { urls.removeAt(index) }) {
-                    Icon(Icons.Filled.Close, contentDescription = "移除线路")
+                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.radio_remove_line))
                 }
             }
         }
@@ -192,10 +197,10 @@ internal fun StationEditorFields(
     TextButton(
         onClick = { urls.add("") },
         modifier = Modifier.padding(top = 0.dp)
-    ) { Text("+ 添加线路") }
+    ) { Text(stringResource(R.string.radio_add_line)) }
     Spacer(Modifier.height(8.dp))
 
-    Text("分类", style = MaterialTheme.typography.labelSmall)
+    Text(stringResource(R.string.radio_category), style = MaterialTheme.typography.labelSmall)
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -204,19 +209,19 @@ internal fun StationEditorFields(
             FilterChip(
                 selected = category == cat,
                 onClick = { onCategoryChange(cat) },
-                label = { Text(cat, style = MaterialTheme.typography.labelSmall) },
+                label = { Text(RadioDictTranslate.text(cat), style = MaterialTheme.typography.labelSmall) },
                 modifier = Modifier.height(24.dp)
             )
         }
     }
     Spacer(Modifier.height(8.dp))
-    Text("地区", style = MaterialTheme.typography.labelSmall)
+    Text(stringResource(R.string.radio_region), style = MaterialTheme.typography.labelSmall)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         ChinaRegionData.majorRegions.forEach { reg ->
             FilterChip(
                 selected = region == reg,
                 onClick = { onRegionChange(reg) },
-                label = { Text(reg, style = MaterialTheme.typography.labelSmall) },
+                label = { Text(RadioDictTranslate.text(reg), style = MaterialTheme.typography.labelSmall) },
                 modifier = Modifier.height(24.dp)
             )
         }
@@ -224,14 +229,14 @@ internal fun StationEditorFields(
 
     if (region == "大陆") {
         Spacer(Modifier.height(8.dp))
-        Text("省份", style = MaterialTheme.typography.labelSmall)
+        Text(stringResource(R.string.radio_province), style = MaterialTheme.typography.labelSmall)
         var provinceExpanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = provinceExpanded,
             onExpandedChange = { provinceExpanded = it }
         ) {
             OutlinedTextField(
-                value = sub.ifBlank { "请选择省份" },
+                value = if (sub.isBlank()) stringResource(R.string.radio_select_province) else RadioDictTranslate.text(sub),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = provinceExpanded) },
@@ -245,7 +250,7 @@ internal fun StationEditorFields(
             ) {
                 ChinaRegionData.provinces.forEach { prov ->
                     DropdownMenuItem(
-                        text = { Text(prov) },
+                        text = { Text(RadioDictTranslate.text(prov)) },
                         onClick = {
                             onSubChange(prov)
                             provinceExpanded = false
@@ -256,14 +261,14 @@ internal fun StationEditorFields(
         }
         if (sub.isNotBlank() && availableCities.isNotEmpty()) {
             Spacer(Modifier.height(4.dp))
-            Text("城市", style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.radio_city), style = MaterialTheme.typography.labelSmall)
             var cityExpanded by remember { mutableStateOf(false) }
             ExposedDropdownMenuBox(
                 expanded = cityExpanded,
                 onExpandedChange = { cityExpanded = it }
             ) {
                 OutlinedTextField(
-                    value = city.ifBlank { "请选择城市" },
+                    value = if (city.isBlank()) stringResource(R.string.radio_select_city) else RadioDictTranslate.text(city),
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = cityExpanded) },
@@ -277,7 +282,7 @@ internal fun StationEditorFields(
                 ) {
                     availableCities.forEach { c ->
                         DropdownMenuItem(
-                            text = { Text(c) },
+                            text = { Text(RadioDictTranslate.text(c)) },
                             onClick = {
                                 onCityChange(c)
                                 cityExpanded = false
@@ -289,13 +294,13 @@ internal fun StationEditorFields(
         }
     } else if (region == "港澳台") {
         Spacer(Modifier.height(8.dp))
-        Text("子类地区", style = MaterialTheme.typography.labelSmall)
+        Text(stringResource(R.string.radio_sub_region), style = MaterialTheme.typography.labelSmall)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             ChinaRegionData.hmtSubRegions.forEach { sr ->
                 FilterChip(
                     selected = sub == sr,
                     onClick = { onSubChange(sr) },
-                    label = { Text(sr, style = MaterialTheme.typography.labelSmall) },
+                    label = { Text(RadioDictTranslate.text(sr), style = MaterialTheme.typography.labelSmall) },
                     modifier = Modifier.height(24.dp)
                 )
             }
@@ -305,8 +310,8 @@ internal fun StationEditorFields(
         OutlinedTextField(
             value = sub,
             onValueChange = onSubChange,
-            label = { Text("所属国家") },
-            placeholder = { Text("例如：葡萄牙、日本、美国") },
+            label = { Text(stringResource(R.string.radio_country)) },
+            placeholder = { Text(stringResource(R.string.radio_country_placeholder)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )

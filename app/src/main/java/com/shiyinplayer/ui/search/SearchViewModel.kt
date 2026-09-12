@@ -32,10 +32,10 @@ data class SearchResults(
 )
 
 /** F2-2：来源筛选。 */
-enum class SongSourceFilter(val label: String) { ALL("全部来源"), LOCAL("本地"), NETWORK("网络") }
+enum class SongSourceFilter { ALL, LOCAL, NETWORK }
 
 /** F2-2：时长筛选。 */
-enum class DurationFilter(val label: String) { ALL("全部时长"), SHORT("3 分钟以内"), LONG("3 分钟以上") }
+enum class DurationFilter { ALL, SHORT, LONG }
 
 private data class FilterQuery(
     val q: String,

@@ -80,8 +80,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import com.shiyinplayer.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -157,7 +160,7 @@ fun NowPlayingScreen(
     var animDirection by remember { mutableStateOf(0) }
     val song = state.currentSong ?: run {
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("未在播放")
+            Text(stringResource(R.string.nowplaying_not_playing))
         }
         return
     }
@@ -245,14 +248,14 @@ fun NowPlayingScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { navController.navigateUp() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
             }
             Spacer(Modifier.weight(1f))
             // 定时（合并睡眠定时 + 定时播放，统一入口）
             IconButton(onClick = { showTimerDialog = true }, modifier = Modifier.size(32.dp)) {
                 Icon(
                     Icons.Outlined.Timer,
-                    contentDescription = "定时",
+                    contentDescription = stringResource(R.string.action_timer),
                     modifier = Modifier.size(20.dp),
                     tint = if (sleepEndAt != null || alarmEnabled) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant
@@ -260,7 +263,7 @@ fun NowPlayingScreen(
             }
             // P5 需求 14：查看当前文件信息
             IconButton(onClick = { showFileInfo = true }, modifier = Modifier.size(32.dp)) {
-                Icon(Icons.Outlined.Info, contentDescription = "文件信息", modifier = Modifier.size(20.dp))
+                Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.song_file_info), modifier = Modifier.size(20.dp))
             }
             // 锁屏动态效果入口（M1）
             IconButton(
@@ -275,7 +278,7 @@ fun NowPlayingScreen(
             ) {
                 Icon(
                     Icons.Filled.Lock,
-                    contentDescription = "锁屏动态效果",
+                    contentDescription = stringResource(R.string.lock_screen_effect),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -307,7 +310,7 @@ fun NowPlayingScreen(
                     val placeholder: @Composable () -> Unit = { Box(Modifier.fillMaxSize().background(phColor)) }
                     SubcomposeAsyncImage(
                         model = coverUrl,
-                        contentDescription = "专辑封面",
+                        contentDescription = stringResource(R.string.album_cover),
                         contentScale = ContentScale.Crop,
                         loading = { placeholder() },
                         error = { placeholder() },
@@ -319,12 +322,12 @@ fun NowPlayingScreen(
                 }
                 Text(song.title, style = MaterialTheme.typography.headlineSmall, maxLines = 2, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(6.dp))
-                Text(song.artistName ?: "未知艺术家", style = MaterialTheme.typography.bodyLarge)
+                Text(song.artistName ?: stringResource(R.string.unknown_artist), style = MaterialTheme.typography.bodyLarge)
                 Text(song.albumName ?: "", style = MaterialTheme.typography.bodyMedium)
                 // 发行年份（在线抓取优先，其次主库存储）
                 val releaseYear = lyrics.year ?: song.year
                 if (releaseYear != null) {
-                    Text("发行年份：$releaseYear", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.song_release_year, releaseYear), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -333,7 +336,7 @@ fun NowPlayingScreen(
         Box(Modifier.weight(1f).fillMaxWidth()) {
             if (lyrics.loading) {
                 Text(
-                    "歌词加载中…", style = MaterialTheme.typography.bodySmall,
+                    stringResource(R.string.lyrics_loading), style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -343,7 +346,7 @@ fun NowPlayingScreen(
                     currentIndex = currentLine,
                     onSeek = viewModel::seek,
                     modifier = Modifier.fillMaxSize(),
-                    emptyText = lyrics.error ?: "暂无歌词",
+                    emptyText = lyrics.error ?: stringResource(R.string.lyrics_none),
                     showTranslation = lyrics.showTranslation
                 )
             }
@@ -352,12 +355,12 @@ fun NowPlayingScreen(
         Column(Modifier.fillMaxWidth().graphicsLayer { alpha = contentAlpha }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                lyrics.source?.let { "歌词来源：$it" } ?: "",
+                lyrics.source?.let { stringResource(R.string.lyrics_source, it) } ?: "",
                 fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
             IconButton(onClick = lyricsViewModel::refresh, modifier = Modifier.size(24.dp)) {
-                Icon(Icons.Default.Refresh, contentDescription = "重新获取歌词", modifier = Modifier.size(14.dp))
+                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.lyrics_refresh), modifier = Modifier.size(14.dp))
             }
             // F2-4：译文显隐切换（仅在有译文时可用）
             if (lyrics.hasTranslation) {
@@ -367,7 +370,7 @@ fun NowPlayingScreen(
                     contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        if (lyrics.showTranslation) "译文" else "原词",
+                        if (lyrics.showTranslation) stringResource(R.string.lyrics_translation) else stringResource(R.string.lyrics_original),
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
@@ -380,7 +383,7 @@ fun NowPlayingScreen(
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
             ) {
                 Text(
-                    if (desktopShown) "关闭桌面" else "桌面歌词",
+                    if (desktopShown) stringResource(R.string.desktop_lyrics_close) else stringResource(R.string.desktop_lyrics),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (desktopShown) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -388,14 +391,14 @@ fun NowPlayingScreen(
         }
         // §12 R3：歌词时间校正（按歌曲持久化到主库 lyricOffsetMs），紧凑小按钮
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("歌词校正", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.lyrics_adjust), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             listOf(-500L to "−0.5s", 500L to "+0.5s").forEach { (deltaMs, label) ->
                 OutlinedButton(
                     onClick = { lyricsViewModel.adjustOffset(song.id, deltaMs) },
                     modifier = Modifier.height(24.dp),
                     contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                 ) {
-                    Text(label, style = MaterialTheme.typography.labelSmall)
+                    Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
             // 在线匹配元数据入口（预填当前曲目）
@@ -404,7 +407,7 @@ fun NowPlayingScreen(
                 modifier = Modifier.height(24.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
             ) {
-                Text("在线匹配", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.online_match), style = MaterialTheme.typography.labelSmall)
             }
             // 2026-08-19 需求4：查找歌词（按标题/歌手搜索候选 → 用户选择 → 更新当前数据库歌词）
             OutlinedButton(
@@ -412,7 +415,7 @@ fun NowPlayingScreen(
                 modifier = Modifier.height(24.dp),
                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
             ) {
-                Text("查找歌词", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.search_lyrics), style = MaterialTheme.typography.labelSmall)
             }
         }
 
@@ -448,9 +451,9 @@ fun NowPlayingScreen(
                 Icon(
                     if (state.repeatMode == RepeatMode.ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                     contentDescription = when (state.repeatMode) {
-                        RepeatMode.OFF -> "循环关闭"
-                        RepeatMode.ALL -> "全部循环"
-                        RepeatMode.ONE -> "单曲循环"
+                        RepeatMode.OFF -> stringResource(R.string.repeat_off)
+                        RepeatMode.ALL -> stringResource(R.string.repeat_all)
+                        RepeatMode.ONE -> stringResource(R.string.repeat_one)
                     },
                     tint = if (repeatActive) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -458,7 +461,7 @@ fun NowPlayingScreen(
             IconButton(onClick = viewModel::toggleShuffle, modifier = Modifier.size(44.dp)) {
                 Icon(
                     Icons.Default.Shuffle,
-                    contentDescription = if (state.shuffle) "随机开启" else "随机关闭",
+                    contentDescription = if (state.shuffle) stringResource(R.string.shuffle_on) else stringResource(R.string.shuffle_off),
                     tint = if (state.shuffle) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -556,7 +559,7 @@ private fun LandscapeNowPlayingContent(
                 // 顶部：返回按钮靠左
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { navController.navigateUp() }, modifier = Modifier.size(40.dp)) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 }
                 Spacer(Modifier.height(6.dp))
@@ -590,7 +593,7 @@ private fun LandscapeNowPlayingContent(
                                 val placeholder: @Composable () -> Unit = { Box(Modifier.fillMaxSize().background(phColor)) }
                                 SubcomposeAsyncImage(
                                     model = coverUrl,
-                                    contentDescription = "专辑封面",
+                                    contentDescription = stringResource(R.string.album_cover),
                                     contentScale = ContentScale.Crop,
                                     loading = { placeholder() },
                                     error = { placeholder() },
@@ -608,7 +611,7 @@ private fun LandscapeNowPlayingContent(
                             )
                             Spacer(Modifier.height(2.dp))
                             Text(
-                                song.artistName ?: "未知艺术家",
+                                song.artistName ?: stringResource(R.string.unknown_artist),
                                 style = MaterialTheme.typography.bodySmall,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -623,7 +626,7 @@ private fun LandscapeNowPlayingContent(
                             if (releaseYear != null) {
                                 Spacer(Modifier.height(4.dp))
                                 Text(
-                                    "发行年份：$releaseYear",
+                                    stringResource(R.string.song_release_year, releaseYear),
                                     style = MaterialTheme.typography.labelSmall,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.primary
@@ -642,13 +645,13 @@ private fun LandscapeNowPlayingContent(
                     IconButton(onClick = onShowTimerDialog, modifier = Modifier.size(32.dp)) {
                         Icon(
                             Icons.Outlined.Timer,
-                            contentDescription = "定时",
+                            contentDescription = stringResource(R.string.action_timer),
                             modifier = Modifier.size(22.dp),
                             tint = if (sleepEndAt != null || alarmEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     IconButton(onClick = onShowFileInfo, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Outlined.Info, contentDescription = "文件信息", modifier = Modifier.size(20.dp))
+                        Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.song_file_info), modifier = Modifier.size(20.dp))
                     }
                     // 锁屏动态效果入口（M1）
                     IconButton(
@@ -663,7 +666,7 @@ private fun LandscapeNowPlayingContent(
                     ) {
                         Icon(
                             Icons.Filled.Lock,
-                            contentDescription = "锁屏动态效果",
+                            contentDescription = stringResource(R.string.lock_screen_effect),
                             modifier = Modifier.size(20.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -676,7 +679,7 @@ private fun LandscapeNowPlayingContent(
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 if (lyrics.loading) {
                     Text(
-                        "歌词加载中…", style = MaterialTheme.typography.bodySmall,
+                        stringResource(R.string.lyrics_loading), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -686,7 +689,7 @@ private fun LandscapeNowPlayingContent(
                         currentIndex = currentLine,
                         onSeek = viewModel::seek,
                         modifier = Modifier.fillMaxSize(),
-                        emptyText = lyrics.error ?: "暂无歌词",
+                        emptyText = lyrics.error ?: stringResource(R.string.lyrics_none),
                         showTranslation = lyrics.showTranslation
                     )
                 }
@@ -718,12 +721,15 @@ private fun LandscapeNowPlayingContent(
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
-                        lyrics.source?.let { "歌词来源：$it" } ?: "",
+                        lyrics.source?.let { stringResource(R.string.lyrics_source, it) } ?: "",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                     IconButton(onClick = lyricsViewModel::refresh, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.Refresh, contentDescription = "重新获取歌词", modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.lyrics_refresh), modifier = Modifier.size(14.dp))
                     }
                     // F2-4：译文显隐切换（仅在有译文时可用）
                     if (lyrics.hasTranslation) {
@@ -733,7 +739,7 @@ private fun LandscapeNowPlayingContent(
                             contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                         ) {
                             Text(
-                                if (lyrics.showTranslation) "译文" else "原词",
+                                if (lyrics.showTranslation) stringResource(R.string.lyrics_translation) else stringResource(R.string.lyrics_original),
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
@@ -746,19 +752,19 @@ private fun LandscapeNowPlayingContent(
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                     ) {
                         Text(
-                            if (desktopShown) "关闭桌面" else "桌面歌词",
+                            if (desktopShown) stringResource(R.string.desktop_lyrics_close) else stringResource(R.string.desktop_lyrics),
                             style = MaterialTheme.typography.labelSmall,
                             color = if (desktopShown) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Text("歌词校正", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.lyrics_adjust), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     listOf(-500L to "−0.5s", 500L to "+0.5s").forEach { (deltaMs, label) ->
                         OutlinedButton(
                             onClick = { lyricsViewModel.adjustOffset(song.id, deltaMs) },
                             modifier = Modifier.height(24.dp),
                             contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                         ) {
-                            Text(label, style = MaterialTheme.typography.labelSmall)
+                            Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                     // 在线匹配元数据入口
@@ -767,14 +773,14 @@ private fun LandscapeNowPlayingContent(
                         modifier = Modifier.height(24.dp),
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                     ) {
-                        Text("在线匹配", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.online_match), style = MaterialTheme.typography.labelSmall)
                     }
                     OutlinedButton(
                         onClick = onShowLyricSearch,
                         modifier = Modifier.height(24.dp),
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                     ) {
-                        Text("查找歌词", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.search_lyrics), style = MaterialTheme.typography.labelSmall)
                     }
                 }
                 // 居中播放控制条（紧凑药丸，左右留空），控件风格与竖屏完全一致
@@ -796,9 +802,9 @@ private fun LandscapeNowPlayingContent(
                             Icon(
                                 if (state.repeatMode == RepeatMode.ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
                                 contentDescription = when (state.repeatMode) {
-                                    RepeatMode.OFF -> "循环关闭"
-                                    RepeatMode.ALL -> "全部循环"
-                                    RepeatMode.ONE -> "单曲循环"
+                                    RepeatMode.OFF -> stringResource(R.string.repeat_off)
+                                    RepeatMode.ALL -> stringResource(R.string.repeat_all)
+                                    RepeatMode.ONE -> stringResource(R.string.repeat_one)
                                 },
                                 tint = if (repeatActive) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -806,16 +812,16 @@ private fun LandscapeNowPlayingContent(
                         IconButton(onClick = viewModel::toggleShuffle, modifier = Modifier.size(44.dp)) {
                             Icon(
                                 Icons.Default.Shuffle,
-                                contentDescription = if (state.shuffle) "随机开启" else "随机关闭",
+                                contentDescription = if (state.shuffle) stringResource(R.string.shuffle_on) else stringResource(R.string.shuffle_off),
                                 tint = if (state.shuffle) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        IconButton(onClick = onPrevWithAnim) { Icon(Icons.Default.SkipPrevious, contentDescription = "上一首") }
+                        IconButton(onClick = onPrevWithAnim) { Icon(Icons.Default.SkipPrevious, contentDescription = stringResource(R.string.action_previous)) }
                         IconButton(onClick = viewModel::toggle) {
-                            Icon(if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = "播放/暂停")
+                            Icon(if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = stringResource(R.string.action_play_pause))
                         }
-                        IconButton(onClick = viewModel::stop) { Icon(Icons.Default.Stop, contentDescription = "停止") }
-                        IconButton(onClick = onNextWithAnim) { Icon(Icons.Default.SkipNext, contentDescription = "下一首") }
+                        IconButton(onClick = viewModel::stop) { Icon(Icons.Default.Stop, contentDescription = stringResource(R.string.action_stop)) }
+                        IconButton(onClick = onNextWithAnim) { Icon(Icons.Default.SkipNext, contentDescription = stringResource(R.string.action_next)) }
                     }
                 }
             }
@@ -847,35 +853,35 @@ private fun TimerSettingsDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("定时") },
+        title = { Text(stringResource(R.string.action_timer)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("睡眠定时", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.sleep_timer), style = MaterialTheme.typography.titleSmall)
                 if (remaining != null && remaining > 0) {
                     Text(
-                        "剩余 ${remaining / 60_000} 分 ${(remaining % 60_000) / 1000} 秒后停止",
+                        stringResource(R.string.sleep_remaining, remaining / 60_000, (remaining % 60_000) / 1000),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                    listOf(15 to "15分", 30 to "30分", 60 to "60分", 0 to "取消").forEach { (m, label) ->
+                    listOf(15 to stringResource(R.string.minutes_text, 15), 30 to stringResource(R.string.minutes_text, 30), 60 to stringResource(R.string.minutes_text, 60), 0 to stringResource(R.string.action_cancel)).forEach { (m, label) ->
                         TextButton(
                             onClick = { onSleepSelect(m) },
                             modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
                         ) {
-                            Text(label, style = MaterialTheme.typography.labelSmall)
+                            Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
                 HorizontalDivider()
-                Text("定时播放", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.alarm_play), style = MaterialTheme.typography.titleSmall)
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text("启用闹钟")
+                    Text(stringResource(R.string.alarm_enable))
                     Spacer(Modifier.weight(1f))
                     Switch(checked = alarmEnabled, onCheckedChange = onAlarmEnabledChange)
                 }
@@ -887,10 +893,10 @@ private fun TimerSettingsDialog(
             TextButton(onClick = {
                 onAlarmConfirm(tpState.hour, tpState.minute)
                 onDismiss()
-            }) { Text("完成") }
+            }) { Text(stringResource(R.string.action_done)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }
@@ -908,19 +914,19 @@ private fun SearchLyricsDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("修改歌词") },
+        title = { Text(stringResource(R.string.lyrics_modify)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
-                    label = { Text("搜索词（标题 歌手）") },
+                    label = { Text(stringResource(R.string.lyrics_search_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = { viewModel.searchLyrics(query, song.artistName) }) {
-                        Text("搜索")
+                        Text(stringResource(R.string.action_search))
                     }
                     if (lyrics.lyricSearching) {
                         CircularProgressIndicator(modifier = Modifier.size(20.dp))
@@ -930,7 +936,7 @@ private fun SearchLyricsDialog(
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
                 }
                 if (lyrics.lyricCandidates.isNotEmpty()) {
-                    Text("共 ${lyrics.lyricCandidates.size} 条候选，点击应用：", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.lyrics_candidates, lyrics.lyricCandidates.size), style = MaterialTheme.typography.bodySmall)
                     LazyColumn(Modifier.height(260.dp).fillMaxWidth()) {
                         items(lyrics.lyricCandidates, key = { it.source + it.title }) { c: LyricCandidate ->
                             TextButton(
@@ -942,7 +948,7 @@ private fun SearchLyricsDialog(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    "${c.title} · ${c.artist ?: "未知"}（${c.source}）",
+                                    stringResource(R.string.lyrics_candidate_item, c.title, c.artist ?: stringResource(R.string.unknown_short), c.source),
                                     style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1
                                 )
@@ -953,6 +959,6 @@ private fun SearchLyricsDialog(
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("关闭") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } }
     )
 }

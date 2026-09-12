@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.shiyinplayer.R
 import com.shiyinplayer.player.LyricLinesStore
 import com.shiyinplayer.player.PlayerManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -153,7 +154,7 @@ class DesktopLyricController @Inject constructor(
     private fun updateLine() {
         val v = lyricView ?: return
         val line = lyricLinesStore.lineAt(playerManager.livePositionMs())?.takeIf { it.isNotBlank() }
-        val text = line ?: "（歌词加载中…）"
+        val text = line ?: context.getString(R.string.lyrics_loading)
         if (text == lastShownText) return
         lastShownText = text
         v.text = text
@@ -190,7 +191,7 @@ class DesktopLyricController @Inject constructor(
         }
 
         val tv = TextView(context).apply {
-            text = "（歌词加载中…）"
+            text = context.getString(R.string.lyrics_loading)
             textSize = 18f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(Color.WHITE)

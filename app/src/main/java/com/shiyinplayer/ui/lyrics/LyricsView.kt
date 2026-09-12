@@ -40,7 +40,7 @@ fun LyricsView(
     currentIndex: Int,
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    emptyText: String = "暂无歌词",
+    emptyText: String = "",
     showTranslation: Boolean = true
 ) {
     if (lines.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.shiyinplayer.ui.lyrics
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shiyinplayer.data.metadata.LrcParser
@@ -7,11 +8,13 @@ import com.shiyinplayer.data.metadata.MergedLine
 import com.shiyinplayer.data.metasync.MetadataSyncManager
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.data.repository.LyricCandidate
+import com.shiyinplayer.R
 import com.shiyinplayer.data.repository.MetadataRepository
 import com.shiyinplayer.player.LyricLinesStore
 import com.shiyinplayer.player.PlayerManager
 import com.shiyinplayer.ui.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +55,7 @@ data class LyricsUiState(
  */
 @HiltViewModel
 class LyricsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val playerManager: PlayerManager,
     private val repo: MetadataRepository,
     private val settings: SettingsRepository,
@@ -164,12 +168,12 @@ class LyricsViewModel @Inject constructor(
                         hasTranslation = lines.any { it.translated?.isNotBlank() == true }
                         sourceName = result.document.source
                     } else {
-                        error = "未找到歌词"
+                        error = context.getString(R.string.lyrics_not_found)
                     }
                 } catch (e: kotlinx.coroutines.CancellationException) {
                     throw e
                 } catch (_: Exception) {
-                    error = "歌词获取失败"
+                    error = context.getString(R.string.lyrics_fetch_failed)
                 }
             }
 
@@ -329,7 +333,7 @@ class LyricsViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 lyricSearching = false,
                 lyricCandidates = list,
-                lyricSearchError = if (list.isEmpty()) "未找到匹配歌词，可尝试调整搜索词" else null
+                lyricSearchError = if (list.isEmpty()) context.getString(R.string.lyrics_search_no_match) else null
             )
         }
     }

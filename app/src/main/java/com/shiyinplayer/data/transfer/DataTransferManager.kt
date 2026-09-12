@@ -2,7 +2,9 @@ package com.shiyinplayer.data.transfer
 
 import android.content.Context
 import android.util.Base64
+import androidx.annotation.StringRes
 import androidx.room.withTransaction
+import com.shiyinplayer.R
 import com.shiyinplayer.data.local.AppDatabase
 import com.shiyinplayer.data.local.dao.AlbumDao
 import com.shiyinplayer.data.local.dao.ArtistDao
@@ -52,6 +54,9 @@ data class ImportPreview(
         get() = !hasSettings && songCount == 0 && playlistCount == 0
 }
 
+/** 用户可读的导入/导出校验错误：携带字符串资源 id 与参数，由 UI 按当前语言渲染。 */
+class TransferError(@StringRes val messageRes: Int, vararg val args: Any) : Exception()
+
 /**
  * 播放器数据导出/导入（更多 → 播放器数据导出/导入）。
  * 导出为一个 UTF-8 JSON 单文件，可按勾选范围包含三节：
@@ -96,7 +101,7 @@ class DataTransferManager @Inject constructor(
             val smbCreds = smbCredentialStore.getAll()
             val webdavCreds = webDavCredentialStore.getAll()
             if ((smbCreds.isNotEmpty() || webdavCreds.isNotEmpty()) && password.isNullOrBlank()) {
-                throw IllegalStateException("导出数据包含网络源登录凭据，必须设置密码保护后才能导出（或取消勾选系统设置）")
+                throw TransferError(R.string.transfer_err_need_credentials)
             }
             val s = JSONObject()
             val prefs = JSONArray()
@@ -254,9 +259,7 @@ class DataTransferManager @Inject constructor(
         // CB'-版本门控：数据包 schemaVersion 高于当前应用支持版本时明确拒绝，避免结构变化导致字段被静默误读/丢失
         val pkgVer = root.optInt("schemaVersion", -1)
         if (pkgVer > SCHEMA_VERSION) {
-            throw IllegalArgumentException(
-                "数据包版本($pkgVer)高于当前应用支持版本($SCHEMA_VERSION)，请升级应用后再导入"
-            )
+            throw TransferError(R.string.transfer_err_version, pkgVer, SCHEMA_VERSION)
         }
 
         root.optJSONObject("settings")?.let { s ->

@@ -38,10 +38,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Playlist
 import com.shiyinplayer.ui.navigation.Screen
 
@@ -57,34 +60,34 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
-                Text("我的歌单", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f).padding(start = 8.dp))
+                Text(stringResource(R.string.playlists_my_playlists), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f).padding(start = 8.dp))
                 IconButton(onClick = { navController?.navigate(Screen.Search.route) }) {
-                    Icon(Icons.Default.TravelExplore, contentDescription = "全局搜索")
+                    Icon(Icons.Default.TravelExplore, contentDescription = stringResource(R.string.playlist_global_search))
                 }
                 OutlinedButton(onClick = { showCreate = true }) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("新建")
+                    Text(stringResource(R.string.playlist_create))
                 }
             }
         }
         item {
-            SectionHeader("智能播放列表")
+            SectionHeader(stringResource(R.string.smart_playlists))
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                SmartTile("最近播放", Icons.Default.History, Modifier.weight(1f)) {
+                SmartTile(stringResource(R.string.smart_recent), Icons.Default.History, Modifier.weight(1f)) {
                     navController?.navigate(Screen.SmartPlaylist.createRoute("recent"))
                 }
-                SmartTile("最常播放", Icons.AutoMirrored.Filled.QueueMusic, Modifier.weight(1f)) {
+                SmartTile(stringResource(R.string.smart_most), Icons.AutoMirrored.Filled.QueueMusic, Modifier.weight(1f)) {
                     navController?.navigate(Screen.SmartPlaylist.createRoute("most"))
                 }
-                SmartTile("随机播放", Icons.Default.Shuffle, Modifier.weight(1f)) {
+                SmartTile(stringResource(R.string.smart_random), Icons.Default.Shuffle, Modifier.weight(1f)) {
                     navController?.navigate(Screen.SmartPlaylist.createRoute("random"))
                 }
             }
         }
-        item { SectionHeader("我的歌单") }
+        item { SectionHeader(stringResource(R.string.playlists_my_playlists)) }
         items(playlists, key = { it.id }) { pl ->
             Box {
                 Row(
@@ -99,7 +102,7 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
                 ) {
                     Text(pl.name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
                     Text(
-                        "${pl.songCount} 首",
+                        stringResource(R.string.count_songs, pl.songCount),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 4.dp)
@@ -110,15 +113,15 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
                     onDismissRequest = { menuFor = null }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("播放当前歌单") },
+                        text = { Text(stringResource(R.string.playlist_menu_play)) },
                         onClick = { viewModel.playPlaylist(pl.id); menuFor = null }
                     )
                     DropdownMenuItem(
-                        text = { Text("重命名歌单") },
+                        text = { Text(stringResource(R.string.playlist_menu_rename)) },
                         onClick = { editing = pl; menuFor = null }
                     )
                     DropdownMenuItem(
-                        text = { Text("删除歌单") },
+                        text = { Text(stringResource(R.string.playlist_menu_delete)) },
                         onClick = { deleting = pl; menuFor = null }
                     )
                 }
@@ -130,7 +133,7 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
     // 新建歌单
     if (showCreate) {
         NameDialog(
-            title = "新建播放列表",
+            title = stringResource(R.string.playlist_create_title),
             initial = "",
             onDismiss = { showCreate = false },
             onConfirm = { name -> viewModel.create(name); showCreate = false }
@@ -139,7 +142,7 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
     // 重命名歌单（长按）
     editing?.let { pl ->
         NameDialog(
-            title = "重命名播放列表",
+            title = stringResource(R.string.playlist_rename_title),
             initial = pl.name,
             onDismiss = { editing = null },
             onConfirm = { name -> viewModel.rename(pl.id, name); editing = null }
@@ -149,10 +152,10 @@ fun PlaylistsScreen(navController: NavController? = null, viewModel: PlaylistsVi
     deleting?.let { pl ->
         AlertDialog(
             onDismissRequest = { deleting = null },
-            title = { Text("删除播放列表") },
-            text = { Text("确定删除「${pl.name}」？此操作不可撤销。") },
-            confirmButton = { TextButton(onClick = { viewModel.delete(pl.id); deleting = null }) { Text("删除") } },
-            dismissButton = { TextButton(onClick = { deleting = null }) { Text("取消") } }
+            title = { Text(stringResource(R.string.playlist_delete_title)) },
+            text = { Text(stringResource(R.string.playlist_delete_confirm, pl.name)) },
+            confirmButton = { TextButton(onClick = { viewModel.delete(pl.id); deleting = null }) { Text(stringResource(R.string.action_delete)) } },
+            dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.action_cancel)) } }
         )
     }
 }
@@ -164,12 +167,12 @@ private fun NameDialog(title: String, initial: String, onDismiss: () -> Unit, on
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            OutlinedTextField(name, { name = it }, label = { Text("播放列表名称") }, singleLine = true)
+            OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.playlist_name_label)) }, singleLine = true)
         },
         confirmButton = {
-            TextButton(enabled = name.isNotBlank(), onClick = { onConfirm(name.trim()) }) { Text("确定") }
+            TextButton(enabled = name.isNotBlank(), onClick = { onConfirm(name.trim()) }) { Text(stringResource(R.string.action_confirm)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } }
     )
 }
 
@@ -194,6 +197,6 @@ private fun SmartTile(label: String, icon: ImageVector, modifier: Modifier = Mod
     ) {
         Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         Spacer(Modifier.width(6.dp))
-        Text(label, style = MaterialTheme.typography.bodyMedium)
+        Text(label, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }

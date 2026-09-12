@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.util.TimeUtils
 
@@ -53,9 +55,9 @@ fun DuplicateCleanupScreen(navController: NavController? = null, viewModel: Dupl
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             IconButton(onClick = { navController?.popBackStack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
             }
-            Text("重复曲目清理", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.dup_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
         }
         HorizontalDivider()
 
@@ -79,7 +81,7 @@ fun DuplicateCleanupScreen(navController: NavController? = null, viewModel: Dupl
 
         when {
             !busy && groups.isEmpty() -> Text(
-                "未发现重复曲目。\n按「标题 + 歌手 + 时长（2 秒内）」判定，合并后歌单引用自动改指向保留项。",
+                stringResource(R.string.dup_empty),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(24.dp)
@@ -129,7 +131,7 @@ private fun DuplicateGroupCard(
                 )
             }
             Text(
-                "${group.members.size} 个重复项 · 点击成员选定保留",
+                stringResource(R.string.dup_group_count, group.members.size),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 2.dp)
@@ -148,7 +150,7 @@ private fun DuplicateGroupCard(
                 onClick = onMerge,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("合并到保留项（移除其余 ${group.members.size - 1} 个）") }
+            ) { Text(stringResource(R.string.dup_merge_keep, group.members.size - 1)) }
         }
     }
 }
@@ -204,7 +206,7 @@ private fun MemberRow(
         }
         if (isKeep) {
             Text(
-                "保留",
+                stringResource(R.string.dup_keep),
                 style = MaterialTheme.typography.labelMedium,
                 color = accent,
                 fontWeight = FontWeight.SemiBold

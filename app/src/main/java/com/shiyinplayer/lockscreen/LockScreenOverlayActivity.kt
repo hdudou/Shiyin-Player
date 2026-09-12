@@ -79,7 +79,7 @@ class LockScreenOverlayActivity : ComponentActivity() {
             !LockScreenPermissionHelper.canDrawOverlays(this)
         ) {
             val vendor = LockScreenPermissionHelper.detectVendor()
-            val (title, msg) = LockScreenPermissionHelper.getPermissionGuideText(vendor)
+            val (title, msg) = LockScreenPermissionHelper.getPermissionGuideText(this, vendor)
             permissionTitle.value = title
             permissionMessage.value = msg
             showPermissionDialog.value = true

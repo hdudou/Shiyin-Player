@@ -30,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Artist
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.AddToPlaylistDialog
@@ -69,23 +71,23 @@ fun ArtistsScreen(navController: NavController? = null, viewModel: ArtistsViewMo
         ) {
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 项",
+                    stringResource(R.string.albums_selected_count, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == artists.size) emptySet() else artists.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == artists.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == artists.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
-                Text("艺术家", modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.tab_artists), modifier = Modifier.weight(1f).padding(start = 8.dp), style = MaterialTheme.typography.titleLarge)
                 IconButton(onClick = { gridView = !gridView }) {
                     Icon(
                         if (gridView) Icons.Outlined.ViewAgenda else Icons.Outlined.GridView,
-                        contentDescription = if (gridView) "切换到列表" else "切换到图片墙"
+                        contentDescription = if (gridView) stringResource(R.string.artists_switch_list) else stringResource(R.string.artists_switch_grid)
                     )
                 }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         if (gridView) {
@@ -135,15 +137,15 @@ fun ArtistsScreen(navController: NavController? = null, viewModel: ArtistsViewMo
                 OutlinedButton(onClick = {
                     scope.launch { actionsViewModel.playAll(viewModel.songsFor(selectedArtists)) }
                 }, modifier = Modifier.weight(1f)) {
-                    Text("播放全部")
+                    Text(stringResource(R.string.action_play_all))
                 }
                 OutlinedButton(onClick = { actionsViewModel.stop() }, modifier = Modifier.weight(1f)) {
-                    Text("停止")
+                    Text(stringResource(R.string.action_stop))
                 }
                 OutlinedButton(onClick = {
                     scope.launch { pendingSongs = viewModel.songsFor(selectedArtists); showPlaylistPicker = true }
                 }, modifier = Modifier.weight(1f)) {
-                    Text("加入歌单")
+                    Text(stringResource(R.string.action_add_to_playlist))
                 }
             }
         }
@@ -152,7 +154,7 @@ fun ArtistsScreen(navController: NavController? = null, viewModel: ArtistsViewMo
     if (showPlaylistPicker) {
         AddToPlaylistDialog(
             playlists = playlists,
-            subtitle = "将 ${pendingSongs.size} 首曲目加入播放列表",
+            subtitle = stringResource(R.string.add_to_playlist_count, pendingSongs.size),
             onDismiss = { showPlaylistPicker = false },
             onCreate = { name -> scope.launch { actionsViewModel.createAndAddMany(name, pendingSongs) }; showPlaylistPicker = false },
             onSelect = { pl -> scope.launch { actionsViewModel.addSongsToPlaylist(pl.id, pendingSongs) }; showPlaylistPicker = false }

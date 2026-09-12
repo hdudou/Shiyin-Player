@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Album
 import com.shiyinplayer.data.model.Artist
 import com.shiyinplayer.data.model.Song
@@ -59,7 +61,7 @@ fun SongCover(
         }
         SubcomposeAsyncImage(
             model = song.albumArtUri,
-            contentDescription = "封面",
+            contentDescription = stringResource(R.string.content_cover),
             contentScale = ContentScale.Crop,
             loading = { placeholder() },
             error = { placeholder() },
@@ -122,7 +124,7 @@ fun SongRow(
             )
             // 2026-08-19：始终在歌名下用小字显示歌手名（不依赖 twoLine 设置）
             Text(
-                song.artistName?.takeIf { it.isNotBlank() } ?: "未知艺术家",
+                song.artistName?.takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown_artist),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1
@@ -157,7 +159,7 @@ fun AlbumCard(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier) 
                 val phSurface = MaterialTheme.colorScheme.surfaceVariant
                 SubcomposeAsyncImage(
                     model = album.albumArtUri,
-                    contentDescription = "专辑封面",
+                    contentDescription = stringResource(R.string.content_album_cover),
                     contentScale = ContentScale.Crop,
                     loading = { Box(Modifier.fillMaxSize().background(phSurface)) },
                     error = { Box(Modifier.fillMaxSize().background(phSurface)) },
@@ -176,7 +178,7 @@ fun AlbumCard(album: Album, onClick: () -> Unit, modifier: Modifier = Modifier) 
                 }
             }
             Text(
-                "${album.songCount} 首",
+                stringResource(R.string.count_songs, album.songCount),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White,
                 modifier = Modifier
@@ -203,7 +205,7 @@ fun ArtistRow(artist: Artist, onClick: () -> Unit, modifier: Modifier = Modifier
     ) {
         Text(artist.name, style = MaterialTheme.typography.bodyLarge, maxLines = 1, modifier = Modifier.weight(1f))
         Text(
-            "${artist.songCount} 首",
+            stringResource(R.string.count_songs, artist.songCount),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -250,7 +252,7 @@ fun ArtistActionCard(artist: Artist, onClick: () -> Unit, modifier: Modifier = M
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            "${artist.songCount} 首",
+            stringResource(R.string.count_songs, artist.songCount),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

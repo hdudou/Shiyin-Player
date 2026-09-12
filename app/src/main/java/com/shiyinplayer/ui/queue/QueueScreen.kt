@@ -43,12 +43,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
 import com.shiyinplayer.ui.common.SongMenuHost
@@ -92,35 +94,35 @@ fun QueueScreen(viewModel: PlayerViewModel = hiltViewModel()) {
         ) {
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == state.queue.size) emptySet() else state.queue.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == state.queue.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == state.queue.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
                 Row(
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("播放队列", style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.queue_title), style = MaterialTheme.typography.titleLarge)
                     Text(
-                        "共 ${state.queue.size} 首",
+                        stringResource(R.string.queue_total, state.queue.size),
                         modifier = Modifier.padding(start = 8.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
                 IconButton(
                     onClick = { if (state.queue.isNotEmpty()) showClearConfirm = true },
                     enabled = state.queue.isNotEmpty()
                 ) {
                     Icon(
                         Icons.Default.DeleteSweep,
-                        contentDescription = "清空队列",
+                        contentDescription = stringResource(R.string.action_clear_queue),
                         tint = if (state.queue.isNotEmpty()) MaterialTheme.colorScheme.error
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                     )
@@ -151,7 +153,7 @@ fun QueueScreen(viewModel: PlayerViewModel = hiltViewModel()) {
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "移除",
+                                contentDescription = stringResource(R.string.action_remove),
                                 modifier = Modifier.align(Alignment.CenterEnd).padding(end = 24.dp),
                                 tint = MaterialTheme.colorScheme.onErrorContainer
                             )
@@ -247,7 +249,7 @@ fun QueueScreen(viewModel: PlayerViewModel = hiltViewModel()) {
                             ) {
                                 Icon(
                                     Icons.Default.DragHandle,
-                                    contentDescription = "拖拽排序",
+                                    contentDescription = stringResource(R.string.action_drag_sort),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -264,18 +266,18 @@ fun QueueScreen(viewModel: PlayerViewModel = hiltViewModel()) {
     if (showClearConfirm) {
         AlertDialog(
             onDismissRequest = { showClearConfirm = false },
-            title = { Text("清空队列") },
-            text = { Text("确定要清空整个播放队列（${state.queue.size} 首）吗？此操作不可撤销。") },
+            title = { Text(stringResource(R.string.action_clear_queue)) },
+            text = { Text(stringResource(R.string.clear_queue_confirm, state.queue.size)) },
             confirmButton = {
                 TextButton(onClick = {
                     showClearConfirm = false
                     viewModel.clearQueue()
                     selectionMode = false
                     selectedIds = emptySet()
-                }) { Text("清空", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.action_clear), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { showClearConfirm = false }) { Text("取消") }
+                TextButton(onClick = { showClearConfirm = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }

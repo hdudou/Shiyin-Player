@@ -39,8 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.shiyinplayer.R
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -77,7 +79,7 @@ fun WidescreenScaffold(
         Row(Modifier.weight(1f).fillMaxWidth()) {
             if (!isNowPlaying) {
                 NavigationRail(Modifier.fillMaxHeight().width(80.dp)) {
-                    (leftNavItems + rightNavItems).forEach { item ->
+                    (leftNavItems() + rightNavItems()).forEach { item ->
                         NavigationRailItem(
                             selected = currentRoute == item.screen.route,
                             onClick = {
@@ -143,7 +145,7 @@ private fun LandscapeMiniPlayerBar(
                 if (song.albumArtUri != null) {
                     AsyncImage(
                         model = song.albumArtUri,
-                        contentDescription = "专辑封面",
+                        contentDescription = stringResource(R.string.content_album_cover),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(44.dp)
@@ -155,27 +157,27 @@ private fun LandscapeMiniPlayerBar(
                 Column(Modifier.weight(1f).padding(horizontal = 10.dp)) {
                     Text(song.title, style = MaterialTheme.typography.bodyMedium, maxLines = 1, color = MaterialTheme.colorScheme.onSurface)
                     Text(
-                        song.artistName ?: "未知艺术家",
+                        song.artistName ?: stringResource(R.string.unknown_artist),
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = viewModel::prev, modifier = Modifier.size(40.dp)) {
-                    Icon(Icons.Default.SkipPrevious, contentDescription = "上一首", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Default.SkipPrevious, contentDescription = stringResource(R.string.action_previous), tint = MaterialTheme.colorScheme.onSurface)
                 }
                 IconButton(onClick = viewModel::togglePlay, modifier = Modifier.size(44.dp)) {
                     Icon(
                         if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = "播放/暂停",
+                        contentDescription = stringResource(R.string.action_play_pause),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(onClick = viewModel::stop, modifier = Modifier.size(40.dp)) {
-                    Icon(Icons.Default.Stop, contentDescription = "停止", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Default.Stop, contentDescription = stringResource(R.string.action_stop), tint = MaterialTheme.colorScheme.onSurface)
                 }
                 IconButton(onClick = viewModel::next, modifier = Modifier.size(40.dp)) {
-                    Icon(Icons.Default.SkipNext, contentDescription = "下一首", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Default.SkipNext, contentDescription = stringResource(R.string.action_next), tint = MaterialTheme.colorScheme.onSurface)
                 }
             }
         }
@@ -205,12 +207,12 @@ private fun LandscapeModeSwitchButton(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 Icons.Filled.PlayArrow,
-                contentDescription = "播放/切换",
+                contentDescription = stringResource(R.string.nav_play_toggle),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
             Text(
-                "播放/切换",
+                stringResource(R.string.nav_play_toggle),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,

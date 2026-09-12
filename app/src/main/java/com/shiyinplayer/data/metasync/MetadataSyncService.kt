@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import com.shiyinplayer.R
 import com.shiyinplayer.ui.MainActivity
 
 /**
@@ -70,7 +71,7 @@ class MetadataSyncService : Service() {
         // 换新 ID（v3）使系统以 MIN 重建，避免旧通道 importance 已锁定无法降低的问题。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = android.app.NotificationChannel(
-                CHANNEL_ID, "元数据同步", NotificationManager.IMPORTANCE_MIN
+                CHANNEL_ID, getString(R.string.sync_channel_name), NotificationManager.IMPORTANCE_MIN
             )
             channel.lockscreenVisibility = Notification.VISIBILITY_SECRET
             channel.enableVibration(false)
@@ -80,7 +81,7 @@ class MetadataSyncService : Service() {
         } else {
             val channel = NotificationChannelCompat.Builder(
                 CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN
-            ).setName("元数据同步").setShowBadge(false).build()
+            ).setName(getString(R.string.sync_channel_name)).setShowBadge(false).build()
             runCatching { NotificationManagerCompat.from(this).createNotificationChannel(channel) }
         }
     }
@@ -96,8 +97,8 @@ class MetadataSyncService : Service() {
         // 极简隐藏占位：仅满足前台服务必须持有一通知的约束，用户端近乎不可见。
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_notify_sync)
-            .setContentTitle("正在同步音乐元数据")
-            .setContentText("后台读取/联网补充歌曲信息，兼顾保活")
+            .setContentTitle(getString(R.string.sync_notify_title))
+            .setContentText(getString(R.string.sync_notify_text))
             // SERVICE 类别：避免被 ColorOS 归入「告警」自动聚合而影响媒体控制卡显示。
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setPriority(NotificationCompat.PRIORITY_MIN)

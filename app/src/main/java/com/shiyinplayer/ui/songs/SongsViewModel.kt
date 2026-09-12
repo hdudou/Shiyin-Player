@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shiyinplayer.R
 import com.shiyinplayer.data.local.dao.SongDao
 import com.shiyinplayer.data.local.entity.SongEntity
 import com.shiyinplayer.data.model.MediaSourceType
@@ -61,7 +62,7 @@ class SongsViewModel @Inject constructor(
         viewModelScope.launch {
             var changed = false
             for (uri in uris) {
-                val name = uri.lastPathSegment?.substringBeforeLast('.') ?: "未知曲目"
+                val name = uri.lastPathSegment?.substringBeforeLast('.') ?: context.getString(R.string.unknown_title)
                 val entity = withContext(Dispatchers.IO) { readEntityForUri(uri, fallbackTitle = name) }
                 if (entity != null) { songDao.upsert(entity); changed = true }
             }

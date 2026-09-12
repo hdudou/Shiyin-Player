@@ -33,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.shiyinplayer.R
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.ui.common.SongActionsViewModel
 import com.shiyinplayer.ui.common.SongMenuHost
@@ -77,33 +79,34 @@ fun AlbumDetailScreen(
                 if (selectionMode) { selectionMode = false; selectedIds = emptySet() }
                 else navController.popBackStack()
             }) {
-                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) "退出选择" else "返回")
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = if (selectionMode) stringResource(R.string.action_exit_selection) else stringResource(R.string.action_back))
             }
             if (selectionMode) {
                 Text(
-                    "已选 ${selectedIds.size} 首",
+                    stringResource(R.string.songs_selected_count, selectedIds.size),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 )
                 OutlinedButton(onClick = {
                     selectedIds = if (selectedIds.size == songs.size) emptySet() else songs.map { it.id }.toSet()
-                }) { Text(if (selectedIds.size == songs.size) "取消全选" else "全选") }
-                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text("完成") }
+                }) { Text(if (selectedIds.size == songs.size) stringResource(R.string.action_deselect_all) else stringResource(R.string.action_select_all)) }
+                OutlinedButton(onClick = { selectionMode = false; selectedIds = emptySet() }) { Text(stringResource(R.string.action_done)) }
             } else {
                 Column(Modifier.weight(1f)) {
                     Text(albumName, style = MaterialTheme.typography.titleLarge)
                     Row {
                         artistName?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-                        if (year != null) {
+                        val y = year
+                        if (y != null) {
                             Text(
-                                "（$year）",
+                                stringResource(R.string.album_year_suffix, y),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
-                OutlinedButton(onClick = { selectionMode = true }) { Text("选择") }
+                OutlinedButton(onClick = { selectionMode = true }) { Text(stringResource(R.string.action_select)) }
             }
         }
         HorizontalDivider()
@@ -122,10 +125,10 @@ fun AlbumDetailScreen(
                     ) {
                         OutlinedButton(onClick = { viewModel.playAll() }, modifier = Modifier.weight(1f)) {
                             Icon(Icons.Default.PlayArrow, contentDescription = null)
-                            Text("播放全部（${songs.size}）")
+                            Text(stringResource(R.string.album_play_all_count, songs.size))
                         }
                         OutlinedButton(onClick = { viewModel.stop() }) {
-                            Icon(Icons.Default.Stop, contentDescription = "停止")
+                            Icon(Icons.Default.Stop, contentDescription = stringResource(R.string.action_stop))
                         }
                     }
                 }
@@ -133,7 +136,7 @@ fun AlbumDetailScreen(
                     item {
                         AsyncImage(
                             model = coverUrl,
-                            contentDescription = "专辑封面",
+                            contentDescription = stringResource(R.string.album_cover),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .padding(16.dp)

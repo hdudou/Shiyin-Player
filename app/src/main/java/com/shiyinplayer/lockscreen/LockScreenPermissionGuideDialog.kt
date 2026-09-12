@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.shiyinplayer.R
 
 /**
  * 锁屏权限引导对话框：
@@ -57,12 +59,12 @@ fun LockScreenPermissionGuideDialog(
                 onOpenSettings()
                 onCancel()
             }) {
-                Text("去设置开启")
+                Text(stringResource(R.string.lockscreen_go_settings))
             }
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text("取消（降级到通知栏控制）")
+                Text(stringResource(R.string.lockscreen_cancel_downgrade))
             }
         }
     )

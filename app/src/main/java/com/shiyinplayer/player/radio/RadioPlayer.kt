@@ -321,6 +321,26 @@ class RadioPlayer @Inject constructor(
         _state.update { RadioState() }
     }
 
+    /**
+     * 音乐模式起播时调用：停止当前电台流但保留展示状态（stationName / streamUrl / lineCount）。
+     * 与 [stop] 的区别是**不清空** RadioState —— 避免用户切回电台时丢失上次内容展示。
+     * 供 PlayerManager 在音乐起播时跨模式抢占电台使用。
+     */
+    fun suppressForMusicMode() {
+        val playing = exoPlayer?.isPlaying == true || _state.value.isBuffering
+        cancelRetry()
+        stopEpgPolling()
+        exoPlayer?.stop()
+        if (playing) {
+            _state.update { it.copy(isBuffering = false, error = null) }
+        }
+    }
+
+    /** 释放睡眠定时（外部停止音频链时一并清理，避免残留定时器误触发 pause）。 */
+    fun cancelSleepForMusicMode() {
+        cancelSleepTimer()
+    }
+
     override fun releaseAudioFocus() {
         pause()
     }
