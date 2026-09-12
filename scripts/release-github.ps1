@@ -95,7 +95,7 @@ Write-Host "==> Pushing main..."
 Invoke-Checked { & $Git -C $Root push origin main } 'git push main'
 
 # ---- 6. tag (create+push only if not already on remote) ----------------------
-$remoteTag = (& $Git ls-remote origin "refs/tags/$Tag" 2>&1) | Where-Object { $_ }
+$remoteTag = (& $Git -C $Root ls-remote origin "refs/tags/$Tag" 2>&1) | Where-Object { $_ }
 if ($remoteTag) {
     Write-Host "==> Tag $Tag already exists on remote, skipping tag push."
 } else {
