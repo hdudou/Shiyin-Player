@@ -227,12 +227,11 @@
     <!-- 网络来源管理 -->
     <string name="network_title">音乐库来源管理</string>
     <string name="network_add">添加来源</string>
-    <string name="network_empty">暂无网络来源。点击「添加来源」添加 SMB、WebDAV 或 HTTP 直链，扫描后即可在曲库中播放。</string>
+    <string name="network_empty">暂无网络来源。点击「添加来源」添加 SMB、WebDAV 或文件夹，扫描后即可在曲库中播放。</string>
     <string name="network_scanning_suffix">（扫描中…）</string>
     <string name="network_disabled_suffix">（已禁用）</string>
     <string name="network_progress_update">已更新 %1$d 首，已新增 %2$d 首</string>
     <string name="network_progress_added">已新增 %1$d 首</string>
-    <string name="network_type_http">HTTP 直链</string>
     <string name="network_type_folder">文件夹</string>
     <string name="network_delete_title">删除网络来源</string>
     <string name="network_delete_body">确定删除「%1$s」吗？\n\n将同时：\n① 删除本机保存的该源的连接信息；\n② 删除本机曲库中该源的音乐文件条目及其元数据。\n\n若同一音乐在多个源存在，仅删除该源的条目，其它源保留；仅当某音乐只有这一个来源时，才会连同其元数据和整个条目一并删除。</string>
@@ -248,19 +247,20 @@
     <string name="network_add_title">添加来源</string>
     <string name="network_edit_src">修改来源</string>
     <string name="network_name">名称（可选）</string>
-    <string name="network_url_hint_smb">地址，如 smb://192.168.1.10/Music</string>
-    <string name="network_url_hint_webdav">地址，如 https://dav.example.com/dav</string>
-    <string name="network_url_hint_http">播放列表/索引地址，如 https://example.com/playlist.m3u</string>
-    <string name="network_url_hint_local">文件夹路径，如 /storage/emulated/0/Music</string>
+    <string name="network_url_hint">地址</string>
     <string name="network_browse_lan">浏览局域网</string>
     <string name="network_browse_folder">浏览文件夹</string>
-    <string name="network_user">用户名（可选）</string>
+    <string name="network_user">用户名</string>
     <string name="network_pass">密码</string>
     <string name="network_pass_edit">密码（留空则不修改）</string>
-    <string name="network_note_local">本机文件夹直接扫描文件系统，无需账号密码；需已授予「所有文件访问」权限。</string>
-    <string name="network_note_http">HTTP 直链无需账号密码；扫描将抓取该地址并导入其中的音频链接。</string>
+    <string name="network_note_local">扫描本机文件夹，无需账号密码</string>
     <string name="network_smb_title">浏览局域网主机 / 共享</string>
-    <string name="network_smb_manual_host">自动发现无结果时，输入主机 IP</string>
+    <string name="network_smb_manual_host">无结果时输入主机 IP</string>
+    <string name="network_browse_scanning">正在扫描局域网，请稍候…</string>
+    <string name="network_browse_none">未发现局域网 SMB 主机，可手动输入主机地址</string>
+    <string name="network_smb_cred_title">连接 SMB 主机</string>
+    <string name="network_anon">匿名访问</string>
+    <string name="network_connect">连接</string>
     <string name="network_use_dir">使用此目录</string>
     <string name="action_edit">修改</string>
     <string name="action_open">打开</string>
@@ -361,7 +361,6 @@
 <string name="file_name_with_size">%1$s（%2$s）</string>
 
         <!-- 通用控件：来源类型 -->
-        <string name="type_http">HTTP 直链</string>
         <string name="type_folder">文件夹</string>
 
         <!-- 通用控件：队列 -->

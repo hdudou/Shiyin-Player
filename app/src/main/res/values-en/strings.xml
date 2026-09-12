@@ -228,12 +228,11 @@
     <!-- Network sources -->
     <string name="network_title">Music Library Sources</string>
     <string name="network_add">Add source</string>
-    <string name="network_empty">No network sources yet. Tap "Add source" to add a SMB, WebDAV or HTTP link; after scanning they become playable in the library.</string>
+    <string name="network_empty">No network sources yet. Tap "Add source" to add a SMB, WebDAV or folder; after scanning they become playable in the library.</string>
     <string name="network_scanning_suffix"> (scanning…)</string>
     <string name="network_disabled_suffix"> (disabled)</string>
     <string name="network_progress_update">Updated %1$d, added %2$d tracks</string>
     <string name="network_progress_added">Added %1$d tracks</string>
-    <string name="network_type_http">HTTP link</string>
     <string name="network_type_folder">Folder</string>
     <string name="network_delete_title">Delete network source</string>
     <string name="network_delete_body">Delete "%1$s"?\n\nThis will also:\n1. remove the locally stored connection info for this source;\n2. remove this source\'s music file entries and their metadata from the library.\n\nIf the same music exists in multiple sources, only this source\'s entries are removed and others stay; an entry is removed together with its metadata only when this is its only source.</string>
@@ -249,19 +248,20 @@
     <string name="network_add_title">Add source</string>
     <string name="network_edit_src">Edit source</string>
     <string name="network_name">Name (optional)</string>
-    <string name="network_url_hint_smb">Address, e.g. smb://192.168.1.10/Music</string>
-    <string name="network_url_hint_webdav">Address, e.g. https://dav.example.com/dav</string>
-    <string name="network_url_hint_http">Playlist/index address, e.g. https://example.com/playlist.m3u</string>
-    <string name="network_url_hint_local">Folder path, e.g. /storage/emulated/0/Music</string>
+    <string name="network_url_hint">Address</string>
     <string name="network_browse_lan">Browse LAN</string>
     <string name="network_browse_folder">Browse folders</string>
-    <string name="network_user">Username (optional)</string>
+    <string name="network_user">Username</string>
     <string name="network_pass">Password</string>
     <string name="network_pass_edit">Password (leave blank to keep)</string>
-    <string name="network_note_local">Local folders are scanned directly from the file system, no credentials needed; "All files access" must be granted.</string>
-    <string name="network_note_http">HTTP links need no credentials; scanning fetches the address and imports the audio links within it.</string>
+    <string name="network_note_local">Scans local folders, no credentials</string>
     <string name="network_smb_title">Browse LAN hosts / shares</string>
-    <string name="network_smb_manual_host">If auto-discovery finds nothing, enter host IP</string>
+    <string name="network_smb_manual_host">Enter host IP if nothing found</string>
+    <string name="network_browse_scanning">Scanning LAN, please wait…</string>
+    <string name="network_browse_none">No SMB hosts found on LAN; you can enter a host address manually</string>
+    <string name="network_smb_cred_title">Connect to SMB host</string>
+    <string name="network_anon">Anonymous access</string>
+    <string name="network_connect">Connect</string>
     <string name="network_use_dir">Use this directory</string>
     <string name="action_edit">Edit</string>
     <string name="action_open">Open</string>
@@ -348,7 +348,7 @@
 <string name="file_name_prefix">Filename: %1$s</string>
 <string name="online_match_row">%1$s · %2$s%3$s · %4$s</string>
 <string name="file_name_with_size">%1$s (%2$s)</string>
-<string name="type_http">HTTP link</string>
+
 <string name="type_folder">Folder</string>
 <string name="queue_title">Playback queue</string>
 <string name="queue_total">%1$d tracks in total</string>

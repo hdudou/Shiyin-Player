@@ -50,7 +50,6 @@ class NetworkViewModel @Inject constructor(
             list.filter {
                 it.type == MediaSourceType.SMB ||
                     it.type == MediaSourceType.WEBDAV ||
-                    it.type == MediaSourceType.HTTP ||
                     it.type == MediaSourceType.LOCAL
             }
         }
@@ -93,22 +92,7 @@ class NetworkViewModel @Inject constructor(
         )
     }
 
-    /** 2026-08-24 需求：HTTP 直链来源——url 为 m3u/换行列表或 HTML 自动索引页地址；无凭据。 */
-    suspend fun addHttpSource(name: String, url: String) {
-        val cfg = JSONObject().put("url", url.trim()).toString()
-        repo.addMusicSource(
-            MusicSource(name = name.ifBlank { url }, type = MediaSourceType.HTTP, configJson = cfg, enabled = true)
-        )
-    }
-
-    suspend fun updateHttpSource(id: Long, name: String, url: String) {
-        val cfg = JSONObject().put("url", url.trim()).toString()
-        val cur = sources.value.firstOrNull { it.id == id } ?: return
-        repo.updateMusicSource(cur.copy(name = name.ifBlank { url }, configJson = cfg))
-    }
-
-    /**
-     * 2026-08-24：添加本机文件夹源。输入可能是两类：
+    /** 2026-08-24：添加本机文件夹源。输入可能是两类：
      * - content:// 树 URI（系统目录选择器返回）→ 存 configJson.treeUri，由 SAF 递归扫描；
      * - 绝对路径（如 /storage/emulated/0/Music）→ 存 configJson.folderPath，File 递归扫描。
      * 名称为空时用解码后的文件夹名兜底，避免直接显示 content:///百分号编码 URI 造成乱码。
@@ -232,6 +216,14 @@ class NetworkViewModel @Inject constructor(
             smbBrowser.listFiles(path)
                 .map { NetworkEntry(it.name, it.isDir, it.size, if (path.endsWith("/")) "$path${it.name}" else "$path/${it.name}") }
         }
+
+    /** 为「浏览局域网」设置某主机的临时凭据（不写入已保存源凭据库，仅本次浏览会话生效）。 */
+    fun setSmbBrowseCredential(host: String, username: String, password: String) =
+        smbBrowser.setBrowseCredential(host, username, password)
+
+    /** 清空某主机的临时浏览凭据（匿名访问）。 */
+    fun clearSmbBrowseCredential(host: String) =
+        smbBrowser.clearBrowseCredential(host)
 
     private fun browseAt(path: String, source: MusicSource) {
         viewModelScope.launch(dispatcher.io) {

@@ -390,7 +390,6 @@ private data class FileInfoDisplay(
 private fun typeLabel(t: MediaSourceType): String = when (t) {
     MediaSourceType.SMB -> "SMB"
     MediaSourceType.WEBDAV -> "WebDAV"
-    MediaSourceType.HTTP -> stringResource(R.string.type_http)
     MediaSourceType.LOCAL -> stringResource(R.string.type_folder)
 }
 

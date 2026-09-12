@@ -7,6 +7,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,11 +30,12 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.NavigateBefore
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -175,7 +178,6 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
                     when (type) {
                         MediaSourceType.SMB -> viewModel.addSmbSource(name, url, user, pass)
                         MediaSourceType.WEBDAV -> viewModel.addWebDavSource(name, url, user, pass)
-                        MediaSourceType.HTTP -> viewModel.addHttpSource(name, url)
                         MediaSourceType.LOCAL -> if (requireAllFilesAccessFor(context, url)) viewModel.addLocalFolderSource(name, url) else return@launch
                     }
                 }
@@ -193,7 +195,6 @@ fun NetworkScreen(viewModel: NetworkViewModel = hiltViewModel()) {
                     when (type) {
                         MediaSourceType.SMB -> viewModel.updateSmbSource(src.id, name, url, user, pass)
                         MediaSourceType.WEBDAV -> viewModel.updateWebDavSource(src.id, name, url, user, pass)
-                        MediaSourceType.HTTP -> viewModel.updateHttpSource(src.id, name, url)
                         MediaSourceType.LOCAL -> if (requireAllFilesAccessFor(context, url)) viewModel.updateLocalFolderSource(src.id, name, url) else return@launch
                     }
                 }
@@ -292,7 +293,6 @@ private fun NetworkSourceRow(
             when (src.type) {
                 MediaSourceType.SMB -> Icons.Default.Storage
                 MediaSourceType.WEBDAV -> Icons.Default.Link
-                MediaSourceType.HTTP -> Icons.Default.Public
                 MediaSourceType.LOCAL -> Icons.Default.Folder
             },
             contentDescription = null
@@ -317,10 +317,7 @@ private fun NetworkSourceRow(
                 )
             }
         }
-        // HTTP 直链无目录结构，不提供「浏览」；保留同步/修改/删除
-        if (src.type != MediaSourceType.HTTP) {
-            IconButton(onClick = { onBrowse(src) }) { Icon(Icons.Default.FolderOpen, contentDescription = stringResource(R.string.action_browse)) }
-        }
+        IconButton(onClick = { onBrowse(src) }) { Icon(Icons.Default.FolderOpen, contentDescription = stringResource(R.string.action_browse)) }
         IconButton(onClick = { onSync(src) }) {
             Icon(
                 Icons.Default.Sync,
@@ -338,7 +335,6 @@ private fun NetworkSourceRow(
 private fun typeLabelRes(t: MediaSourceType): Int = when (t) {
     MediaSourceType.SMB -> R.string.network_type_smb
     MediaSourceType.WEBDAV -> R.string.network_type_webdav
-    MediaSourceType.HTTP -> R.string.network_type_http
     MediaSourceType.LOCAL -> R.string.network_type_folder
 }
 
@@ -366,16 +362,68 @@ private fun AddSourceDialog(
     var smbBrowseOpen by remember { mutableStateOf(false) }
     var browsePath by remember { mutableStateOf("smb://") }
     var browseEntries by remember { mutableStateOf<List<NetworkEntry>>(emptyList()) }
+    var browsing by remember { mutableStateOf(false) }
     var manualHost by remember { mutableStateOf("") }
+    // 进入主机前的凭据询问（连接主机需账号密码或匿名）
+    var credPromptOpen by remember { mutableStateOf(false) }
+    var credTargetPath by remember { mutableStateOf("") }
+    var browseUser by remember { mutableStateOf("") }
+    var browsePass by remember { mutableStateOf("") }
+    var browseAnon by remember { mutableStateOf(false) }
+    // 本次浏览会话登录某主机所用的凭据（用于「使用此目录」时回填到 SMB 用户名/密码框）
+    var sessionCred by remember { mutableStateOf<Pair<String, String>?>(null) }
+    var sessionAnon by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     suspend fun loadSMBList(path: String) {
+        browsing = true
         browseEntries = try { vm.smbQuickBrowse(path) } catch (t: Throwable) { emptyList() }
         browsePath = path
+        browsing = false
     }
     fun openSmbDir(entry: NetworkEntry) {
-        if (entry.isDir) scope.launch { loadSMBList(entry.path) }
+        if (!entry.isDir) return
+        // 进入「主机根」即 smb://host 时，先询问凭据，用输入的凭据连接该主机再枚举共享
+        val u = Uri.parse(entry.path)
+        if (u.host?.isNotBlank() == true && u.pathSegments.isEmpty()) {
+            credTargetPath = entry.path
+            credPromptOpen = true
+        } else {
+            scope.launch { loadSMBList(entry.path) }
+        }
     }
+    // 用输入的凭据（或匿名）连接目标主机并枚举其共享目录
+    fun connectWithCred() {
+        val host = Uri.parse(credTargetPath).host ?: return
+        if (browseAnon) {
+            vm.clearSmbBrowseCredential(host)
+            sessionCred = null
+            sessionAnon = true
+        } else {
+            vm.setSmbBrowseCredential(host, browseUser.trim(), browsePass)
+            val used = browseUser.trim()
+            if (used.isBlank()) {
+                sessionCred = null
+                sessionAnon = true
+            } else {
+                sessionCred = used to browsePass
+                sessionAnon = false
+            }
+        }
+        credPromptOpen = false
+        scope.launch { loadSMBList(credTargetPath) }
+    }
+    // 返回上一级：从当前目录回到其父级，主机根再向上回到 smb:// 根；host 为空（已在根）时不可用
+    fun goUpSmbDir() {
+        val uri = Uri.parse(browsePath)
+        val host = uri.host ?: return
+        val hostPort = if (uri.port > 0) "$host:${uri.port}" else host
+        val segs = uri.pathSegments
+        val next = if (segs.isEmpty()) "smb://"
+        else "smb://$hostPort/${segs.dropLast(1).joinToString("/")}".trimEnd('/')
+        scope.launch { loadSMBList(next) }
+    }
+    val smbCanGoUp: () -> Boolean = { Uri.parse(browsePath).host != null }
 
     // 2026-08-24 需求1：本机文件夹用系统目录选择器（SAF），选中后持久化读取权限并回填 treeUri
     val folderPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -399,41 +447,38 @@ private fun AddSourceDialog(
         title = { Text(if (initial == null) stringResource(R.string.network_add_title) else stringResource(R.string.network_edit_src)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         onClick = { type = MediaSourceType.SMB },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.network_type_smb), color = if (type == MediaSourceType.SMB) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(stringResource(R.string.network_type_smb), color = if (type == MediaSourceType.SMB) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, maxLines = 1, softWrap = false) }
                     OutlinedButton(
                         onClick = { type = MediaSourceType.WEBDAV },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.network_type_webdav), color = if (type == MediaSourceType.WEBDAV) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(
-                        onClick = { type = MediaSourceType.HTTP },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.network_type_http), color = if (type == MediaSourceType.HTTP) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(stringResource(R.string.network_type_webdav), color = if (type == MediaSourceType.WEBDAV) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, maxLines = 1, softWrap = false) }
                     OutlinedButton(
                         onClick = { type = MediaSourceType.LOCAL },
-                        modifier = Modifier.weight(1f)
-                    ) { Text(stringResource(R.string.network_type_folder), color = if (type == MediaSourceType.LOCAL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface) }
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text(stringResource(R.string.network_type_folder), color = if (type == MediaSourceType.LOCAL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, maxLines = 1, softWrap = false) }
                 }
-                OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.network_name)) }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(
-                    url, { url = it },
-                    label = {
-                        Text(
-                            when (type) {
-                                MediaSourceType.SMB -> stringResource(R.string.network_url_hint_smb)
-                                MediaSourceType.WEBDAV -> stringResource(R.string.network_url_hint_webdav)
-                                MediaSourceType.HTTP -> stringResource(R.string.network_url_hint_http)
-                                MediaSourceType.LOCAL -> stringResource(R.string.network_url_hint_local)
-                            }
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.network_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                if (type != MediaSourceType.LOCAL) {
+                    OutlinedTextField(
+                        url, { url = it },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.network_url_hint)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(user, { user = it }, label = { Text(stringResource(R.string.network_user)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(
+                        pass, { pass = it },
+                        label = { Text(if (initial == null) stringResource(R.string.network_pass) else stringResource(R.string.network_pass_edit)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(autoCorrect = false),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (type == MediaSourceType.SMB) {
                         OutlinedButton(
@@ -444,21 +489,9 @@ private fun AddSourceDialog(
                         OutlinedButton(onClick = { folderPicker.launch(null) }) { Text(stringResource(R.string.network_browse_folder)) }
                     }
                 }
-                if (type != MediaSourceType.HTTP && type != MediaSourceType.LOCAL) {
-                    OutlinedTextField(user, { user = it }, label = { Text(stringResource(R.string.network_user)) }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(
-                        pass, { pass = it },
-                        label = { Text(if (initial == null) stringResource(R.string.network_pass) else stringResource(R.string.network_pass_edit)) },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(autoCorrect = false),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
+                if (type == MediaSourceType.LOCAL) {
                     Text(
-                        when (type) {
-                            MediaSourceType.LOCAL -> stringResource(R.string.network_note_local)
-                            else -> stringResource(R.string.network_note_http)
-                        },
+                        stringResource(R.string.network_note_local),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -489,26 +522,91 @@ private fun AddSourceDialog(
                         }) { Text(stringResource(R.string.action_open)) }
                     }
                     Spacer(Modifier.height(4.dp))
-                    Text(browsePath, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(browsePath, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
+                        if (smbCanGoUp()) {
+                            TextButton(onClick = { goUpSmbDir() }) {
+                                Icon(Icons.Default.NavigateBefore, contentDescription = null)
+                                Text(stringResource(R.string.action_up))
+                            }
+                        }
+                    }
                     Spacer(Modifier.height(8.dp))
-                    LazyColumn(Modifier.height(300.dp).fillMaxWidth()) {
-                        items(browseEntries, key = { it.path }) { e ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth().clickable(enabled = e.isDir) { openSmbDir(e) }.padding(vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(if (e.isDir) Icons.Default.Folder else Icons.Default.Audiotrack, contentDescription = null)
-                                Spacer(Modifier.width(8.dp))
-                                Text(e.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    Box(modifier = Modifier.height(300.dp).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        if (browsing) {
+                            // 扫描局域网可能耗时（根枚举 + /24 445 探测），给出动态反馈而非空白
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                                Text(stringResource(R.string.network_browse_scanning), style = MaterialTheme.typography.bodyMedium)
+                            }
+                        } else {
+                            LazyColumn(Modifier.fillMaxSize()) {
+                                if (browseEntries.isEmpty()) {
+                                    item {
+                                        Text(
+                                            stringResource(R.string.network_browse_none),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(vertical = 16.dp)
+                                        )
+                                    }
+                                } else {
+                                    items(browseEntries, key = { it.path }) { e ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth().clickable(enabled = e.isDir) { openSmbDir(e) }.padding(vertical = 10.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(if (e.isDir) Icons.Default.Folder else Icons.Default.Audiotrack, contentDescription = null)
+                                            Spacer(Modifier.width(8.dp))
+                                            Text(e.name, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             },
             confirmButton = {
-                TextButton(onClick = { url = browsePath; smbBrowseOpen = false }) { Text(stringResource(R.string.network_use_dir)) }
+                TextButton(onClick = {
+                    // 回填：当前目录路径到地址框；按本次登录所用凭据（或匿名）回填用户名/密码
+                    url = browsePath
+                    if (sessionAnon) {
+                        user = ""; pass = ""
+                    } else sessionCred?.let { (u, p) -> user = u; pass = p }
+                    smbBrowseOpen = false
+                }) { Text(stringResource(R.string.network_use_dir)) }
             },
             dismissButton = { TextButton(onClick = { smbBrowseOpen = false }) { Text(stringResource(R.string.action_cancel)) } }
+        )
+    }
+
+    // 进入主机前：输入用户名/密码或勾选匿名访问，用该凭据连接主机
+    if (credPromptOpen) {
+        AlertDialog(
+            onDismissRequest = { credPromptOpen = false },
+            title = { Text(stringResource(R.string.network_smb_cred_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(Uri.parse(credTargetPath).host ?: "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    OutlinedTextField(browseUser, { browseUser = it }, label = { Text(stringResource(R.string.network_user)) }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(
+                        browsePass, { browsePass = it },
+                        label = { Text(stringResource(R.string.network_pass)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(autoCorrect = false),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = browseAnon, onCheckedChange = { browseAnon = it })
+                        Text(stringResource(R.string.network_anon), style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = { connectWithCred() }) { Text(stringResource(R.string.network_connect)) }
+            },
+            dismissButton = { TextButton(onClick = { credPromptOpen = false }) { Text(stringResource(R.string.action_cancel)) } }
         )
     }
 }

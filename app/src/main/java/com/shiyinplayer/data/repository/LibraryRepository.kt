@@ -237,12 +237,11 @@ class LibraryRepository @Inject constructor(
     fun getSongById(id: Long): Flow<Song?> =
         kotlinx.coroutines.flow.flow { emit(songDao.getById(id)?.toModel()) }
 
-    /** 来源优先级（R2-01）：本地 > SMB > WebDAV > HTTP，值越小优先级越高。 */
+    /** 来源优先级（R2-01）：本地 > SMB > WebDAV，值越小优先级越高。 */
     private fun sourcePriority(type: MediaSourceType): Int = when (type) {
         MediaSourceType.LOCAL -> 0
         MediaSourceType.SMB -> 1
         MediaSourceType.WEBDAV -> 2
-        MediaSourceType.HTTP -> 3
     }
 
     /** 多源同曲合并（R2-01）：按 标题+艺术家+专辑 分组，取优先级最高的来源为主，
@@ -536,17 +535,12 @@ class LibraryRepository @Inject constructor(
         return removed
     }
 
-    /** 网络源根前缀：SMB/WEBDAV 取 config.url，HTTP 取 scheme://authority；用于孤儿归属判定。LOCAL 返回 null。 */
+    /** 网络源根前缀：SMB/WEBDAV 取 config.url；用于孤儿归属判定。LOCAL 返回 null。 */
     private fun networkRootPrefixOf(src: MusicSource): String? {
         val j = runCatching { org.json.JSONObject(src.configJson) }.getOrNull() ?: return null
         return when (src.type) {
             MediaSourceType.SMB, MediaSourceType.WEBDAV ->
                 j.optString("url").takeIf { it.isNotBlank() }?.trimEnd('/')
-            MediaSourceType.HTTP ->
-                runCatching { Uri.parse(j.optString("url")) }.getOrNull()?.let { u ->
-                    val a = u.authority
-                    if (u.scheme.isNullOrBlank() || a.isNullOrBlank()) null else "${u.scheme}://$a"
-                }
             else -> null
         }
     }

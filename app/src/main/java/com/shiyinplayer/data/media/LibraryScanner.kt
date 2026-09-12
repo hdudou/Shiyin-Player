@@ -24,7 +24,6 @@ import com.shiyinplayer.data.local.entity.FolderAttachmentEntity
 import com.shiyinplayer.data.local.entity.SongEntity
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.MusicSource
-import com.shiyinplayer.data.remote.http.HttpDirectFetcher
 import com.shiyinplayer.data.remote.webdav.WebDavBrowser
 import com.shiyinplayer.data.repository.ScanResult
 import com.shiyinplayer.ui.settings.SettingsRepository
@@ -71,7 +70,6 @@ class LibraryScanner @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val smbBrowser: SmbBrowser,
     private val webDavBrowser: WebDavBrowser,
-    private val httpFetcher: HttpDirectFetcher,
     private val settings: SettingsRepository,
     private val folderStructure: FolderStructureBuilder,
     private val folderAttachmentDao: FolderAttachmentDao
@@ -162,7 +160,6 @@ class LibraryScanner @Inject constructor(
                                 MediaSourceType.LOCAL -> scanLocal(src, scanHidden, extWhitelist, emit, { atts.add(it) })
                                 MediaSourceType.SMB -> scanSmb(src, scanHidden, extWhitelist, emit, { atts.add(it) })
                                 MediaSourceType.WEBDAV -> scanWebDav(src, scanHidden, extWhitelist, emit, { atts.add(it) })
-                                MediaSourceType.HTTP -> scanHttp(src, scanHidden, extWhitelist, emit)
                             }
                             Log.i(TAG, "来源完成: ${src.name} (attachments=${atts.size})")
                             // 只有"成功扫描"的来源参与失效清理（配置缺失/根失败不清库）。
@@ -354,8 +351,7 @@ class LibraryScanner @Inject constructor(
 
     /**
      * 需求：源根前缀（该源的曲目 dedupKey 均以此开头），用于失效清理精确匹配。
-     * 全部来源类型都参与：LOCAL（folderPath 绝对路径 / SAF tree→document 前缀）、SMB、WEBDAV、HTTP。
-     * HTTP 直链 link 与列表页 url 通常同域，取其 scheme://authority/ 作前缀桶。
+     * 全部来源类型都参与：LOCAL（folderPath 绝对路径 / SAF tree→document 前缀）、SMB、WEBDAV。
      * 返回 null = 配置缺失，不参与失效清理（由调用处跳过）。
      */
     private fun remoteRootPrefix(src: MusicSource): String? {
@@ -378,11 +374,6 @@ class LibraryScanner @Inject constructor(
             }
             MediaSourceType.SMB, MediaSourceType.WEBDAV ->
                 j.optString("url").takeIf { it.isNotBlank() }?.trimEnd('/')?.let { "$it/" }
-            MediaSourceType.HTTP ->
-                runCatching { Uri.parse(j.optString("url")) }.getOrNull()?.let { u ->
-                    val a = u.authority
-                    if (u.scheme.isNullOrBlank() || a.isNullOrBlank()) null else "${u.scheme}://$a/"
-                }
         }
     }
 
@@ -625,7 +616,7 @@ class LibraryScanner @Inject constructor(
         for ((dirKey, map) in audioFiles) {
             for ((key, doc) in map) {
                 if (dirKey to key in consumedAudioKeys) continue
-                extractMetadata(doc, src)?.let { emit(it) }
+                extractMetadata(doc)?.let { emit(it) }
             }
         }
         return true
@@ -781,85 +772,6 @@ class LibraryScanner @Inject constructor(
         return true
     }
 
-    /**
-     * HTTP 直链来源扫描：抓取 [src] 的 url（m3u/换行列表 或 HTML 自动索引页），
-     * 提取其中音频直链并逐个入库。复用 WebDAV 的格式/时长前缀探测。
-     * 抓取失败返回 false（不误清库）；抓取成功但无音频链接返回 true（视为正常空列表）。
-     */
-    private suspend fun scanHttp(
-        src: MusicSource,
-        scanHidden: Boolean,
-        extWhitelist: Set<String>,
-        emit: (SongEntity) -> Unit
-    ): Boolean {
-        val url = runCatching { JSONObject(src.configJson).optString("url") }.getOrNull()
-            .takeIf { it?.startsWith("http://") == true || it?.startsWith("https://") == true } ?: return false
-        val text = try {
-            withTimeout(PROBE_TIMEOUT_MS) { httpFetcher.fetchText(url) }
-        } catch (e: kotlinx.coroutines.CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            null
-        } ?: return false
-        val links = extractHttpAudioUrls(text, url, extWhitelist)
-        val now = System.currentTimeMillis()
-        val visited = mutableSetOf<String>()
-        for (link in links) {
-            if (!visited.add(link)) continue
-            val name = link.substringAfter('?').substringBefore('#').substringAfterLast('/')
-            if (!scanHidden && name.startsWith('.')) continue
-            val ext = name.substringAfterLast('.', "").lowercase()
-            val prefix = probeRemoteBytes { httpFetcher.readRange(link, PROBE_PREFIX_BYTES) }
-            val formatVerified = prefix?.let { com.shiyinplayer.player.decoder.MagicNumberValidator.validate(it, ext) } ?: true
-            val duration = prefix?.let { p ->
-                probeDurationFromPrefix(p, ext).takeIf { it > 0 }
-                    ?: com.shiyinplayer.player.decoder.FormatSpecificDurationProber.probe(ext, p, PROBE_PREFIX_BYTES.toLong())
-            } ?: 0L
-            val titleBase = name.substringBeforeLast('.')
-            val (remoteArtist, remoteTitle) = parseFileNameTitle(titleBase)
-            val albumArtUri = prefix?.let { extractRemoteArtwork(it, name, link) }
-            emit(
-                SongEntity(
-                    title = remoteTitle ?: titleBase,
-                    artistName = remoteArtist,
-                    uri = link,
-                    sourceType = MediaSourceType.HTTP,
-                    albumArtUri = albumArtUri,
-                    mimeType = guessMime(name),
-                    formatVerified = formatVerified,
-                    durationMs = duration,
-                    dateAdded = now,
-                    sizeBytes = prefix?.size?.toLong() ?: 0L,
-                    dedupKey = link
-                )
-            )
-        }
-        return true
-    }
-
-    /** 从抓取文本（m3u/换行列表 或 HTML 索引）提取音频直链绝对 URL，按扩展名白名单过滤。 */
-    private fun extractHttpAudioUrls(text: String, base: String, extWhitelist: Set<String>): Set<String> {
-        val refs = mutableListOf<String>()
-        // HTML <a href="..."> / href='...'
-        REGEX_HTML_HREF.findAll(text).forEach { k -> refs += k.groupValues[1] }
-        // m3u / 换行列表：非空、非注释行
-        text.lineSequence().forEach { line ->
-            val t = line.trim()
-            if (t.isNotEmpty() && !t.startsWith("#")) refs += t
-        }
-        val audioExt = if (extWhitelist.isEmpty()) Constants.AUDIO_EXTENSIONS else extWhitelist
-        val out = LinkedHashSet<String>()
-        for (ref in refs) {
-            val u = if (ref.startsWith("http://") || ref.startsWith("https://")) ref else HttpDirectFetcher.resolve(base, ref) ?: continue
-            val ext = u.substringAfter('?').substringBefore('#').substringAfterLast('.').lowercase()
-            if (ext in audioExt) out += u
-        }
-        return out
-    }
-
-    /** 通用 HTTP HTML 自动索引链接（引号单/双皆可，避免跨标签贪婪）。 */
-    private val REGEX_HTML_HREF = Regex("""<a\s+[^>]*href\s*=\s*["']([^"']+)["']""", RegexOption.IGNORE_CASE)
-
     // ===== 工具 =====
 
     /** P2-7：取 DocumentFile 所在目录名（URI 解码后），供 CUE 子曲目专辑名兜底。 */
@@ -948,7 +860,7 @@ class LibraryScanner @Inject constructor(
         }
     }
 
-    private fun extractMetadata(file: DocumentFile, src: MusicSource): SongEntity? {
+    private fun extractMetadata(file: DocumentFile): SongEntity? {
         val uri = file.uri
         val retriever = MediaMetadataRetriever()
         try {
