@@ -1,5 +1,6 @@
 # =============================================================================
-#  Publish a GitHub release: build (R8) + commit + tag + gh release + upload APK.
+#  Publish a release to GitHub AND Gitea: build (R8) + commit + tag +
+#  gh + Gitea API release + upload APK.
 #  Single entry point for "user asks assistant to ship a release".
 #
 #  Usage (from repo root, or anywhere):
@@ -8,8 +9,14 @@
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipBuild        # reuse existing APK in dist/
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -Offline          # build from local cache
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -AutoCommit       # auto commit pending changes
+#    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -GiteaRepo user/repo   # Gitea target
+#    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipGitea        # skip Gitea release
 #
-#  Requirements: gh CLI installed & logged in (gh auth status), git creds via gh.
+#  Requirements:
+#    - GitHub: gh CLI installed & logged in (gh auth status), git creds via gh.
+#    - Gitea (e.g. gitea.com): optional auto-publish via Gitea API v1 using
+#      $env:GITEA_REPO (owner/repo) and $env:GITEA_TOKEN (personal access token).
+#      Env vars GITEE_REPO/GITEE_TOKEN are also honored as aliases.
 #  Version defaults to app/version.properties -> versionName.
 # =============================================================================
 param(
@@ -19,7 +26,9 @@ param(
     [switch]$AutoCommit,
     [string]$NotesFile,
     [string]$Title,
-    [string]$Repo = 'hdudou/Shiyin-Player'
+    [string]$Repo = 'hdudou/Shiyin-Player',
+    [string]$GiteaRepo,
+    [switch]$SkipGitea
 )
 $ErrorActionPreference = 'Stop'
 $Root     = Split-Path -Parent $PSScriptRoot
@@ -63,6 +72,11 @@ if (-not $Version) {
 }
 $Tag = 'v' + $Version
 $Apk = Join-Path $Root "dist\app-release-$Version.apk"
+$releaseNotes = if ($NotesFile -and (Test-Path $NotesFile)) {
+    [System.IO.File]::ReadAllText($NotesFile)
+} else {
+    "Release $Tag of Shiyin Player (GPL-3.0), R8 obfuscated.`r`n`r`nDownload and install the APK (Android 10+)."
+}
 Write-Host "==> Target: $Tag ($Repo)"
 
 # ---- 3. working tree must be clean (or auto-commit) -------------------------
@@ -104,17 +118,15 @@ if ($remoteTag) {
     Invoke-Checked { & $Git -C $Root push origin $Tag } 'git tag push'
 }
 
-# ---- 7. create release or add asset -----------------------------------------
+# ---- 7. create release or add asset (GitHub) --------------------------------
 $existing = gh release view $Tag --repo $Repo --json tagName --jq '.tagName' 2>&1
 $create = $true
 if ($existing -and $existing.Trim() -eq $Tag) { $create = $false }
 
 if ($create) {
     Write-Host "==> Creating GitHub release and uploading asset..."
-    $args = @('release','create',$Tag,'--repo',$Repo)
+    $args = @('release','create',$Tag,'--repo',$Repo,'--notes',$releaseNotes)
     if ($Title) { $args += @('--title',$Title) }
-    if ($NotesFile -and (Test-Path $NotesFile)) { $args += @('--notes-file',$NotesFile) }
-    else { $args += @('--notes',"Release $Tag of Shiyin Player (GPL-3.0).") }
     $args += $Apk
     Invoke-Checked { & gh @args } 'gh release create'
 } else {
@@ -122,11 +134,88 @@ if ($create) {
     Invoke-Checked { & gh release upload $Tag --repo $Repo --clobber $Apk } 'gh release upload'
 }
 
-# ---- 8. report -----------------------------------------------------------------
+# ---- 8. Gitea publish (optional, Gitea API v1) ------------------------------
+if ($SkipGitea) {
+    Write-Host "==> Gitea skipped (-SkipGitea)"
+} else {
+    $giteaRepo  = if ($GiteaRepo) { $GiteaRepo } elseif ($env:GITEA_REPO) { $env:GITEA_REPO } else { $env:GITEE_REPO }
+    $giteaToken = if ($env:GITEA_TOKEN) { $env:GITEA_TOKEN } else { $env:GITEE_TOKEN }
+    if (-not $giteaRepo -or -not $giteaToken) {
+        Write-Host "==> Gitea SKIPPED: set env GITEA_REPO + GITEA_TOKEN (or -GiteaRepo) to publish there."
+    } else {
+        $base  = "https://gitea.com/api/v1/repos/$giteaRepo"
+        $hdr   = @{ Authorization = "token $giteaToken" }
+        $name  = if ($Title) { $Title } else { $Tag }
+        Write-Host "==> Publishing to Gitea: $giteaRepo"
+
+        # 8.1 main branch commit sha (needed to create the tag ref)
+        $sha = $null
+        try {
+            $branch = Invoke-RestMethod -Uri "$base/branches/main" -Headers $hdr -Method Get
+            $sha = $branch.commit.id
+        } catch {
+            Write-Warning "Gitea: cannot read main branch (is the repo pushed?). Details: $($_.Exception.Message)"
+        }
+        if ($sha) {
+            # 8.2 ensure tag ref exists (create if missing)
+            $tagExists = $false
+            try {
+                Invoke-RestMethod -Uri "$base/git/refs/tags/$Tag" -Headers $hdr -Method Get | Out-Null
+                $tagExists = $true
+            } catch { }
+            if (-not $tagExists) {
+                try {
+                    Invoke-RestMethod -Uri "$base/git/refs" -Headers $hdr -Method Post -ContentType 'application/json' `
+                        -Body (@{ ref = "refs/tags/$Tag"; sha = $sha } | ConvertTo-Json) | Out-Null
+                    Write-Host "==> Gitea tag $Tag created."
+                } catch {
+                    Write-Warning "Gitea: failed to create tag $Tag. $($_.Exception.Message)"
+                }
+            }
+            # 8.3 ensure release exists (create if missing)
+            $relId = $null
+            try {
+                $rel = Invoke-RestMethod -Uri "$base/releases/tags/$Tag" -Headers $hdr -Method Get
+                $relId = $rel.id
+                Write-Host "==> Gitea release $Tag already exists (id=$relId)."
+            } catch { }
+            if (-not $relId) {
+                try {
+                    $body = @{
+                        tag_name = $Tag
+                        name     = $name
+                        body     = $releaseNotes
+                    } | ConvertTo-Json
+                    $rel = Invoke-RestMethod -Uri "$base/releases" -Headers $hdr -Method Post -ContentType 'application/json' -Body $body
+                    $relId = $rel.id
+                    Write-Host "==> Gitea release $Tag created (id=$relId)."
+                } catch {
+                    Write-Warning "Gitea: failed to create release. $($_.Exception.Message)"
+                }
+            }
+            # 8.4 upload APK asset (curl multipart; PowerShell5 lacks Invoke-RestMethod -Form)
+            if ($relId) {
+                Write-Host "==> Uploading APK to Gitea release $relId..."
+                & curl.exe -s -H "Authorization: token $giteaToken" -F "attachment=@$Apk" "$base/releases/$relId/assets" 2>&1 | Out-Null
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Warning "Gitea asset upload failed (exit=$LASTEXITCODE). If the asset already exists, replace it in the Gitea web UI."
+                } else {
+                    Write-Host "==> Gitea asset uploaded."
+                }
+            }
+        } else {
+            Write-Warning "Gitea publish aborted (no main branch). Push code to Gitea repo first, then re-run."
+        }
+    }
+}
+
+# ---- 9. report -----------------------------------------------------------------
 $url = gh release view $Tag --repo $Repo --json url --jq '.url' 2>&1
 Write-Host ""
 Write-Host "============================================================"
 Write-Host "  PUBLISHED: $Tag"
 Write-Host "  Asset:     $Apk"
-Write-Host "  URL:       $($url.Trim())"
+Write-Host "  GitHub:    $($url.Trim())"
+$gR = if ($GiteaRepo) { $GiteaRepo } elseif ($env:GITEA_REPO) { $env:GITEA_REPO } else { $env:GITEE_REPO }
+if ($gR) { Write-Host "  Gitea:     https://gitea.com/$gR/releases" }
 Write-Host "============================================================"
