@@ -59,12 +59,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = false
+            isShrinkResources = false
             // 占位签名：开发期复用 debug keystore 以便直接打包；正式发布前请替换为自有 keystore
             // （在 local.properties / 环境变量中配置 storeFile / storePassword / keyAlias / keyPassword）。
             signingConfig = signingConfigs.getByName("debug")

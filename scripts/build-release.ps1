@@ -1,4 +1,4 @@
-# Open-source Release build script (R8 obfuscation + resource shrinking)
+# Open-source Release build script (un-minified: R8 obfuscation disabled)
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 [-Offline]
 #   -Offline   build from local dependency cache (recommended on this machine)
 # Output is always copied to <open-source root>/dist/ named with the version.
@@ -43,7 +43,7 @@ if ($vp['versionName']) {
 $Dist = Join-Path $Root 'dist'
 New-Item -ItemType Directory -Force -Path $Dist | Out-Null
 
-Write-Host "==> Building Release (R8 obfuscate + shrink), version $versionName ..."
+Write-Host "==> Building Release (un-minified), version $versionName ..."
 # gradle writes deprecation warnings to stderr; under EAP=Stop those are misread as fatal.
 $prevEap = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
@@ -64,7 +64,7 @@ if (-not (Test-Path $Apk)) { throw "APK not found: $Apk" }
 $Dest = Join-Path $Dist "app-release-$versionName.apk"
 Copy-Item $Apk $Dest -Force
 Write-Host ""
-Write-Host "==> Obfuscated Release done: $Dest"
+Write-Host "==> Un-minified Release done: $Dest"
 Write-Host "    Raw product: $Apk"
 $size = [math]::Round((Get-Item $Dest).Length / 1MB, 2)
 Write-Host "    Size: $size MB"

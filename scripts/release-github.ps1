@@ -75,7 +75,7 @@ $Apk = Join-Path $Root "dist\app-release-$Version.apk"
 $releaseNotes = if ($NotesFile -and (Test-Path $NotesFile)) {
     [System.IO.File]::ReadAllText($NotesFile)
 } else {
-    "Release $Tag of Shiyin Player (GPL-3.0), R8 obfuscated.`r`n`r`nDownload and install the APK (Android 10+)."
+    "Release $Tag of Shiyin Player (GPL-3.0).`r`n`r`nDownload and install the APK (Android 10+).`r`n`r`nNote: This build is un-minified (R8 obfuscation disabled) for stability.`r`n`r`n功能概览：多源曲库（本机文件夹 / SMB / WebDAV）、全格式解码（内置 FFmpeg）、自动/手动元数据刮削、内置全球电台、无缝播放 / 音量归一化 / 均衡器、播放器与收音机双模式、车载蓝牙歌词、睡眠定时等。"
 }
 Write-Host "==> Target: $Tag ($Repo)"
 
