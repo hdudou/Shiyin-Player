@@ -1,4 +1,4 @@
-# =============================================================================
+﻿# =============================================================================
 #  Publish a release to GitHub AND Gitea: build (R8) + commit + tag +
 #  gh + Gitea API release + upload APK.
 #  Single entry point for "user asks assistant to ship a release".

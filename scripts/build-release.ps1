@@ -1,4 +1,4 @@
-# Open-source Release build script (un-minified: R8 obfuscation disabled)
+﻿# Open-source Release build script (un-minified: R8 obfuscation disabled)
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\build-release.ps1 [-Offline]
 #   -Offline   build from local dependency cache (recommended on this machine)
 # Output is always copied to <open-source root>/dist/ named with the version.

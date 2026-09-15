@@ -218,6 +218,7 @@ class PlaybackController @Inject constructor(
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
+    private var btFlickerAutoResumeRunnable: Runnable? = null
     // 2026-08-24：蓝牙断开兜底——连接广播可能被 ROM 裁剪/不匹配，改由音频路由移除事件保证暂停。
     private val audioDeviceCallback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         object : AudioDeviceCallback() {
@@ -234,11 +235,19 @@ class PlaybackController @Inject constructor(
                     Log.i("AudioFocus", "蓝牙音频设备移除，暂停")
                     pauseOnBtDisconnect(btAddressFrom(btRemoved))
                 } else if (wiredRemoved && headsetPause) {
-                    // 有线/USB-C 耳机拔出：只暂停、不标记重连恢复；同时清残留 BT 标记防后续蓝牙重连误恢复。
-                    // 部分设备（尤其平板 + USB转接）不触发 ACTION_NOISY，靠音频路由移除事件兜底。
-                    Log.i("AudioFocus", "有线耳机音频设备移除，暂停")
-                    clearStaleResumeMarker()
-                    pause()
+                    // 修复：蓝牙音频输出中，忽略 USB/有线设备瞬时枚举移除，避免被误判为拔线而误暂停。
+                    val btOutputActive = runCatching {
+                        audioManager.getDevices(AudioDeviceInfo.TYPE_BLUETOOTH_A2DP).isNotEmpty()
+                    }.getOrDefault(false)
+                    if (btOutputActive) {
+                        Log.i("AudioFocus", "蓝牙输出中，忽略有线/USB音频设备移除")
+                    } else {
+                        // 有线/USB-C 耳机拔出：只暂停、不标记重连恢复；同时清残留 BT 标记防后续蓝牙重连误恢复。
+                        // 部分设备（尤其平板 + USB转接）不触发 ACTION_NOISY，靠音频路由移除事件兜底。
+                        Log.i("AudioFocus", "有线耳机音频设备移除，暂停")
+                        clearStaleResumeMarker()
+                        pause()
+                    }
                 }
             }
         }
@@ -319,6 +328,7 @@ class PlaybackController @Inject constructor(
                     pendingResumeBtAddress = null // NOISY 无设备地址，保持 null 走退化恢复
                     lastResumeMarkerAt = SystemClock.elapsedRealtime()
                     Log.i("AudioFocus", "媒体中断(noisy)，标记待蓝牙重连恢复")
+                    scheduleBtFlickerAutoResume()
                 } else {
                     // 未在播放时中断绝不残留待恢复标记，防止后续重连/挂断误恢复（带护栏，避免同断开事件的重复信号互清）
                     clearStaleResumeMarker()
@@ -362,6 +372,7 @@ class PlaybackController @Inject constructor(
             pendingResumeBtAddress = btAddress
             lastResumeMarkerAt = SystemClock.elapsedRealtime()
             Log.i("AudioFocus", "蓝牙断开，标记待重连恢复（device=$btAddress）")
+            scheduleBtFlickerAutoResume()
         } else {
             clearStaleResumeMarker()
         }
@@ -393,6 +404,31 @@ class PlaybackController @Inject constructor(
         lastResumeMarkerAt = Long.MIN_VALUE
         Log.i("AudioFocus", "蓝牙重连，恢复播放")
         play()
+    }
+
+    /**
+     * 蓝牙闪断容错：蓝牙/NOISY 触发的暂停若打上了待重连恢复标记，短延时后复查——
+     * 若那一刻蓝牙媒体设备实际仍连接（短暂闪断已自愈），则自动恢复播放，避免
+     * 「恢复依赖重连事件但事件未触发」导致播放永久停住。
+     */
+    private fun scheduleBtFlickerAutoResume() {
+        btFlickerAutoResumeRunnable?.let { mainHandler.removeCallbacks(it) }
+        val r = Runnable {
+            if (!btReconnectResume || !resumeOnBtReconnect) return@Runnable
+            val btConnected = runCatching {
+                audioManager.getDevices(AudioDeviceInfo.TYPE_BLUETOOTH_A2DP).isNotEmpty()
+            }.getOrDefault(false)
+            if (btConnected) {
+                resumeOnBtReconnect = false
+                pendingResumeBtAddress = null
+                lastResumeMarkerAt = Long.MIN_VALUE
+                Log.i("AudioFocus", "蓝牙闪断容错：设备仍连接，自动恢复播放")
+                onChanged()
+                play()
+            }
+        }
+        btFlickerAutoResumeRunnable = r
+        mainHandler.postDelayed(r, 1500L)
     }
 
     // ===== 音频焦点（2026-08-24） =====

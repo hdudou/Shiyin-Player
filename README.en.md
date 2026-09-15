@@ -191,6 +191,20 @@ For tracks the auto-sync missed, or that need correcting:
 
 ---
 
+## Release history
+
+### 2.1.4 (2026-09-15)
+
+- **Fixed**: occasional random auto-pause while playing over Bluetooth earphones (flicker recovery — if the device is in fact still connected after a brief BT dropout, playback resumes automatically instead of stopping permanently when the reconnect event never fires).
+- **Fixed**: when playing over Bluetooth, singling out USB/wired audio devices as they are momentarily enumerated then removed no longer causes a spurious "unplugged" pause.
+- **Changed**: release builds are now shipped **un-minified** (R8 disabled). The APK is roughly 1.5× larger but runs more reliably and makes crash reports easier to trace — a good fit for current distribution.
+
+### 2.1.3 (2026-09-12)
+
+- First independent open-source release: detached from the private edition history, while keeping all open capabilities (multi-source library / full-format decoding / built-in radio / metadata scraping).
+
+---
+
 ## Open-source license & compliance
 
 This project is released under the **GNU General Public License v3.0 (GPL-3.0)**. The full text is in the **`LICENSE`** file at the repository root, and at <https://www.gnu.org/licenses/>.
