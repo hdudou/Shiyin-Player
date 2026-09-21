@@ -97,6 +97,17 @@ If `gradlew` fails to locate a JDK, set `JAVA_HOME` to your JDK 17 explicitly, o
 
 The `release` build type currently **reuses the debug keystore as a placeholder** signature, only for easy local packaging. Before a real release, replace it with your own keystore in `app/build.gradle.kts` and provide `storeFile / storePassword / keyAlias / keyPassword` via `local.properties` (gitignored) or environment variables. Never commit private key files to the repository.
 
+### Pre-push desensitization gate
+
+This repository must contain **no private information**: internal addresses, host credentials, device serial numbers, the self-use build's sync-protocol fields (`deviceToken` / `pinnedCert` / sync port), or internal planning documents. Once pushed, **git history keeps them forever** (editing the file later does not remove them; only a history rewrite would). A checker ships with the repo:
+
+```bash
+python scripts/check-desensitize.py                  # check manually
+python scripts/check-desensitize.py --install-hook   # install as a pre-push hook (aborts on hit)
+```
+
+Hits are reported as `file:line` plus the rule name; if a hit is a false positive, annotate that line with `desensitize-allow` and a reason.
+
 ---
 
 ## Getting started

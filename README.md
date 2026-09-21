@@ -95,6 +95,17 @@ app/build/outputs/apk/release/app-release.apk
 
 `release` 构建类型当前**占位复用 debug keystore** 签名，仅便于本地直接打包调试。正式发布前请在 `app/build.gradle.kts` 中替换为自有 keystore，并在 `local.properties`（已 gitignore）或环境变量中配置 `storeFile / storePassword / keyAlias / keyPassword`。严禁将私钥文件提交进仓库。
 
+### 推送前的脱敏闸门
+
+本仓库**禁止任何私有信息入库**：内网地址、主机账号口令、真机序列号、自用版的同步协议字段（`deviceToken` / `pinnedCert` / 同步端口）、以及内部计划文档等。这些东西一旦推上来，**git 历史会永久保留**（事后改文件也删不掉，只能重写历史）。因此仓库自带一个检查脚本：
+
+```bash
+python scripts/check-desensitize.py                  # 人工检查
+python scripts/check-desensitize.py --install-hook   # 装成 pre-push 钩子，命中即中止推送
+```
+
+命中会打印 `文件:行号` 与规则名；确属误报可在该行加注释 `desensitize-allow` 并写明理由。
+
 ---
 
 ## 使用入门
