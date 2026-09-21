@@ -99,7 +99,7 @@ The `release` build type currently **reuses the debug keystore as a placeholder*
 
 ### Pre-push desensitization gate
 
-This repository must contain **no private information**: internal addresses, host credentials, device serial numbers, the self-use build's sync-protocol fields (`deviceToken` / `pinnedCert` / sync port), or internal planning documents. Once pushed, **git history keeps them forever** (editing the file later does not remove them; only a history rewrite would). A checker ships with the repo:
+This repository must contain **no private information**: the author's internal addresses and servers, host credentials, device serial numbers, identifiers from the self-use build's LAN sync protocol, or internal planning documents. Once pushed, **git history keeps them forever** (editing the file later does not remove them; only a history rewrite would). A checker ships with the repo:
 
 ```bash
 python scripts/check-desensitize.py                  # check manually

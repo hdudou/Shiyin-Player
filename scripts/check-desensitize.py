@@ -66,6 +66,11 @@ SKIP_EXT = {
     ".apk", ".aab", ".zip", ".gz", ".7z", ".mp3", ".mp4", ".ttf", ".otf", ".woff", ".woff2",
 }
 
+# 本脚本自身必然包含全部规则字面量（它就是规则的定义处），必须自我排除 ——
+# 否则第一次推送就会被自己拦下（实测确实如此）。这是**唯一**允许的路径级豁免，
+# 别往里加别的文件：真要豁免请用行内 desensitize-allow 并写明理由。
+SELF_SKIP = {"scripts/check-desensitize.py"}
+
 
 def tracked_files() -> list[str]:
     out = subprocess.run(["git", "ls-files"], cwd=REPO_ROOT,
@@ -76,6 +81,8 @@ def tracked_files() -> list[str]:
 def scan() -> list[tuple[str, int, str, str, str]]:
     findings: list[tuple[str, int, str, str, str]] = []
     for rel in tracked_files():
+        if rel in SELF_SKIP:
+            continue
         if os.path.splitext(rel)[1].lower() in SKIP_EXT:
             continue
         path = os.path.join(REPO_ROOT, rel)
