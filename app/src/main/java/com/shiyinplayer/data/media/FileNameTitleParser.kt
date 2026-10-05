@@ -109,7 +109,7 @@ fun cleanArtist(s: String?): String? {
     if (s.isNullOrBlank()) return s
     var r = s.trim().trimStart { it in EDGE_SYMBOLS }.trimEnd { it in EDGE_SYMBOLS }
     while (true) {
-        val n = r.replaceFirst(TRACK_NO_PREFIX_RE, "").trim()
+        val n = r.replaceFirst(ARTIST_TRACK_NO_PREFIX_RE, "").trim()
         if (n == r) break
         r = n
     }
@@ -132,6 +132,19 @@ fun cleanAlbum(raw: String?): String? {
 
 /** 前导"数字+空白/分隔"式序号（需求：清 000 001 002）：如 "01 " "05. " "3 - "；限 3 位避免误删 4 位年份。 */
 private val TRACK_NO_PREFIX_RE = Regex("""^\d{1,3}(?:[\.\-_:·.—]\s*|\s+)""")
+
+/**
+ * **艺人名专用**的前导序号规则：数字后面**必须带分隔符**（点 / 横线 / 下划线 / 冒号 / · / —）。
+ *
+ * 为什么不能直接复用上面那条 [TRACK_NO_PREFIX_RE]：它的 `|\s+` 分支表示"数字 + 空白"就算序号。
+ * 对**歌名**这是对的（"01 Bar style.mp3" 确实该剥掉 01），但对**艺人名**会毁掉大量真实组合 ——
+ * "2 Unlimited"、"3 Doors Down"、"5 Seconds of Summer"、"21 Guns" 都会被截掉开头的数字，
+ * 同一个歌手在库里裂成多行（与"-007.Alizee" 那次事故同类的脏数据，只是方向相反）。
+ *
+ * 而真实事故里的序号本来就带分隔符（`-007.Alizee` / `003. Dido`），所以这里要求分隔符：
+ * 既保住那批修复，又不误伤数字开头的合法艺名。
+ */
+private val ARTIST_TRACK_NO_PREFIX_RE = Regex("""^\d{1,3}[\.\-_:·.—]\s*""")
 
 /** 裸轨道序号前缀：如 "01. " "02-" "03_ 07：" → 歌名前的序号编号（需求3：入库歌名去掉这类前缀）。 */
 private val STRIP_TRACK_RE = Regex("^\\d{1,4}\\s*[\\.\\-_:·—]")

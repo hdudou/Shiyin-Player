@@ -11,6 +11,8 @@
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -AutoCommit       # auto commit pending changes
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -GiteaRepo user/repo   # Gitea target
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipGitea        # skip Gitea release
+#    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipBuild -UpdateGiteaNotes -NotesFile rel.md
+#                                                                                          # 只刷新已发布 Gitea release 的正文（修历史乱码 / 改文案）
 #
 #  Requirements:
 #    - GitHub: gh CLI installed & logged in (gh auth status), git creds via gh.
@@ -28,14 +30,27 @@ param(
     [string]$Title,
     [string]$Repo = 'hdudou/Shiyin-Player',
     [string]$GiteaRepo,
-    [switch]$SkipGitea
+    [switch]$SkipGitea,
+    # 已存在同名 Gitea release 时，用本次文案刷新其正文。默认关闭，避免覆盖手工润色过的说明。
+    # 修历史乱码：-SkipBuild -UpdateGiteaNotes -NotesFile <正确文案.md>
+    [switch]$UpdateGiteaNotes,
+    # 工具链路径（可选）。优先级：参数 > 环境变量 > PATH 上的可执行名。
+    # ⚠️ 刻意**不在脚本里硬编码任何本机绝对路径**：那既是私有信息（脱敏闸门的 LOCAL_PATH
+    # 规则会直接拦下），也让脚本在别人的机器上必然失败。本机自用请传参或设环境变量：
+    #   powershell -File scripts\release-github.ps1 -GradleBin <...> -JavaHome <...> -AndroidSdk <...>
+    #   或设置 GRADLE_BIN / JAVA_HOME / ANDROID_HOME。
+    [string]$GradleBin,
+    [string]$JavaHome,
+    [string]$AndroidSdk
 )
 $ErrorActionPreference = 'Stop'
 $Root     = Split-Path -Parent $PSScriptRoot
 $Git      = 'C:\Program Files\Git\bin\git.exe'
-$GradleBin = 'E:\androidplayer-t\.build_env\gradle-8.9\bin\gradle.bat'
-$JavaHome  = 'E:\androidplayer-t\.build_env\jdk17'
-$AndroidSdk = 'E:\androidplayer-t\.build_env\sdk'
+# 工具链解析：参数 > 环境变量 > PATH 上的可执行名（gradle / javac 自动回退）。
+# 不硬编码本机路径 —— 见 param 块里的说明（脱敏 + 可移植性）。
+$GradleBin  = if ($GradleBin)  { $GradleBin }  elseif ($env:GRADLE_BIN)  { $env:GRADLE_BIN }  else { 'gradle' }
+$JavaHome   = if ($JavaHome)   { $JavaHome }   elseif ($env:JAVA_HOME)   { $env:JAVA_HOME }
+$AndroidSdk = if ($AndroidSdk) { $AndroidSdk } elseif ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { $env:ANDROID_SDK_ROOT }
 
 # gh may have been installed after this shell started.
 $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
@@ -48,9 +63,35 @@ function Invoke-Checked {
     if ($LASTEXITCODE -ne 0) { throw "$What failed (exit=$LASTEXITCODE)" }
 }
 
+# 调用 Gitea API 并发送 JSON 正文。
+# ⚠️ 正文必须先用 UTF-8 编码成字节再交给 -Body，绝不能直接传字符串：
+#   Windows PowerShell 5.1 在「-Body 传字符串 + ContentType 不带 charset」时，
+#   会按 Latin-1/ASCII 编码正文，所有非 ASCII 字符（中文）被静默替换成 ?。
+#   v2.1.4 的 Gitea 发布说明就是这样被毁的（同一份文案经 gh 发到 GitHub 则完好）。
+function Invoke-GiteaJson {
+    param(
+        [string]$Uri,
+        [ValidateSet('Post', 'Patch')][string]$Method,
+        [hashtable]$Payload,
+        [hashtable]$Headers
+    )
+    $json  = $Payload | ConvertTo-Json -Depth 6
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+    return Invoke-RestMethod -Uri $Uri -Headers $Headers -Method $Method `
+        -ContentType 'application/json; charset=utf-8' -Body $bytes
+}
+
 # ---- 0. toolchain & prereqs ------------------------------------------------
-foreach ($tool in @($GradleBin, $JavaHome, $AndroidSdk)) {
-    if (-not (Test-Path $tool)) { throw "Toolchain not found: $tool" }
+# 绝对路径要求存在；裸名（如 PATH 上的 gradle）改为查 PATH —— 否则 Test-Path 'gradle' 恒为 false，
+# 参数化之后会误报「工具链缺失」。
+foreach ($pair in @(@('Gradle', $GradleBin), @('JAVA_HOME', $JavaHome), @('ANDROID_HOME', $AndroidSdk))) {
+    $label, $tool = $pair
+    if ([string]::IsNullOrWhiteSpace($tool)) {
+        throw "$label not set. Pass -$label <path> or set the matching environment variable."
+    }
+    $looksLikePath = $tool -match '^[A-Za-z]:[\\/]' -or $tool.StartsWith('\\')
+    $ok = if ($looksLikePath) { Test-Path $tool } else { [bool](Get-Command $tool -ErrorAction SilentlyContinue) }
+    if (-not $ok) { throw "$label not found: $tool" }
 }
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { throw "gh CLI not found. Install: winget install GitHub.cli" }
 
@@ -174,23 +215,32 @@ if ($SkipGitea) {
             }
             # 8.3 ensure release exists (create if missing)
             $relId = $null
+            $existingBody = ''
             try {
                 $rel = Invoke-RestMethod -Uri "$base/releases/tags/$Tag" -Headers $hdr -Method Get
                 $relId = $rel.id
+                $existingBody = "$($rel.body)"
                 Write-Host "==> Gitea release $Tag already exists (id=$relId)."
             } catch { }
             if (-not $relId) {
                 try {
-                    $body = @{
+                    $rel = Invoke-GiteaJson -Uri "$base/releases" -Method Post -Headers $hdr -Payload @{
                         tag_name = $Tag
                         name     = $name
                         body     = $releaseNotes
-                    } | ConvertTo-Json
-                    $rel = Invoke-RestMethod -Uri "$base/releases" -Headers $hdr -Method Post -ContentType 'application/json' -Body $body
+                    }
                     $relId = $rel.id
                     Write-Host "==> Gitea release $Tag created (id=$relId)."
                 } catch {
                     Write-Warning "Gitea: failed to create release. $($_.Exception.Message)"
+                }
+            } elseif ($UpdateGiteaNotes -and ($existingBody -ne $releaseNotes)) {
+                # 已存在且正文与本次文案不一致：刷新之（修历史乱码的唯一入口，需显式 -UpdateGiteaNotes）
+                try {
+                    Invoke-GiteaJson -Uri "$base/releases/$relId" -Method Patch -Headers $hdr -Payload @{ body = $releaseNotes } | Out-Null
+                    Write-Host "==> Gitea release $Tag notes refreshed (id=$relId)."
+                } catch {
+                    Write-Warning "Gitea: failed to update release notes. $($_.Exception.Message)"
                 }
             }
             # 8.4 upload APK asset (curl multipart; PowerShell5 lacks Invoke-RestMethod -Form)
