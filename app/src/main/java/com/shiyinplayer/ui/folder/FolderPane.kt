@@ -82,7 +82,6 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun FolderPane(
-    navController: androidx.navigation.NavController? = null,
     selectionMode: Boolean = false,
     onSelectionChange: (Boolean) -> Unit = {}
 ) {

@@ -4,7 +4,7 @@
 
 Shiyin is an Android music player for local + network music, with built-in ZeroTier virtual-network access and an internet radio. It organizes your library across three source types — local storage, WebDAV and SMB — and embeds ZeroTier's libzt user-space stack, so you can join a virtual LAN right inside the app (no system VPN permission needed) and reach music on a home NAS across networks.
 
-This repository is a redacted open-source copy of the author's private build: it ships **no private network IDs, default music sources, or update servers**, and has neither auto-update nor over-the-air radio-station sync — every connection is configured by you. The UI is currently Chinese (with an English language pack).
+This repository is a redacted open-source copy of the author's private build: it ships **no private network IDs, default music sources, or update servers** — all three are left empty in the code and configured by you. In-app version checking and over-the-air radio-list sync **are included** (they arrived with the latest sync), but they likewise ship no address: an empty `Constants.UPDATE_BASE_URL` means "no update channel configured", and no request is ever made. The UI is currently Chinese (with an English language pack).
 
 ---
 
@@ -21,7 +21,7 @@ This repository is a redacted open-source copy of the author's private build: it
 - **Sound engine**: equalizer with genre-based auto-EQ, volume normalization, ReplayGain, and gapless playback.
 - **Data backup**: export / import player data (settings, library, playlists can be selected), optionally encrypted with AES-256-GCM.
 
-> Screen casting (Cast / AirPlay / DLNA), version auto-update, built-in radio remote sync, and HTTP direct-link sources have been removed in the open-source edition and are no longer provided.
+> Screen casting (Cast / AirPlay / DLNA) and HTTP direct-link sources have been removed in the open-source edition. In-app version update and built-in radio-list sync **are included in this repository**, but stay inactive until you configure an update URL (it ships empty).
 
 ---
 
@@ -99,7 +99,7 @@ The `release` build type currently **reuses the debug keystore as a placeholder*
 
 ### Pre-push desensitization gate
 
-This repository must contain **no private information**: the author's internal addresses and servers, host credentials, device serial numbers, identifiers from the self-use build's LAN sync protocol, or internal planning documents. Once pushed, **git history keeps them forever** (editing the file later does not remove them; only a history rewrite would). A checker ships with the repo:
+This repository must contain **no private information**: the author's internal addresses and servers, host credentials, device serial numbers, the author's local absolute paths, or internal planning documents. (The LAN sync protocol's field names and port 23541 are public now — they ship with the feature; the two matching rules were removed from the checker, with the rationale recorded in its comments.) Once pushed, **git history keeps them forever** (editing the file later does not remove them; only a history rewrite would). A checker ships with the repo:
 
 ```bash
 python scripts/check-desensitize.py                  # check manually

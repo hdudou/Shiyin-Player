@@ -9,7 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.common.PlaybackParameters
+
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.shiyinplayer.data.cache.MusicCacheManager
@@ -28,6 +28,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -103,7 +104,9 @@ class PlayerManager @Inject constructor(
     /** 是否正在播放音频（供 PlaybackHost 等公共层读取）。 */
     val isPlaying: Boolean get() = playbackState.value.isPlaying
 
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    // ⚠️ SupervisorJob：本 scope 挂着十余个设置观察（音频路由 / 热重建 / 循环模式 / 无缝 /
+    // 车载蓝牙歌词 / 监听文件夹等），其中一个抛异常若取消整个 scope，其余设置会集体静默失效。
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var skipOnError = true
     // 歌间停顿（自动切歌时暂停）；gapless 无缝播放时不生效。
     // 音量/淡入淡出/睡眠定时/耳机拔出 等音频段状态与命令已迁至 PlaybackController。
@@ -953,22 +956,8 @@ class PlayerManager @Inject constructor(
             shuffle = queueController.shuffle,
             // P2-8：toList() 拷贝快照，避免 UI 持有队列同一引用被后续 mutate 污染
             queue = queueController.queue.toList(),
-            currentIndex = queueController.currentIndex,
-            playbackSpeed = if (fbActive) fb.playbackSpeed else exoPlayer.playbackParameters.speed
+            currentIndex = queueController.currentIndex
         )
-    }
-
-    /**
-     * 设置播放速度（仅作用于当前会话，重启后恢复 1.0）。
-     * 0.5x-2.0x 范围；不在兜底播放时（fbActive）不生效（系统 MediaPlayer 不支持变速）。
-     */
-    fun setPlaybackSpeed(speed: Float) {
-        if (mediaPlayerFallback.active) {
-            // 兜底播放器不支持变速，忽略
-            return
-        }
-        exoPlayer.playbackParameters = PlaybackParameters(speed.coerceIn(0.25f, 2.0f))
-        emitFull()
     }
 
     // ---- AB 循环 ----

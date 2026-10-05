@@ -65,8 +65,11 @@ class RadioPlayer @Inject constructor(
 
     companion object {
         private const val TAG = "RadioPlayer"
-        private const val MAX_RETRY_ATTEMPTS = 8
-        private val RETRY_DELAYS_MS = longArrayOf(1_000, 2_000, 4_000, 8_000, 16_000, 16_000, 16_000, 16_000)
+        /**
+         * 单次重试退避上限（16s）。重试次数与退避基数改由设置页驱动
+         * （`radio_max_retry_count` / `radio_retry_delay_seconds`），不再硬编码。
+         */
+        private const val MAX_RETRY_DELAY_MS = 16_000L
         /** 单线路重试耗尽后切换到下一线路；所有线路各尝试一轮仍失败则放弃 */
         private const val MAX_LINE_ATTEMPTS_PER_PLAY = 3
     }
@@ -572,29 +575,44 @@ class RadioPlayer @Inject constructor(
     // ---- 重连逻辑 ----
 
     private fun scheduleRetry() {
-        if (retryAttempt >= MAX_RETRY_ATTEMPTS) {
-            // 当前线路重试耗尽 → 尝试自动切换到本电台的下一条可用线路
-            if (trySwitchToNextLine()) return
-            _state.update {
-                it.copy(
-                    error = "电台暂时不可用（所有线路均无法播放）",
-                    isPlaying = false,
-                    isBuffering = false
-                )
-            }
+        // 设置页「自动重连」：关闭时不做任何自动重试（此前该开关无任何消费者，恒按硬编码重试）
+        if (!settingsRepository.radioAutoReconnectSync()) {
+            Log.i(TAG, "自动重连已关闭，不再重试")
+            failCurrentLine()
             return
         }
 
-        val delayMs = RETRY_DELAYS_MS[retryAttempt.coerceAtMost(RETRY_DELAYS_MS.size - 1)]
+        // 设置页「最大重试次数」：此前被硬编码为 8，滑块完全无效
+        val maxAttempts = settingsRepository.radioMaxRetryCountSync().coerceIn(1, 50)
+        if (retryAttempt >= maxAttempts) {
+            failCurrentLine()
+            return
+        }
+
+        // 设置页「重试间隔（秒）」作为退避基数，指数增长并封顶
+        val baseDelayMs = settingsRepository.radioRetryDelaySecondsSync().coerceIn(1, 60) * 1000L
+        val delayMs = (baseDelayMs shl retryAttempt.coerceAtMost(4)).coerceAtMost(MAX_RETRY_DELAY_MS)
         retryAttempt++
 
-        Log.w(TAG, "Reconnecting in ${delayMs}ms (attempt $retryAttempt)")
+        Log.w(TAG, "Reconnecting in ${delayMs}ms (attempt $retryAttempt/$maxAttempts)")
 
         retryJob = scope.launch {
             delay(delayMs)
             currentUrl?.let { url ->
                 startStream(url, _state.value.stationName)
             }
+        }
+    }
+
+    /** 当前线路重试耗尽：先尝试切下一条线路，全部线路都不行才报错收手。 */
+    private fun failCurrentLine() {
+        if (trySwitchToNextLine()) return
+        _state.update {
+            it.copy(
+                error = "电台暂时不可用（所有线路均无法播放）",
+                isPlaying = false,
+                isBuffering = false
+            )
         }
     }
 
@@ -664,13 +682,20 @@ class RadioPlayer @Inject constructor(
      */
     private fun startEpgPolling() {
         stopEpgPolling()
-        // 首次查询
-        scope.launch {
+
+        // 设置页「显示节目信息」：关闭时不轮询、也不展示节目名
+        if (!settingsRepository.radioShowProgramInfoSync()) {
+            Log.i(TAG, "节目信息显示已关闭，跳过 EPG 轮询")
+            return
+        }
+
+        // 首次查询与周期查询合并到同一个 job ——
+        // 此前首次查询单独 scope.launch 且没记进 epgJob，stopEpgPolling() 取消不掉它，
+        // 每次起播都会遗留一个「3 秒后打一次 EPG 请求」的孤儿协程。
+        epgJob = scope.launch {
             delay(3_000)
             fetchAndApplyEpg()
-        }
-        // 周期性查询
-        epgJob = scope.launch {
+
             while (true) {
                 delay(EPG_INTERVAL_MS)
                 fetchAndApplyEpg()

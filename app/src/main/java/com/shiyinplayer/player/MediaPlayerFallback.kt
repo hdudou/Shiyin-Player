@@ -38,9 +38,7 @@ class MediaPlayerFallback(private val context: Context) {
         val positionMs: Long = 0L,
         val durationMs: Long = 0L,
         val song: Song? = null,
-        val error: String? = null,
-        /** 播放速度（系统 MediaPlayer 不支持变速，固定 1.0f）。 */
-        val playbackSpeed: Float = 1.0f
+        val error: String? = null
     )
 
     val state = MutableStateFlow(State())

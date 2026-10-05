@@ -34,6 +34,10 @@ interface RadioStationDao {
     @Query("SELECT * FROM radio_station WHERE url = :url LIMIT 1")
     suspend fun getByUrl(url: String): RadioStationEntity?
 
+    /** 局域网同步 /sync/library 分页快照（suspend；替代整表 getAllStationsSync）。 */
+    @Query("SELECT * FROM radio_station ORDER BY name COLLATE LOCALIZED LIMIT :limit OFFSET :offset")
+    suspend fun getPaged(offset: Int, limit: Int): List<RadioStationEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(station: RadioStationEntity): Long
 
@@ -55,10 +59,10 @@ interface RadioStationDao {
     @Query("DELETE FROM radio_station WHERE source = :source")
     suspend fun deleteBySource(source: String)
 
-    @Query("UPDATE radio_station SET isFavorite = 1 WHERE id = :id")
+    @Query("UPDATE radio_station SET isFavorite = 1, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun setFavorite(id: Long)
 
-    @Query("UPDATE radio_station SET isFavorite = 0 WHERE id = :id")
+    @Query("UPDATE radio_station SET isFavorite = 0, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun unsetFavorite(id: Long)
 
     /**

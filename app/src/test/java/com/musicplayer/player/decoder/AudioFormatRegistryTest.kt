@@ -1,5 +1,6 @@
-package com.shiyinplayer.player.decoder
+package com.musicplayer.player.decoder
 
+import com.shiyinplayer.player.decoder.AudioFormatRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -8,24 +9,24 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * AudioFormatRegistry 单元测试（P1A §1.1 / P1B §2.1）。
+ * AudioFormatRegistry 单元测试。
  *
- * 验证 37 格式登记、Phase 枚举顺序、activeExtensions 过滤、
- * CURRENT_PHASE = P2B（active 28 格式：NATIVE 9 + P0 8 + P1A 6 + P2A 可用 2 + P2B 3）。
+ * 验证格式登记表、Phase 枚举顺序、activeExtensions 过滤。
  *
- * 注（R-A1 同步）：DSD（P1B）尽早搁置——registry 已不含 dsf/dff，DSD 相关断言已随之移除。
+ * 2026-09-16 同步：登记表已收敛为 **37 个格式 / 3 个阶段**（NATIVE 13 + P0 8 + P2A 16），
+ * CURRENT_PHASE = P2A，故全部登记格式均 active。原 P1A 模块音乐（mod/xm/s3m/it/mtm/umx）、
+ * P2B MIDI（mid/midi/rmi）与 P1B DSD 的旧断言随格式移除/回归一并重写：
+ * 模块音乐与 MIDI 已彻底移除，DSD（dsf/dff）经自编译 FFmpeg 软解回归为 P2A 可用格式。
  */
 class AudioFormatRegistryTest {
 
     @Test
-    fun `Phase enum ordinal order NATIVE less than P0 less than P1A less than P1B less than P2A less than P2B`() {
+    fun `Phase enum ordinal order NATIVE less than P0 less than P2A`() {
         val phases = AudioFormatRegistry.Phase.values()
+        assertEquals(3, phases.size)
         assertEquals(AudioFormatRegistry.Phase.NATIVE, phases[0])
         assertEquals(AudioFormatRegistry.Phase.P0, phases[1])
-        assertEquals(AudioFormatRegistry.Phase.P1A, phases[2])
-        assertEquals(AudioFormatRegistry.Phase.P1B, phases[3])
-        assertEquals(AudioFormatRegistry.Phase.P2A, phases[4])
-        assertEquals(AudioFormatRegistry.Phase.P2B, phases[5])
+        assertEquals(AudioFormatRegistry.Phase.P2A, phases[2])
     }
 
     @Test
@@ -40,14 +41,13 @@ class AudioFormatRegistryTest {
     }
 
     @Test
-    fun `CURRENT_PHASE is P2B`() {
-        assertEquals(AudioFormatRegistry.Phase.P2B, AudioFormatRegistry.CURRENT_PHASE)
+    fun `CURRENT_PHASE is P2A`() {
+        assertEquals(AudioFormatRegistry.Phase.P2A, AudioFormatRegistry.CURRENT_PHASE)
     }
 
     @Test
-    fun `activeExtensions contains 28 formats at P2B (deliverable only)`() {
-        val active = AudioFormatRegistry.activeExtensions()
-        assertEquals(28, active.size)
+    fun `activeExtensions contains all 37 registered formats at P2A`() {
+        assertEquals(37, AudioFormatRegistry.activeExtensions().size)
     }
 
     @Test
@@ -67,35 +67,32 @@ class AudioFormatRegistryTest {
     }
 
     @Test
-    fun `activeExtensions includes P1A module music formats`() {
+    fun `activeExtensions includes all P2A formats unlocked by ffmpeg soft decoding`() {
         val active = AudioFormatRegistry.activeExtensions()
-        listOf("mod", "xm", "s3m", "it", "mtm", "umx").forEach {
-            assertTrue("P1A format $it should be active", it in active)
+        listOf("ape", "wv", "tta", "mpc", "spx", "aa3", "at3", "oma", "wma", "tak", "ofr").forEach {
+            assertTrue("P2A format $it should be active", it in active)
         }
     }
 
     @Test
-    fun `activeExtensions includes P2A ape and wma (rest deferred)`() {
+    fun `activeExtensions includes ffmpeg-backed DSD and extra formats`() {
         val active = AudioFormatRegistry.activeExtensions()
-        listOf("ape", "wma").forEach {
-            assertTrue("P2A format $it should be active at P2B", it in active)
-        }
-        listOf("wv", "tta", "mpc", "spx", "aa3", "at3", "oma", "tak", "ofr").forEach {
-            assertFalse("deferred P2A format $it should NOT be active", it in active)
+        listOf("dsf", "dff", "caf", "shn", "ac4").forEach {
+            assertTrue("FFmpeg soft-decoded format $it should be active", it in active)
         }
     }
 
     @Test
-    fun `activeExtensions includes P2B MIDI formats`() {
-        val active = AudioFormatRegistry.activeExtensions()
-        listOf("mid", "midi", "rmi").forEach {
-            assertTrue("P2B format $it should be active at P2B", it in active)
+    fun `removed module music and MIDI formats are not registered`() {
+        listOf("mod", "xm", "s3m", "it", "mtm", "umx", "mid", "midi", "rmi").forEach {
+            assertFalse("$it should have been removed from registry", it in AudioFormatRegistry.activeExtensions())
+            assertNull("$it should have no phase entry", AudioFormatRegistry.phaseOf(it))
         }
     }
 
     @Test
-    fun `decodePathOf mod is NDK`() {
-        assertEquals(AudioFormatRegistry.DecodePath.NDK, AudioFormatRegistry.decodePathOf("mod"))
+    fun `decodePathOf ape is NDK`() {
+        assertEquals(AudioFormatRegistry.DecodePath.NDK, AudioFormatRegistry.decodePathOf("ape"))
     }
 
     @Test
@@ -104,39 +101,50 @@ class AudioFormatRegistryTest {
     }
 
     @Test
-    fun `mimeTypeOf mod is audio x-mod`() {
-        assertEquals("audio/x-mod", AudioFormatRegistry.mimeTypeOf("mod"))
+    fun `mimeTypeOf ape is audio x-ape`() {
+        assertEquals("audio/x-ape", AudioFormatRegistry.mimeTypeOf("ape"))
     }
 
     @Test
-    fun `magicOf xm is Ascii Extended Module at offset 0`() {
-        val magic = AudioFormatRegistry.magicOf("xm")
+    fun `magicOf ape is Ascii MAC at offset 0`() {
+        val magic = AudioFormatRegistry.magicOf("ape")
         assertNotNull(magic)
         assertTrue(magic is AudioFormatRegistry.MagicSpec.Ascii)
-        assertEquals("Extended Module", (magic as AudioFormatRegistry.MagicSpec.Ascii).text)
+        assertEquals("MAC ", (magic as AudioFormatRegistry.MagicSpec.Ascii).text)
         assertEquals(0, magic.offset)
     }
 
     @Test
-    fun `magicOf s3m is Ascii SCRM at offset 44`() {
-        val magic = AudioFormatRegistry.magicOf("s3m")
+    fun `magicOf wv is Ascii wvpk at offset 0`() {
+        val magic = AudioFormatRegistry.magicOf("wv")
         assertNotNull(magic)
         assertTrue(magic is AudioFormatRegistry.MagicSpec.Ascii)
-        assertEquals("SCRM", (magic as AudioFormatRegistry.MagicSpec.Ascii).text)
-        assertEquals(44, magic.offset)
+        assertEquals("wvpk", (magic as AudioFormatRegistry.MagicSpec.Ascii).text)
+        assertEquals(0, magic.offset)
+    }
+
+    @Test
+    fun `magicOf ac3 is HexBytes 0B77 at offset 0`() {
+        val magic = AudioFormatRegistry.magicOf("ac3")
+        assertNotNull(magic)
+        assertTrue(magic is AudioFormatRegistry.MagicSpec.HexBytes)
+        val bytes = (magic as AudioFormatRegistry.MagicSpec.HexBytes).bytes
+        assertEquals(2, bytes.size)
+        assertEquals(0x0B.toByte(), bytes[0])
+        assertEquals(0x77.toByte(), bytes[1])
     }
 
     @Test
     fun `isFormatActive returns true for active formats`() {
         assertTrue(AudioFormatRegistry.isFormatActive("mp3"))
-        assertTrue(AudioFormatRegistry.isFormatActive("mod"))
+        assertTrue(AudioFormatRegistry.isFormatActive("ape"))
         assertTrue(AudioFormatRegistry.isFormatActive("wma"))
     }
 
     @Test
-    fun `isFormatActive returns true for all registered formats at P2B`() {
+    fun `isFormatActive returns true for all registered formats at P2A`() {
         assertTrue(AudioFormatRegistry.isFormatActive("ape"))
-        assertTrue(AudioFormatRegistry.isFormatActive("mid"))
+        assertTrue(AudioFormatRegistry.isFormatActive("dsf"))
     }
 
     @Test
@@ -148,28 +156,26 @@ class AudioFormatRegistryTest {
     fun `phaseOf returns correct phase`() {
         assertEquals(AudioFormatRegistry.Phase.NATIVE, AudioFormatRegistry.phaseOf("mp3"))
         assertEquals(AudioFormatRegistry.Phase.P0, AudioFormatRegistry.phaseOf("ac3"))
-        assertEquals(AudioFormatRegistry.Phase.P1A, AudioFormatRegistry.phaseOf("mod"))
         assertEquals(AudioFormatRegistry.Phase.P2A, AudioFormatRegistry.phaseOf("ape"))
-        assertEquals(AudioFormatRegistry.Phase.P2B, AudioFormatRegistry.phaseOf("mid"))
+        assertEquals(AudioFormatRegistry.Phase.P2A, AudioFormatRegistry.phaseOf("dsf"))
     }
 
     @Test
-    fun `phaseOf returns null for unknown and removed DSD formats`() {
+    fun `phaseOf returns null for unknown format`() {
         assertNull(AudioFormatRegistry.phaseOf("xyz"))
-        assertNull(AudioFormatRegistry.phaseOf("dsf"))
     }
 
     @Test
     fun `activeExtensions with empty filter returns all active`() {
         val active = AudioFormatRegistry.activeExtensions(emptySet())
-        assertEquals(28, active.size)
+        assertEquals(37, active.size)
     }
 
     @Test
     fun `activeExtensions with filter returns intersection`() {
-        val filter = setOf("mp3", "mod", "ape", "xyz")
+        val filter = setOf("mp3", "ape", "xyz")
         val active = AudioFormatRegistry.activeExtensions(filter)
-        assertEquals(setOf("mp3", "mod", "ape"), active)
+        assertEquals(setOf("mp3", "ape"), active)
     }
 
     @Test
@@ -180,7 +186,7 @@ class AudioFormatRegistryTest {
         )
         assertEquals(
             AudioFormatRegistry.ProbeStrategy.FORMAT_SPECIFIC,
-            AudioFormatRegistry.probeStrategyOf("mod")
+            AudioFormatRegistry.probeStrategyOf("ape")
         )
     }
 }

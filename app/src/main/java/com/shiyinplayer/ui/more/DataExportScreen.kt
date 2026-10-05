@@ -33,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -59,7 +59,8 @@ fun DataExportScreen(
     val snackbar = SnackbarHostState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val busy by viewModel.busy.collectAsState()
+    // B1-8：改生命周期感知版本 —— 页面退到后台时停止收集，别再白耗
+    val busy by viewModel.busy.collectAsStateWithLifecycle()
 
     var includeSettings by rememberSaveable { androidx.compose.runtime.mutableStateOf(true) }
     var includeSongs by rememberSaveable { androidx.compose.runtime.mutableStateOf(true) }

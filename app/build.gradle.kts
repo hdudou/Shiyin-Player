@@ -20,6 +20,15 @@ val appVersionCode = buildCode.coerceAtLeast(1)
 val propsVersionName = versionProps.getProperty("versionName")?.trim()
 val appVersionName = if (propsVersionName.isNullOrEmpty()) "1.0.$buildCode" else propsVersionName
 
+/**
+ * B1-9：单一事实来源的第三方库版本。
+ *
+ * 「关于」页要展示这些版本，若在 UI 里再写一份字符串，升级依赖后页面必然悄悄漂移
+ * —— 实测过：页面写 "1.1.0-alpha06"，实际依赖早已是 1.1.0 正式版。
+ * 这里声明一次，dependencies 与 buildConfigField 都引用它。
+ */
+val securityCrypto = "1.1.0"
+
 android {
     namespace = "com.shiyinplayer"
     compileSdk = 34
@@ -40,16 +49,44 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
+
+        // B1-9：「关于」页要展示的第三方库版本，凡能从构建脚本取到的一律由这里注入，
+        // 不在 UI 里另写一份（否则升级依赖后页面必然悄悄漂移）。
+        // 注意：buildConfigField 只能写在 defaultConfig / buildTypes 里，
+        // 直接放在 android { } 下会 "Unresolved reference"。
+        buildConfigField("String", "VERSION_SECURITY_CRYPTO", "\"$securityCrypto\"")
     }
 
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
+    // ===== native 构建（FFmpeg JNI）可选开关 =====
+    // 背景：受限环境（如 IDE 内嵌终端 / 沙箱进程树里 cmd.exe 被拦截）下
+    // cmake → ninja → cmd.exe 这条链无法运行，configureCMakeDebug 会以
+    // "CreateProcess: 请求的操作需要提升" 失败，导致**连 Kotlin 代码都没机会编译**。
+    // 策略：若 src/main/jniLibs 下已有 FFmpeg JNI 产物（libffmpeg_jni.so / libffmpegJNI.so），
+    // 就直接复用、跳过 externalNativeBuild；无产物时（干净 clone）自动回退为源码编译。
+    // 显式覆盖：gradle ... -Pshiyin.native.build=true（强制编译）/ =false（强制跳过）。
+    // ⚠️ 改动了 src/main/cpp 下 C/C++ 源码后，必须显式 -Pshiyin.native.build=true 重新编译并更新 jniLibs。
+    val prebuiltFfmpegJni = file("src/main/jniLibs/arm64-v8a/libffmpeg_jni.so").exists() &&
+            file("src/main/jniLibs/arm64-v8a/libffmpegJNI.so").exists()
+    val enableNativeBuild = providers.gradleProperty("shiyin.native.build")
+        .map { it.trim().toBoolean() }
+        .getOrElse(!prebuiltFfmpegJni)
+    if (enableNativeBuild) {
+        externalNativeBuild {
+            cmake {
+                path = file("src/main/cpp/CMakeLists.txt")
+                version = "3.22.1"
+            }
         }
+    } else {
+        logger.lifecycle("[shiyin] externalNativeBuild 已跳过：复用 jniLibs 既有 FFmpeg JNI 产物")
     }
 
     sourceSets["main"].jniLibs.srcDirs("src/main/jniLibs") // 放置 libzt.so（v2.1）
+
+    // B0-5：MigrationTestHelper 从**测试 APK 的 assets**里读 `包名/版本.json`。
+    // 不把 schema 导出目录挂进 androidTest assets，每个起点都会报
+    // "Cannot find the schema file in the assets folder"（实测 13 个用例全红就是这个原因）。
+    sourceSets["androidTest"].assets.srcDirs("$projectDir/schemas")
 
     testOptions {
         unitTests {
@@ -150,6 +187,9 @@ dependencies {
     implementation("androidx.room:room-runtime:$room")
     implementation("androidx.room:room-ktx:$room")
     ksp("androidx.room:room-compiler:$room")
+    // B0-5：迁移链版本矩阵测试（app/src/androidTest/.../MigrationMatrixTest.kt）要用
+    // MigrationTestHelper 逐版本验证，版本必须与 Room runtime 一致。
+    androidTestImplementation("androidx.room:room-testing:$room")
 
     // ===== DataStore（设置 / 续播 / 均衡器预设） =====
     implementation("androidx.datastore:datastore-preferences:1.1.1")
@@ -174,7 +214,16 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // ===== AndroidX Security（凭据加密持久化：SMB / WebDAV） =====
-    implementation("androidx.security:security-crypto:1.1.0")
+    // 版本取文件顶部的 securityCrypto（与「关于」页展示的版本号同源，杜绝漂移）。
+    implementation("androidx.security:security-crypto:$securityCrypto")
+
+    // ===== 局域网同步（PC 主控 / 安卓接收端，端口 23541） =====
+    // 内嵌 HTTP 服务；NanoHTTPD 同时提供 TLS 用的 makeSecure / SSLServerSocketFactory。
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    // 运行时生成自签 X.509 证书（TLS 服务端 + PC 侧 cert pinning 用）。
+    // 版本必须与工程既有传递依赖 bcprov-jdk15on:1.69 对齐：jdk15on 与 jdk18on 是两条互不兼容的
+    // 坐标线，混用会同时打入两份 org.bouncycastle.* 导致 checkDebugDuplicateClasses 失败。
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
 
     // ===== 核心库脱糖（jcifs-ng 需要 java.nio） =====
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")

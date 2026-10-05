@@ -13,8 +13,6 @@ data class PlaybackState(
     val queue: List<Song> = emptyList(),
     val currentIndex: Int = -1,
     val buffering: Boolean = false,
-    /** 播放速度（1.0 = 正常速度）。ExoPlayer 通过 PlaybackParameters 设置。 */
-    val playbackSpeed: Float = 1.0f,
     /** AB 循环起点（毫秒），null = 未设置。 */
     val loopStartMs: Long? = null,
     /** AB 循环终点（毫秒），null = 未设置。 */

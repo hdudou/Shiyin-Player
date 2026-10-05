@@ -60,11 +60,15 @@ class PlaylistRepository @Inject constructor(
     suspend fun addSongToPlaylist(playlistId: Long, songId: Long) {
         if (playlistItemDao.countByPlaylistAndSong(playlistId, songId) > 0) return
         val position = (playlistItemDao.maxPosition(playlistId) ?: -1) + 1
-        playlistItemDao.insert(
-            com.shiyinplayer.data.local.entity.PlaylistItemEntity(
-                playlistId = playlistId, songId = songId, position = position
+        // LWW：成员变化必须同步前移歌单 dateModified，否则 PC 侧会判「设备未更新」而覆盖掉这次加歌
+        db.withTransaction {
+            playlistItemDao.insert(
+                com.shiyinplayer.data.local.entity.PlaylistItemEntity(
+                    playlistId = playlistId, songId = songId, position = position
+                )
             )
-        )
+            playlistDao.touch(playlistId)
+        }
     }
 
     /** 批量加入（去重，保持原顺序）。 */
@@ -76,11 +80,20 @@ class PlaylistRepository @Inject constructor(
                 playlistId = playlistId, songId = id, position = position++
             )
         }
-        if (items.isNotEmpty()) playlistItemDao.insertAll(items)
+        if (items.isNotEmpty()) {
+            db.withTransaction {
+                playlistItemDao.insertAll(items)
+                playlistDao.touch(playlistId)
+            }
+        }
     }
 
-    suspend fun removePlaylistItem(playlistId: Long, songId: Long) =
-        playlistItemDao.remove(playlistId, songId)
+    suspend fun removePlaylistItem(playlistId: Long, songId: Long) {
+        db.withTransaction {
+            playlistItemDao.remove(playlistId, songId)
+            playlistDao.touch(playlistId)
+        }
+    }
 
     fun getPlaylistSongs(playlistId: Long): Flow<List<Song>> =
         playlistItemDao.observeByPlaylist(playlistId).map { items ->

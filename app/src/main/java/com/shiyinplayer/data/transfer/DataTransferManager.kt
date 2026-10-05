@@ -360,6 +360,11 @@ class DataTransferManager @Inject constructor(
         j.put("lastPlayedMs", e.lastPlayedMs)
         j.put("formatVerified", e.formatVerified)
         j.put("lyricOffsetMs", e.lyricOffsetMs)
+        // 用户数据与同步时间戳：此前漏写 → 导出再导入后「收藏」全部归零、updatedAt 归零
+        // （updatedAt 归零会让局域网 LWW 把本机判成最旧，PC 推送可直接覆盖本机改动）。
+        j.put("favorite", e.favorite)
+        j.put("discNo", e.discNo)
+        j.put("updatedAt", e.updatedAt)
         return j
     }
 
@@ -391,6 +396,11 @@ class DataTransferManager @Inject constructor(
         lastPlayedMs = j.optLong("lastPlayedMs"),
         formatVerified = j.optBoolean("formatVerified"),
         lyricOffsetMs = j.optLong("lyricOffsetMs"),
+        // 老包没有这三项 → 取安全默认（收藏 false / 光盘号 0 / updatedAt 回落 dateAdded，
+        // 避免归零后在本机同步里被视为「最旧」而被外部改动覆盖）。
+        favorite = j.optBoolean("favorite"),
+        discNo = j.optInt("discNo"),
+        updatedAt = j.optLong("updatedAt").takeIf { it > 0 } ?: j.optLong("dateAdded"),
         searchKey = SongSearchKey.of(
             j.optString("title"),
             j.optStringOrNull("artistName"),

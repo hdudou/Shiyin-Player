@@ -40,7 +40,7 @@ class FolderStructureBuilder @Inject constructor(
 
         // sourceId -> folderPath -> DirAcc
         val dirs = mutableMapOf<Long, LinkedHashMap<String, DirAcc>>()
-        // sourceId -> 去重键 -> FileAcc（普通曲目去重键=路径；CUE 子轨去重键=dedupKey，同整轨每轨一行）
+        // sourceId -> 去重键 -> FileAcc（普通曲目去重键=folderPath；CUE 子轨去重键=dedupKey，同整轨每轨一行）
         val files = mutableMapOf<Long, LinkedHashMap<String, FileAcc>>()
 
         // 分页拉取歌曲，避免一次消费全表 Flow 触发 CursorWindow 溢出
@@ -50,7 +50,7 @@ class FolderStructureBuilder @Inject constructor(
             val page = songDao.getAllPaged(offset, REBUILD_PAGE_SIZE)
             for (song in page) {
                 total++
-                val (srcId, segs) = assign(song.uri, song.dedupKey, roots)
+                val (srcId, segs) = assign(song.uri, roots)
                 if (segs.isEmpty()) continue // 恰为源根本身，非文件
                 for (i in 1 until segs.size) {
                     val path = segs.take(i).joinToString("/")
@@ -60,6 +60,7 @@ class FolderStructureBuilder @Inject constructor(
                 }
                 val folderPath = segs.joinToString("/")
                 val isCue = !song.cueId.isNullOrBlank()
+                // CUE 多子轨共用同一 uri，需用 dedupKey（含 #idx{n}）区分，才能每轨各占一行
                 val fileKey = if (isCue) song.dedupKey.ifBlank { folderPath } else folderPath
                 files.getOrPut(srcId) { LinkedHashMap() }.putIfAbsent(
                     fileKey,
@@ -110,10 +111,10 @@ class FolderStructureBuilder @Inject constructor(
     }
 
     /** 把一首歌归到源 id，并算出相对该源的路径段。 */
-    private fun assign(uri: String, dedupKey: String, roots: Map<Long, String?>): Pair<Long, List<String>> {
-        // CUE 子轨 dedupKey 形如 "uri#idx"，目录归属按文件基址 uri 计算
-        val base = dedupKey.substringBefore('#')
-        val u = Uri.decode(base.trimEnd('/'))
+    private fun assign(uri: String, roots: Map<Long, String?>): Pair<Long, List<String>> {
+        // 目录归属一律按 uri：CUE 子轨的 uri 即其所属整轨文件路径（dedupKey 自 2026-09-16 起为路径哈希，
+        // 不再携带路径语义，不可用于目录归属）。
+        val u = Uri.decode(uri.trimEnd('/'))
         for ((id, r) in roots) {
             if (r.isNullOrBlank()) continue
             val segs = when {

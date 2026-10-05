@@ -4,8 +4,6 @@
     <string name="app_name">Shiyin</string>
 
     <!-- 底部导航 -->
-    <string name="tab_playlists">Playlists</string>
-    <string name="tab_more">More</string>
 
     <!-- 通用 -->
     <string name="action_search">Search</string>
@@ -13,23 +11,10 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">OK</string>
     <string name="action_delete">Delete</string>
-    <string name="action_rescan">Rescan</string>
-    <string name="action_scan_all">Full rescan</string>
-    <string name="empty_hint">Nothing here yet</string>
 
     <!-- 歌曲页 -->
-    <string name="add_song_title">Add from music source</string>
-    <string name="no_sources_hint">No sources yet? Add local / WebDAV / SMB in Settings → Library → Source management.</string>
 
     <!-- 设置 -->
-    <string name="settings_title">Settings</string>
-    <string name="cat_interface">Interface</string>
-    <string name="cat_sound">Sound engine</string>
-    <string name="cat_playback">Playback</string>
-    <string name="cat_playlist">Playlist</string>
-    <string name="cat_library">Library</string>
-    <string name="cat_control">Control</string>
-    <string name="cat_integration">Integration</string>
 
     <!-- ZeroTier -->
     <string name="zerotier_title">ZeroTier virtual network</string>
@@ -256,12 +241,12 @@
     <string name="network_pass_edit">Password (leave blank to keep)</string>
     <string name="network_note_local">Scans local folders, no credentials</string>
     <string name="network_smb_title">Browse LAN hosts / shares</string>
-    <string name="network_smb_manual_host">Enter host IP if nothing found</string>
     <string name="network_browse_scanning">Scanning LAN, please wait…</string>
     <string name="network_browse_none">No SMB hosts found on LAN; you can enter a host address manually</string>
     <string name="network_smb_cred_title">Connect to SMB host</string>
     <string name="network_anon">Anonymous access</string>
     <string name="network_connect">Connect</string>
+    <string name="network_smb_manual_host">Enter host IP if nothing found</string>
     <string name="network_use_dir">Use this directory</string>
     <string name="action_edit">Edit</string>
     <string name="action_open">Open</string>
@@ -314,7 +299,6 @@
 <string name="label_album">Album</string>
 <string name="label_song_name">Song name</string>
 <string name="label_artist_optional">Artist (optional)</string>
-<string name="content_back">Back</string>
 <string name="content_cover">Cover</string>
 <string name="content_album_cover">Album cover</string>
 <string name="song_play_next">Play next</string>
@@ -348,7 +332,6 @@
 <string name="file_name_prefix">Filename: %1$s</string>
 <string name="online_match_row">%1$s · %2$s%3$s · %4$s</string>
 <string name="file_name_with_size">%1$s (%2$s)</string>
-
 <string name="type_folder">Folder</string>
 <string name="queue_title">Playback queue</string>
 <string name="queue_total">%1$d tracks in total</string>
@@ -363,10 +346,6 @@
 <string name="sort_by_name">Name</string>
 <string name="sort_by_year">Year</string>
 <string name="sort_by_artist">Artist</string>
-<string name="toast_cannot_access_file">Cannot access this local audio file</string>
-<string name="toast_no_permission_audio">No permission to access this audio</string>
-<string name="toast_unsupported_source">Unsupported audio source</string>
-<string name="external_audio">External audio</string>
     <string name="theme_zaicai">Ink &amp; Color</string>
     <string name="set_theme_follow_system">Follow system</string>
     <string name="set_theme_light">Light</string>
@@ -511,8 +490,8 @@
     <string name="set_metadata_sources">Metadata sources</string>
     <string name="set_metadata_sources_hint">Toggling only enables/disables a source without changing order; the player fetches from top to bottom and skips disabled sources. Use ▲/▼ of each source to adjust priority.</string>
     <string name="set_source_disabled">(off)</string>
-    <string name="set_reset_sources">Restore defaults (NetEase / QQ / Kuwo and the default order)</string>
-    <string name="set_metadata_sources_hint2">By default only NetEase / QQ / Kuwo are enabled; the rest are off to save data and requests. Enable any source as needed and adjust order with ▲/▼.</string>
+    <string name="set_reset_sources">Restore defaults (NetEase / QQ / Kuwo / Migu / Kugou / TheAudioDB and the default order)</string>
+    <string name="set_metadata_sources_hint2">By default five Chinese sources (NetEase / QQ / Kuwo / Migu / Kugou) are enabled, plus TheAudioDB for artist photos and Chinese biographies; Genius and Wikipedia stay off to save data and requests. Enable any source as needed and adjust order with ▲/▼.</string>
     <string name="set_auto_sync_metadata">Auto-sync music metadata</string>
     <string name="set_sync_running">Running</string>
     <string name="set_sync_idle">Idle (auto-syncs every %1$d minutes)</string>
@@ -640,7 +619,6 @@
     <string name="radio_edit">Edit</string>
     <string name="radio_station_info">Station info</string>
     <string name="radio_uncategorized">Uncategorized</string>
-    <string name="radio_yes">Yes</string>
     <string name="radio_no">No</string>
     <string name="radio_recent">Recently played</string>
     <string name="radio_no_match">No matching stations</string>
@@ -657,15 +635,10 @@
     <string name="radio_delete_station_title">Delete station</string>
     <string name="radio_delete_station_confirm">Delete "%1$s"? This cannot be undone.</string>
     <string name="radio_delete_station_confirm_multi">Delete "%1$s" (%2$d lines in total)? This cannot be undone.</string>
-    <string name="radio_delete_station_suffix">(%1$d lines in total)</string>
 
     <!-- About -->
     <string name="about_version_build">Version %1$s · build %2$d</string>
     <string name="about_view_changelog">View version update notes</string>
-    <string name="about_open_source_title">Open Source License</string>
-    <string name="about_open_source_desc">This project is released under GPL-3.0 (see the LICENSE file in the repository). Anyone who modifies, redistributes or publishes derivative works of this project must also license them under GPL-3.0, keep them fully open, and retain the copyright notice.</string>
-    <string name="about_github_prefix">GitHub: %1$s</string>
-    <string name="about_github_url">https://github.com/hdudou/Shiyin-Player</string>
     <string name="about_third_party_title">Third-party libraries</string>
     <string name="about_third_party_desc">Third-party dependencies currently used by the player (aligned with build config). See each library\'s official license.</string>
     <string name="about_purpose_prefix">Purpose: %1$s</string>
@@ -897,5 +870,34 @@
     <string name="dup_keep">Keep</string>
     <string name="dup_merge_done">Merged "%1$s", kept 1, removed %2$d duplicates</string>
     <string name="dup_merge_failed">Merge failed: %1$s</string>
+
+    <!-- ===== LAN sync (PC as controller / Android as receiver, port 23541) ===== -->
+    <string name="more_lan_sync">LAN sync</string>
+    <string name="more_lan_sync_summary">Receive library and playlist changes pushed from PC</string>
+    <string name="lan_sync_section_basic">Sync switch</string>
+    <string name="lan_sync_enable_label">Allow LAN sync</string>
+    <string name="lan_sync_enable_summary">Listen on port 23541 for PC sync requests (private networks only, TLS encrypted)</string>
+    <string name="lan_sync_listen_ok">Listening on https://%1$s:%2$d</string>
+    <string name="lan_sync_listen_starting">Starting listener…</string>
+    <string name="lan_sync_listen_error">Failed to start: %1$s (make sure Wi-Fi is connected)</string>
+    <string name="lan_sync_section_device">Device name</string>
+    <string name="lan_sync_device_name_label">Device name</string>
+    <string name="lan_sync_device_name_default">Leave empty to use the model name</string>
+    <string name="lan_sync_device_name_save">Save name</string>
+    <string name="lan_sync_section_pair">Pairing code</string>
+    <string name="lan_sync_pin_expired">------</string>
+    <string name="lan_sync_pin_remaining">Expires in %1$s. Enter this code on the PC to pair.</string>
+    <string name="lan_sync_pin_hint">No active code. Tap Refresh to generate a new 6-digit code.</string>
+    <string name="lan_sync_pin_refresh">Refresh</string>
+    <string name="lan_sync_section_paired">Paired devices</string>
+    <string name="lan_sync_paired_empty">No paired devices yet. The first PC must use the pairing code above.</string>
+    <string name="lan_sync_paired_at">Paired %1$s · %2$s</string>
+    <string name="lan_sync_paired_remove">Remove</string>
+    <string name="lan_sync_section_folder">Receive folder</string>
+    <string name="lan_sync_folder_hint">Audio files pushed by the PC are stored as dedupKey-named files under the synced/ subfolder of this path and are added to the library on arrival; when the PC opts into file deletion, only files inside this folder are removed</string>
+    <string name="lan_sync_channel_name">LAN sync</string>
+    <string name="lan_sync_channel_desc">Sync service running status</string>
+    <string name="lan_sync_notify_running_title">LAN sync is on</string>
+    <string name="lan_sync_notify_running_text">Listening on %1$s:%2$d, waiting for PC</string>
 
 </resources>

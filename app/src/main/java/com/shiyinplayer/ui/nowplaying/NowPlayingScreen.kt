@@ -147,7 +147,10 @@ fun NowPlayingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lyrics by lyricsViewModel.state.collectAsStateWithLifecycle()
     val sleepEndAt by viewModel.sleepTimerEndAt.collectAsStateWithLifecycle()
-    val positionTick by lyricsViewModel.positionTick.collectAsStateWithLifecycle()
+    // B4-7：收集"当前歌词行号"而不是 200ms 的位置 tick。
+    // 位置 tick 每 200ms 变一次，收集它等于让播放页每秒重组 5 次（哪怕行号根本没变）；
+    // currentLineIndex 已经做过 distinctUntilChanged，只有真的换行才会触发重组。
+    val currentLineIndex by lyricsViewModel.currentLineIndex.collectAsStateWithLifecycle()
     var showMatch by remember { mutableStateOf(false) }
     var showTimerDialog by remember { mutableStateOf(false) }
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle()
@@ -165,8 +168,9 @@ fun NowPlayingScreen(
         return
     }
 
-    // §12 R5：基于稳定 tick 驱动当前歌词行，避免依赖 playbackState 发射粒度导致跳行
-    val currentLine = lyricsViewModel.indexForPosition(positionTick)
+    // §12 R5：基于稳定 tick 驱动当前歌词行，避免依赖 playbackState 发射粒度导致跳行。
+    // B4-7：行号由 ViewModel 派生（内部已按行号去重），这里不再每次重组都做一次全量扫描。
+    val currentLine = currentLineIndex
     val coverUrl = lyrics.coverUrl ?: song.albumArtUri
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE

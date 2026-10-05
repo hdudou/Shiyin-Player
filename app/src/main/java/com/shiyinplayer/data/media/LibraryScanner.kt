@@ -12,6 +12,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.room.withTransaction
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
+import java.nio.charset.CodingErrorAction
 import com.shiyinplayer.data.local.dao.AlbumDao
 import com.shiyinplayer.data.local.dao.ArtistDao
 import com.shiyinplayer.data.local.dao.FolderAttachmentDao
@@ -29,16 +31,21 @@ import com.shiyinplayer.data.repository.ScanResult
 import com.shiyinplayer.ui.settings.SettingsRepository
 import com.shiyinplayer.util.Constants
 import com.shiyinplayer.util.DispatcherProvider
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -72,7 +79,8 @@ class LibraryScanner @Inject constructor(
     private val webDavBrowser: WebDavBrowser,
     private val settings: SettingsRepository,
     private val folderStructure: FolderStructureBuilder,
-    private val folderAttachmentDao: FolderAttachmentDao
+    private val folderAttachmentDao: FolderAttachmentDao,
+    private val mediaCacheCleaner: MediaCacheCleaner,
 ) {
     companion object {
         private const val TAG = "LibraryScanner"
@@ -81,6 +89,8 @@ class LibraryScanner @Inject constructor(
         // P1-8：远程时长探测前缀从 512KB 收窄到 128KB——各格式头部/时长元数据均在前 128KB
         // （MP3 ID3v2、FLAC STREAMINFO、OGG/Opus 头、WAV/AC3 头等），大曲库扫描网络开销降低 4 倍。
         private const val PROBE_PREFIX_BYTES = 128 * 1024
+        /** CUE 索引表读取上限（纯文本，实测最大不过数十 KB；超限视为异常文件，不解析）。 */
+        private const val CUE_MAX_BYTES = 64 * 1024
         private const val PROBE_TIMEOUT_MS = 5_000L            // 单文件探测超时
         /** P1-6：hide_short_clips 隐藏阈值（<30s 视为短片段）。 */
         private const val SHORT_CLIP_THRESHOLD_MS = 30_000L
@@ -185,6 +195,11 @@ class LibraryScanner @Inject constructor(
             jobs.forEach { it.join() }
         } finally {
             saver.stop()
+            // 等周期保存协程退出，再做收尾 flush ——
+            // 否则「stop 后立刻 flushNow」会与周期 flush 并发（flush 内部有互斥锁兜底，
+            // join 只是让收尾时序确定：先结束周期循环，再落最后一批）。
+            // stop() 会唤醒周期循环的等待，这里不会白等一个完整间隔。
+            runCatching { saverJob.join() }
             // === K：聚合/目录树兜底重建。无论扫描正常完成还是中途异常/取消，都按当前 songs 表
             // 尽力 flush 并重建聚合与目录树，避免「歌曲已入库但聚合/目录树缺失」的不一致残留。
             // 各段独立容错：某一步失败不阻断后续步骤。
@@ -234,58 +249,80 @@ class LibraryScanner @Inject constructor(
     ) {
         private val queue = ConcurrentLinkedQueue<SongEntity>()
         @Volatile private var running = true
-        @Volatile private var savedCount = 0
-        @Volatile private var addedCount = 0
-        @Volatile private var updatedCount = 0
+
+        /** 停止信号：让周期循环立刻从 delay 唤醒，不用干等一整个间隔（扫描收尾会因此卡至多 30s）。 */
+        private val stopSignal = CompletableDeferred<Unit>()
+
+        /**
+         * flush 串行锁：周期 flush 与扫描收尾的 [flushNow] 此前可能并发执行 ——
+         * 两者都先 poll 队列再落库，并发时会互相看到空队列、并把非原子的计数 `+=` 写丢。
+         */
+        private val flushMutex = Mutex()
+
+        private val savedCount = AtomicInteger(0)
+        private val addedCount = AtomicInteger(0)
+        private val updatedCount = AtomicInteger(0)
 
         fun offer(song: SongEntity) { queue.add(song) }
-        fun stop() { running = false }
+        fun stop() {
+            running = false
+            stopSignal.complete(Unit)
+        }
 
         /** 当前已新增（入库）数量。 */
-        fun addedCount(): Int = addedCount
+        fun addedCount(): Int = addedCount.get()
 
         /** 当前已覆盖更新（按 id 重写元数据）数量。 */
-        fun updatedCount(): Int = updatedCount
+        fun updatedCount(): Int = updatedCount.get()
 
         /** 周期 flush 循环（由 saverJob 驱动）。 */
         suspend fun run() {
             report()
             while (running) {
-                delay(intervalMs)
+                // 等「周期到点」或「停止信号」，后者立即唤醒
+                withTimeoutOrNull(intervalMs) { stopSignal.await() }
+                if (!running) break
                 flush()
             }
         }
 
-        /** 立即落库一次（扫描结束时调用）。 */
+        /** 立即落库一次（扫描结束时调用；与周期 flush 互斥，不会并发）。 */
         suspend fun flushNow() { flush() }
 
-        private suspend fun flush() {
+        private suspend fun flush() = flushMutex.withLock {
+            flushLocked()
+        }
+
+        private suspend fun flushLocked() {
             val batch = mutableListOf<SongEntity>()
             while (true) { queue.poll()?.let { batch += it } ?: break }
             if (batch.isEmpty()) return
             when (mode) {
-                // 增量：对已存在 dedupKey 行做元数据刷新（远端标题/歌手/专辑/时长/流派等更正
-                // 能落到库内），且保留用户数据（playCount/rating/歌词偏移等）；未见曲目正常插入。
+                // 纯增量（UI 文案「仅新增」）：dedupKey 命中即**跳过**，保留库内现有内容，
+                // 只插入未入库曲目。此前与 FULL_UPDATE 走同一分支 → 用户选「仅新增」仍会被
+                // 改写已有曲目的标题/歌手/专辑，与界面承诺不符。
                 ScanMode.NEW_ONLY -> {
-                    val (up, ins) = persistFullUpdate(batch)
-                    updatedCount += up
-                    addedCount += ins
+                    addedCount.addAndGet(persistInsertOnly(batch))
                 }
                 // 全量更新：已入库按 id 覆盖扫描元数据内容，保留主键与用户数据；未入库的插入
                 ScanMode.FULL_UPDATE -> {
                     val (up, ins) = persistFullUpdate(batch)
-                    updatedCount += up
-                    addedCount += ins
+                    updatedCount.addAndGet(up)
+                    addedCount.addAndGet(ins)
                 }
             }
-            savedCount += batch.size
+            savedCount.addAndGet(batch.size)
             report()
-            Log.i(TAG, "增量保存 ${batch.size} 首（累计 $savedCount，mode=$mode，新增=$addedCount 更新=$updatedCount）")
+            Log.i(
+                TAG,
+                "增量保存 ${batch.size} 首（累计 ${savedCount.get()}，mode=$mode，" +
+                    "新增=${addedCount.get()} 更新=${updatedCount.get()}）"
+            )
         }
 
         /** 向外部实时上报当前计数（新增 / 更新），供 UI 在扫描状态中显示。 */
         private fun report() {
-            onProgress?.invoke(addedCount, updatedCount)
+            onProgress?.invoke(addedCount.get(), updatedCount.get())
         }
 
         /**
@@ -321,17 +358,37 @@ class LibraryScanner @Inject constructor(
             return updates.size to inserts.size
         }
 
-        fun totalCount(): Int = savedCount
+        /**
+         * 纯增量落库（[ScanMode.NEW_ONLY]）：dedupKey 已存在于库中的曲目一律跳过，
+         * 只插入未入库的曲目。语义见 [ScanMode.NEW_ONLY]。
+         * @return 新增插入数量
+         */
+        private suspend fun persistInsertOnly(batch: List<SongEntity>): Int {
+            val existingKeys = songDao.getByDedupKeys(batch.map { it.dedupKey })
+                .mapTo(HashSet()) { it.dedupKey }
+            val inserts = batch
+                .filter { it.dedupKey !in existingKeys }
+                .map { it.copy(searchKey = SongSearchKey.of(it.title, it.artistName, it.albumName)) }
+            if (inserts.isEmpty()) return 0
+            songDao.upsertAll(inserts)
+            return inserts.size
+        }
+
+        fun totalCount(): Int = savedCount.get()
     }
 
     /**
      * 需求：删除某网络源中「本次扫描未出现」的旧曲目（文件在源中被移动/删除），并清理其歌单引用。
-     * 按源根前缀精确匹配该源全部记录（instr=1），只删不在 presen 中的——不触碰同类型其它源。
+     * 按源根 **uri 前缀**精确匹配该源全部记录（instr=1），只删不在 present 中的——不触碰同类型其它源。
+     * 2026-09-16：dedupKey 改为 `{sourceType}:{sha256(路径)}`、不再携带路径前缀，归属判定改用 uri。
      */
     private suspend fun pruneMissingRoot(type: MediaSourceType, prefix: String, presentDedupKeys: Set<String>) {
-        val existing = songDao.getIdsAndDedupKeysByPrefix(type.name, prefix)
+        val existing = songDao.getIdsAndDedupKeysByUriPrefix(type.name, prefix)
         val toDelete = existing.filter { it.dedupKey !in presentDedupKeys }.map { it.id }
         if (toDelete.isEmpty()) return
+        // 需求⑤：删行之前先把封面地址留下来（删完就查不到这两首歌的封面了）
+        val artworkUris = runCatching { mediaCacheCleaner.collectArtworkBeforeDelete(toDelete) }
+            .getOrDefault(emptyList())
         toDelete.forEach { id ->
             try {
                 playlistItemDao.removeAllForSong(id)
@@ -346,11 +403,12 @@ class LibraryScanner @Inject constructor(
                 throw e
             } catch (_: Exception) { }
         }
+        runCatching { mediaCacheCleaner.cleanAfterDelete(toDelete, artworkUris) }
         Log.i(TAG, "网源失效清理：源根 $prefix 删除 ${toDelete.size} 首旧曲目")
     }
 
     /**
-     * 需求：源根前缀（该源的曲目 dedupKey 均以此开头），用于失效清理精确匹配。
+     * 需求：源根前缀（该源的曲目 uri 均以此开头），用于失效清理精确匹配。
      * 全部来源类型都参与：LOCAL（folderPath 绝对路径 / SAF tree→document 前缀）、SMB、WEBDAV。
      * 返回 null = 配置缺失，不参与失效清理（由调用处跳过）。
      */
@@ -365,16 +423,165 @@ class LibraryScanner @Inject constructor(
                     j.optString("treeUri").takeIf { it.isNotBlank() }?.let { tree ->
                         // SAF tree → document 前缀（与 FolderStructureBuilder.normalizeRoot 一致），如
                         // content://a/tree/XYZ → content://a/document/XYZ
-                        val doc = if (tree.contains("/tree/"))
+                        // **不加尾斜杠**：子项 uri 的 documentId 内部斜杠被编码为 %2F
+                        // （.../document/primary%3A音乐%2F子目录%2F曲目.flac），补 "/" 会永远匹配不上，
+                        // 使 SAF 源的失效清理形同虚设（删掉的文件永远留在库里）。
+                        if (tree.contains("/tree/"))
                             tree.substringBefore("/tree/") + "/document/" + tree.substringAfter("/tree/")
                         else tree
-                        doc.trimEnd('/').let { "$it/" }
                     }
                 }
             }
             MediaSourceType.SMB, MediaSourceType.WEBDAV ->
                 j.optString("url").takeIf { it.isNotBlank() }?.trimEnd('/')?.let { "$it/" }
         }
+    }
+
+    // ===== CUE 分轨（共用实现：本地绝对路径 / SAF / SMB / WebDAV 四分支统一） =====
+
+    /** 整轨音频候选：CUE 分轨只需要「路径 + 文件名 + 字节数」，mime 供普通入库沿用来源声明的类型。 */
+    private data class AudioCandidate(
+        val path: String,
+        val name: String,
+        val size: Long,
+        val mime: String? = null
+    )
+
+    /**
+     * CUE 索引表分轨：把 [CueSheet.file] 引用的整轨文件拆为子曲目（整轨本身不入库），
+     * 返回已消费的「目录键 to 基名键」集合（调用方据此跳过整轨的普通入库）。
+     *
+     * 目录键 = 路径去末段，基名键 = 文件名去扩展名 + 小写。**同目录优先匹配，无则全局兜底**
+     * （索引表与分轨文件分处不同目录时仍可命中）。
+     *
+     * 2026-09-16：原先只有 SAF 分支做分轨，绝对路径 / SMB / WebDAV 源的整轨文件会整条入库
+     * （表现为一张 CD 只显示一首超长曲目），现四分支统一走本实现。
+     *
+     * @param readCueBytes 读取索引表原始字节（各分支注入：File / contentResolver / SMB / WebDAV）
+     * @param probeDurationMs 整轨总时长，作为末轨终点
+     * @param mimeOf 子曲目 MIME（沿用整轨容器类型）
+     * @param albumFallbackOf 专辑名兜底（无 `REM ALBUM` 时取整轨所在目录名）
+     */
+    private suspend fun emitCueSplit(
+        sourceType: MediaSourceType,
+        cueCandidates: List<AudioCandidate>,
+        audioIndex: Map<String, Map<String, AudioCandidate>>,
+        consumed: MutableSet<Pair<String, String>>,
+        now: Long,
+        readCueBytes: suspend (AudioCandidate) -> ByteArray?,
+        probeDurationMs: suspend (AudioCandidate) -> Long,
+        mimeOf: (AudioCandidate) -> String?,
+        albumFallbackOf: (AudioCandidate) -> String?,
+        emit: (SongEntity) -> Unit
+    ) {
+        for (cue in cueCandidates) {
+            val sheet = decodeCueText(readCueBytes(cue))?.let { CueParser.parse(it) } ?: continue
+            val cueDirKey = cue.path.substringBeforeLast('/', "")
+            val baseKey = sheet.file.substringBeforeLast('.').lowercase()
+            val matchedDirKey = if (audioIndex[cueDirKey]?.containsKey(baseKey) == true) {
+                cueDirKey
+            } else {
+                audioIndex.entries.firstOrNull { (_, map) -> map.containsKey(baseKey) }?.key
+            } ?: continue
+            val audio = audioIndex[matchedDirKey]?.get(baseKey) ?: continue
+            consumed += matchedDirKey to baseKey
+            val wholeDuration = probeDurationMs(audio)
+            // P2-7：CUE 子曲目回填专辑/艺术家（REM ALBUM/REM ARTIST → 目录名 / 分轨 PERFORMER 兜底），
+            // 使子曲目参与专辑/艺术家聚合（此前 albumName 恒 null 被聚合遗漏）。
+            val cueAlbum = sheet.albumName?.takeIf { it.isNotBlank() } ?: albumFallbackOf(audio)
+            sheet.tracks.forEachIndexed { i, t ->
+                val start = t.index01Ms
+                val end = sheet.tracks.getOrNull(i + 1)?.index01Ms ?: wholeDuration
+                emit(
+                    SongEntity(
+                        title = cleanTitleKeep(t.title) ?: t.title,
+                        artistName = cleanArtist(sheet.artistName) ?: cleanArtist(t.performer),
+                        albumName = cleanAlbum(cueAlbum),
+                        albumArtUri = null,
+                        durationMs = if (end > start) end - start else 0,
+                        trackNumber = i + 1,
+                        uri = audio.path,
+                        mimeType = mimeOf(audio),
+                        sourceType = sourceType,
+                        path = audio.path,
+                        dateAdded = now,
+                        sizeBytes = audio.size,
+                        cueId = audio.path,
+                        dedupKey = DedupKey.forTrack(sourceType, audio.path, i + 1),
+                        trackIndex = i + 1,
+                        clipStartMs = start,
+                        clipEndMs = if (end > start) end else null
+                    )
+                )
+            }
+        }
+    }
+
+    /**
+     * CUE 文本解码：优先严格 UTF-8，失败回退 GB18030。
+     * 中文区索引表大量以 GBK/GB18030 存放（TITLE 常为中文），宽松 UTF-8 解码会产出替换字符，
+     * 故此处用严格模式探测编码，避免歌名乱码入库。
+     */
+    private fun decodeCueText(bytes: ByteArray?): String? {
+        if (bytes == null || bytes.isEmpty()) return null
+        return runCatching {
+            Charsets.UTF_8.newDecoder()
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                .decode(ByteBuffer.wrap(bytes))
+                .toString()
+        }.getOrElse {
+            runCatching { String(bytes, charset("GB18030")) }.getOrNull()
+        }
+    }
+
+    /** 远程整轨时长探测（CUE 分轨末轨终点；探测失败回 0，末轨终点退化为上一轨起点）。 */
+    private suspend fun remoteDurationMs(
+        candidate: AudioCandidate,
+        readPrefix: suspend (String, Int) -> ByteArray?
+    ): Long {
+        val ext = candidate.name.substringAfterLast('.', "").lowercase()
+        val prefix = probeRemoteBytes { readPrefix(candidate.path, PROBE_PREFIX_BYTES) } ?: return 0L
+        return probeDurationFromPrefix(prefix, ext).takeIf { it > 0 }
+            ?: com.shiyinplayer.player.decoder.FormatSpecificDurationProber.probe(ext, prefix, candidate.size)
+    }
+
+    /**
+     * 远程普通曲目入库（SMB / WebDAV 共用）：前缀字节探测时长 + 文件名解析歌名歌手 + 内嵌封面提取。
+     * 供 CUE 分轨判定之后调用（被索引表消费的整轨不在此入库）。
+     * MIME 取来源声明值（SMB 按扩展名推断 / WebDAV 用服务器 Content-Type）。
+     */
+    private suspend fun remoteSongEntity(
+        candidate: AudioCandidate,
+        sourceType: MediaSourceType,
+        now: Long,
+        readPrefix: suspend (String, Int) -> ByteArray?
+    ): SongEntity {
+        val ext = candidate.name.substringAfterLast('.', "").lowercase()
+        val prefix = probeRemoteBytes { readPrefix(candidate.path, PROBE_PREFIX_BYTES) }
+        val formatVerified = prefix?.let { com.shiyinplayer.player.decoder.MagicNumberValidator.validate(it, ext) } ?: true
+        val duration = prefix?.let { p ->
+            probeDurationFromPrefix(p, ext).takeIf { it > 0 }
+                ?: com.shiyinplayer.player.decoder.FormatSpecificDurationProber.probe(ext, p, candidate.size)
+        } ?: 0L
+        // 需求 9：远程入库时从文件名解析出真实歌名/歌手，避免标题显示为原始文件名
+        val titleBase = candidate.name.substringBeforeLast('.')
+        val (parsedArtist, remoteTitle) = parseFileNameTitle(titleBase)
+        val remoteArtist = stripDiscMarkers(parsedArtist)
+        val albumArtUri = prefix?.let { extractRemoteArtwork(it, candidate.name, candidate.path) }
+        return SongEntity(
+            title = remoteTitle ?: titleBase,
+            artistName = remoteArtist,
+            uri = candidate.path,
+            sourceType = sourceType,
+            albumArtUri = albumArtUri,
+            mimeType = candidate.mime,
+            formatVerified = formatVerified,
+            durationMs = duration,
+            dateAdded = now,
+            sizeBytes = candidate.size,
+            dedupKey = DedupKey.forRemote(sourceType, candidate.path)
+        )
     }
 
     // ===== 本地 SAF 分支 =====
@@ -431,11 +638,21 @@ class LibraryScanner @Inject constructor(
         }
         val root = File(folderPath)
         if (!root.exists() || !root.isDirectory || !root.canRead()) return false
+        val now = System.currentTimeMillis()
+        // 音频与索引表先收集、遍历完再入库：CUE 分轨需要整轨信息，且整轨本身不得入库
+        val audioIndex = mutableMapOf<String, MutableMap<String, AudioCandidate>>()
+        val cueFiles = mutableListOf<AudioCandidate>()
         walkFiles(root, scanHidden) { file ->
             if (file.isFile && (scanHidden || !file.name.startsWith('.'))) {
                 val ext = file.name.substringAfterLast('.', "").lowercase()
+                val path = file.absolutePath
                 when {
-                    isAudioExt(ext, extWhitelist) -> extractFileMetadata(file)?.let { emit(it) }
+                    isAudioExt(ext, extWhitelist) ->
+                        audioIndex.getOrPut(path.substringBeforeLast('/', "")) { mutableMapOf() }[
+                            file.name.substringBeforeLast('.').lowercase()
+                        ] = AudioCandidate(path, file.name, file.length())
+                    ext == Constants.CUE_EXTENSION ->
+                        cueFiles += AudioCandidate(path, file.name, file.length())
                     ext in COVER_EXTENSIONS || ext in TEXT_EXTENSIONS ->
                         emitAtt(
                             FolderAttachmentEntity(
@@ -443,11 +660,30 @@ class LibraryScanner @Inject constructor(
                                 parentPath = relDir(file.parentFile.absolutePath, root.absolutePath),
                                 name = file.name,
                                 kind = attachmentKind(ext),
-                                uri = file.absolutePath,
+                                uri = path,
                                 size = file.length()
                             )
                         )
                 }
+            }
+        }
+        val consumed = mutableSetOf<Pair<String, String>>()
+        emitCueSplit(
+            sourceType = MediaSourceType.LOCAL,
+            cueCandidates = cueFiles,
+            audioIndex = audioIndex,
+            consumed = consumed,
+            now = now,
+            readCueBytes = { cand -> runCatching { File(cand.path).readBytes() }.getOrNull() },
+            probeDurationMs = { cand -> extractDuration(Uri.fromFile(File(cand.path))) },
+            mimeOf = { cand -> guessMime(cand.name) },
+            albumFallbackOf = { cand -> parentDirNameOf(cand.path) },
+            emit = emit
+        )
+        for ((dirKey, map) in audioIndex) {
+            for ((baseKey, cand) in map) {
+                if (dirKey to baseKey in consumed) continue
+                extractFileMetadata(File(cand.path))?.let { emit(it) }
             }
         }
         return true
@@ -491,9 +727,9 @@ class LibraryScanner @Inject constructor(
 
             val albumArtUri = artworkBytes?.let { saveEmbeddedArtwork(it, file.absolutePath) }
             val ext = file.name.substringAfterLast('.', "").lowercase()
-            val formatVerified = com.shiyinplayer.player.decoder.MagicNumberValidator.validate(
-                Uri.fromFile(file), ext, context
-            )
+            // B4-2：这里手上有 File，直接用文件版校验器，不再绕 Uri + contentResolver
+            // （那个间接层是给 SAF 的 content:// 用的，普通路径没必要）
+            val formatVerified = com.shiyinplayer.player.decoder.MagicNumberValidator.validate(file, ext)
             return SongEntity(
                 title = title,
                 artistName = artist,
@@ -510,7 +746,7 @@ class LibraryScanner @Inject constructor(
                 sizeBytes = size,
                 genre = genre,
                 year = year,
-                dedupKey = file.absolutePath
+                dedupKey = DedupKey.forLocalFile(file.absolutePath)
             )
         } catch (e: Exception) {
             return null
@@ -564,53 +800,28 @@ class LibraryScanner @Inject constructor(
             }
         }
 
-        val consumedAudioKeys = mutableSetOf<Pair<String, String>>()   // (dirKey, baseKey)
-
         // CUE 分轨（T15）：整轨文件拆为子曲目，整轨本身不入库；同目录优先匹配，无则全局兜底
-        for (cue in cueFiles) {
-            val text = runCatching {
-                context.contentResolver.openInputStream(cue.uri)?.bufferedReader()?.use { it.readText() }
-            }.getOrNull() ?: continue
-            val sheet = CueParser.parse(text) ?: continue
-            val cueDirKey = cue.uri.toString().substringBeforeLast('/')
-            val key = sheet.file.substringBeforeLast('.').lowercase()
-            val matchedDirKey = if (audioFiles[cueDirKey]?.containsKey(key) == true) {
-                cueDirKey
-            } else {
-                audioFiles.entries.firstOrNull { (_, map) -> map.containsKey(key) }?.key
-            } ?: continue
-            val audioDoc = audioFiles[matchedDirKey]!![key]!!
-            consumedAudioKeys += matchedDirKey to key
-            val wholeDuration = extractDuration(audioDoc.uri)
-            // P2-7：CUE 子曲目回填专辑/艺术家（REM ALBUM/REM ARTIST → 目录名/分轨 PERFORMER 兜底），
-            // 使子曲目参与专辑/艺术家聚合（此前 albumName 恒 null 被聚合遗漏）。
-            val cueAlbum = sheet.albumName?.takeIf { it.isNotBlank() } ?: parentDirName(audioDoc.uri)
-            sheet.tracks.forEachIndexed { i, t ->
-                val start = t.index01Ms
-                val end = sheet.tracks.getOrNull(i + 1)?.index01Ms ?: wholeDuration
-                emit(
-                    SongEntity(
-                        title = cleanTitleKeep(t.title) ?: t.title,
-                        artistName = cleanArtist(sheet.artistName) ?: cleanArtist(t.performer),
-                        albumName = cleanAlbum(cueAlbum),
-                        albumArtUri = null,
-                        durationMs = if (end > start) end - start else 0,
-                        trackNumber = i + 1,
-                        uri = audioDoc.uri.toString(),
-                        mimeType = context.contentResolver.getType(audioDoc.uri),
-                        sourceType = MediaSourceType.LOCAL,
-                        path = audioDoc.uri.toString(),
-                        dateAdded = System.currentTimeMillis(),
-                        sizeBytes = audioDoc.length(),
-                        cueId = audioDoc.uri.toString(),
-                        dedupKey = "${audioDoc.uri}#${i + 1}",
-                        trackIndex = i + 1,
-                        clipStartMs = start,
-                        clipEndMs = if (end > start) end else null
-                    )
-                )
-            }
-        }
+        val consumedAudioKeys = mutableSetOf<Pair<String, String>>()   // (dirKey, baseKey)
+        emitCueSplit(
+            sourceType = MediaSourceType.LOCAL,
+            cueCandidates = cueFiles.map {
+                AudioCandidate(it.uri.toString(), it.name.orEmpty(), it.length())
+            },
+            audioIndex = audioFiles.mapValues { (_, map) ->
+                map.mapValues { (_, doc) -> AudioCandidate(doc.uri.toString(), doc.name.orEmpty(), doc.length()) }
+            },
+            consumed = consumedAudioKeys,
+            now = System.currentTimeMillis(),
+            readCueBytes = { cand ->
+                runCatching {
+                    context.contentResolver.openInputStream(Uri.parse(cand.path))?.use { it.readBytes() }
+                }.getOrNull()
+            },
+            probeDurationMs = { cand -> extractDuration(Uri.parse(cand.path)) },
+            mimeOf = { cand -> context.contentResolver.getType(Uri.parse(cand.path)) },
+            albumFallbackOf = { cand -> parentDirName(Uri.parse(cand.path)) },
+            emit = emit
+        )
 
         // 普通音频（无 CUE 或非整轨）直接入库
         for ((dirKey, map) in audioFiles) {
@@ -634,6 +845,10 @@ class LibraryScanner @Inject constructor(
         val root = runCatching { JSONObject(src.configJson).optString("url") }.getOrNull()
             .takeIf { !it.isNullOrEmpty() } ?: return false   // 配置缺失：不视为"空目录"，避免误清库
         val now = System.currentTimeMillis()
+        // 音频与索引表先收集、遍历完再入库：CUE 分轨需要整轨信息，且整轨本身不得入库
+        val audioIndex = mutableMapOf<String, MutableMap<String, AudioCandidate>>()
+        val cueFiles = mutableListOf<AudioCandidate>()
+        val pendingSongs = mutableListOf<AudioCandidate>()
         suspend fun walk(path: String, isRoot: Boolean = false) {
             val entries = try {
                 smbBrowser.listFiles(path)
@@ -650,33 +865,15 @@ class LibraryScanner @Inject constructor(
                     val ext = e.name.substringAfterLast('.', "").lowercase()
                     when {
                         isAudioExt(ext, extWhitelist) -> {
-                            val prefix = probeRemoteBytes { smbBrowser.readPrefix(child, PROBE_PREFIX_BYTES) }
-                            val formatVerified = prefix?.let { com.shiyinplayer.player.decoder.MagicNumberValidator.validate(it, ext) } ?: true
-                            val duration = prefix?.let { p ->
-                                probeDurationFromPrefix(p, ext).takeIf { it > 0 }
-                                    ?: com.shiyinplayer.player.decoder.FormatSpecificDurationProber.probe(ext, p, e.size)
-                            } ?: 0L
-                            // 需求 9：远程入库时从文件名解析出真实歌名/歌手，避免标题显示为原始文件名
-                            val titleBase = e.name.substringBeforeLast('.')
-                            var (remoteArtist, remoteTitle) = parseFileNameTitle(titleBase)
-                            remoteArtist = stripDiscMarkers(remoteArtist)
-                            val albumArtUri = prefix?.let { extractRemoteArtwork(it, e.name, child) }
-                            emit(
-                                SongEntity(
-                                    title = remoteTitle ?: titleBase,
-                                    artistName = remoteArtist,
-                                    uri = child,
-                                    sourceType = MediaSourceType.SMB,
-                                    albumArtUri = albumArtUri,
-                                    mimeType = guessMime(e.name),
-                                    formatVerified = formatVerified,
-                                    durationMs = duration,
-                                    dateAdded = now,
-                                    sizeBytes = e.size,
-                                    dedupKey = child
-                                )
-                            )
+                            // 先收集，待 CUE 分轨判定后统一入库（整轨被索引表消费时自身不入库）
+                            val candidate = AudioCandidate(child, e.name, e.size, guessMime(e.name))
+                            pendingSongs += candidate
+                            audioIndex.getOrPut(child.substringBeforeLast('/', "")) { mutableMapOf() }[
+                                e.name.substringBeforeLast('.').lowercase()
+                            ] = candidate
                         }
+                        ext == Constants.CUE_EXTENSION ->
+                            cueFiles += AudioCandidate(child, e.name, e.size)
                         ext in COVER_EXTENSIONS || ext in TEXT_EXTENSIONS ->
                             emitAtt(
                                 FolderAttachmentEntity(
@@ -693,6 +890,29 @@ class LibraryScanner @Inject constructor(
             }
         }
         walk(root, isRoot = true)
+        val consumed = mutableSetOf<Pair<String, String>>()
+        emitCueSplit(
+            sourceType = MediaSourceType.SMB,
+            cueCandidates = cueFiles,
+            audioIndex = audioIndex,
+            consumed = consumed,
+            now = now,
+            readCueBytes = { cand -> smbBrowser.readPrefix(cand.path, CUE_MAX_BYTES) },
+            probeDurationMs = { cand -> remoteDurationMs(cand) { p, n -> smbBrowser.readPrefix(p, n) } },
+            mimeOf = { cand -> guessMime(cand.name) },
+            albumFallbackOf = { cand -> parentDirNameOf(cand.path) },
+            emit = emit
+        )
+        for (cand in pendingSongs) {
+            val dirKey = cand.path.substringBeforeLast('/', "")
+            val baseKey = cand.name.substringBeforeLast('.').lowercase()
+            if (dirKey to baseKey in consumed) continue
+            emit(
+                remoteSongEntity(cand, MediaSourceType.SMB, now) { p, n ->
+                    smbBrowser.readPrefix(p, n)
+                }
+            )
+        }
         // 根目录枚举失败已抛异常冒泡到扫描器外层（记入 errors 并跳过本源清理），走到底即为成功
         return true
     }
@@ -710,6 +930,10 @@ class LibraryScanner @Inject constructor(
             .takeIf { !it.isNullOrEmpty() } ?: return false   // 配置缺失：不视为"空目录"，避免误清库
         val now = System.currentTimeMillis()
         val visited = mutableSetOf<String>()
+        // 音频与索引表先收集、遍历完再入库：CUE 分轨需要整轨信息，且整轨本身不得入库
+        val audioIndex = mutableMapOf<String, MutableMap<String, AudioCandidate>>()
+        val cueFiles = mutableListOf<AudioCandidate>()
+        val pendingSongs = mutableListOf<AudioCandidate>()
         suspend fun walk(path: String, isRoot: Boolean = false) {
             if (!visited.add(path)) return
             val entries = try {
@@ -726,32 +950,15 @@ class LibraryScanner @Inject constructor(
                     val ext = e.name.substringAfterLast('.', "").lowercase()
                     when {
                         isAudioExt(ext, extWhitelist) -> {
-                            val prefix = probeRemoteBytes { webDavBrowser.readPrefix(e.path, PROBE_PREFIX_BYTES) }
-                            val formatVerified = prefix?.let { com.shiyinplayer.player.decoder.MagicNumberValidator.validate(it, ext) } ?: true
-                            val duration = prefix?.let { p ->
-                                probeDurationFromPrefix(p, ext).takeIf { it > 0 }
-                                    ?: com.shiyinplayer.player.decoder.FormatSpecificDurationProber.probe(ext, p, e.size)
-                            } ?: 0L
-                            // 需求 9：远程入库时从文件名解析出真实歌名/歌手，避免标题显示为原始文件名
-                            val titleBase = e.name.substringBeforeLast('.')
-                            val (remoteArtist, remoteTitle) = parseFileNameTitle(titleBase)
-                            val albumArtUri = prefix?.let { extractRemoteArtwork(it, e.name, e.path) }
-                            emit(
-                                SongEntity(
-                                    title = remoteTitle ?: titleBase,
-                                    artistName = remoteArtist,
-                                    uri = e.path,
-                                    sourceType = MediaSourceType.WEBDAV,
-                                    albumArtUri = albumArtUri,
-                                    mimeType = e.contentType,
-                                    formatVerified = formatVerified,
-                                    durationMs = duration,
-                                    dateAdded = now,
-                                    sizeBytes = e.size,
-                                    dedupKey = e.path
-                                )
-                            )
+                            // 先收集，待 CUE 分轨判定后统一入库（整轨被索引表消费时自身不入库）
+                            val candidate = AudioCandidate(e.path, e.name, e.size, e.contentType)
+                            pendingSongs += candidate
+                            audioIndex.getOrPut(e.path.substringBeforeLast('/', "")) { mutableMapOf() }[
+                                e.name.substringBeforeLast('.').lowercase()
+                            ] = candidate
                         }
+                        ext == Constants.CUE_EXTENSION ->
+                            cueFiles += AudioCandidate(e.path, e.name, e.size)
                         ext in COVER_EXTENSIONS || ext in TEXT_EXTENSIONS ->
                             emitAtt(
                                 FolderAttachmentEntity(
@@ -768,6 +975,29 @@ class LibraryScanner @Inject constructor(
             }
         }
         walk(root, isRoot = true)
+        val consumed = mutableSetOf<Pair<String, String>>()
+        emitCueSplit(
+            sourceType = MediaSourceType.WEBDAV,
+            cueCandidates = cueFiles,
+            audioIndex = audioIndex,
+            consumed = consumed,
+            now = now,
+            readCueBytes = { cand -> webDavBrowser.readPrefix(cand.path, CUE_MAX_BYTES) },
+            probeDurationMs = { cand -> remoteDurationMs(cand) { p, n -> webDavBrowser.readPrefix(p, n) } },
+            mimeOf = { cand -> guessMime(cand.name) },
+            albumFallbackOf = { cand -> parentDirNameOf(cand.path) },
+            emit = emit
+        )
+        for (cand in pendingSongs) {
+            val dirKey = cand.path.substringBeforeLast('/', "")
+            val baseKey = cand.name.substringBeforeLast('.').lowercase()
+            if (dirKey to baseKey in consumed) continue
+            emit(
+                remoteSongEntity(cand, MediaSourceType.WEBDAV, now) { p, n ->
+                    webDavBrowser.readPrefix(p, n)
+                }
+            )
+        }
         // 根目录枚举失败已抛异常冒泡到扫描器外层（记入 errors 并跳过本源清理），走到底即为成功
         return true
     }
@@ -779,6 +1009,11 @@ class LibraryScanner @Inject constructor(
         val parent = uri.toString().substringBeforeLast('/')
         return Uri.decode(parent.substringAfterLast('/')).takeIf { it.isNotBlank() }
     }
+
+    /** 路径版目录名（绝对路径 / SMB / WebDAV 的 CUE 子曲目专辑名兜底）。 */
+    private fun parentDirNameOf(path: String): String? =
+        Uri.decode(path.trimEnd('/').substringBeforeLast('/', "")).substringAfterLast('/')
+            .takeIf { it.isNotBlank() }
 
     /** P1-6：扩展名白名单过滤（白名单为空 = 全部 active 扩展名）。 */
     private fun isAudioExt(ext: String, extWhitelist: Set<String>): Boolean =
@@ -914,7 +1149,7 @@ class LibraryScanner @Inject constructor(
             sizeBytes = size,
             genre = genre,
             year = year,
-            dedupKey = uri.toString()
+            dedupKey = DedupKey.forLocalFile(uri.toString())
         )
     }
 
@@ -924,7 +1159,7 @@ class LibraryScanner @Inject constructor(
     private fun extractRemoteArtwork(prefix: ByteArray?, name: String, uriKey: String): String? {
         if (prefix == null || prefix.isEmpty()) return null
         val ext = name.substringAfterLast('.', "").lowercase()
-        val tmp = File(context.cacheDir, "artwork/remote_${"$uriKey:$name".hashCode()}.$ext")
+        val tmp = ArtworkStore.pathFor(context, "remote_${"$uriKey:$name".hashCode()}.$ext")
         return try {
             tmp.parentFile?.mkdirs()
             tmp.writeBytes(prefix)
@@ -946,7 +1181,8 @@ class LibraryScanner @Inject constructor(
     /** 内嵌封面写入缓存目录，返回 file:// URI；超尺寸时降采样避免 OOM。无有效图返回 null。 */
     private fun saveEmbeddedArtwork(bytes: ByteArray, key: String): String? {
         if (bytes.isEmpty()) return null
-        val dir = File(context.cacheDir, "artwork")
+        // 目录也走 ArtworkStore：写入与"删曲目时回收"必须认同一个位置，否则清理时认不出自己的文件
+        val dir = ArtworkStore.dir(context)
         if (!dir.exists()) dir.mkdirs()
         val outFile = File(dir, "${key.hashCode()}.jpg")
         if (outFile.exists()) return "file://${outFile.absolutePath}"

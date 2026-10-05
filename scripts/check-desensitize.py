@@ -50,15 +50,27 @@ RULES: list[tuple[str, re.Pattern[str], str]] = [
      "作者本机绝对路径"),
     ("PLAN_DOC", re.compile(r"plan-1\.0\.(14|16)"),
      "私有计划/决策文档（含内网地址与未公开设计）"),
-    ("SYNC_PROTO", re.compile(r"(deviceToken|pinnedCert|TokenSecret|lan_sync)"),
-     "私有局域网同步协议字段"),
-    ("SYNC_PORT", re.compile(r"23541"),
-     "私有同步服务端口"),
     ("PC_REPO", re.compile(r"(shiyin-pc|Shiyin\.Desktop|nas://)"),
      "PC 主控端仓库 / 私有网络源定位符"),
     ("INTERNAL_HOST", re.compile(r"192\.168\.[0-9]+\.23(?::\d+)?"),
      "作者内网服务器（NAS / Gitea 常见落点）"),
+    # ↓ 以下两条是 2026-10 补的：局域网同步开源后，闸门曾漏掉这两个真实私有值 ——
+    #   ZEROTIER_DEFAULT_NETWORK_ID（作者 ZeroTier 网络 ID，内置进去等于**所有安装者静默加入作者网络**）
+    #   与 ZT_WEBDAV_DEFAULT_PASS（家庭主机口令）。它们不像网段/端口那样有特征形态，
+    #   只能按值本身建规则（与上面的 HOST_CRED 同思路，靠 SELF_SKIP 自我排除）。
+    ("ZT_NET_ID", re.compile(r"9f77fc393ed8c292"),
+     "作者 ZeroTier 网络 ID（Constants.ZEROTIER_DEFAULT_NETWORK_ID，必须留空）"),
+    ("ZT_HOST_PASS", re.compile(r"shiyin8"),
+     "家庭主机 WebDAV 口令（Constants.ZT_WEBDAV_DEFAULT_PASS，必须留空）"),
 ]
+# ⚠️ 已**移除**的两条规则（2026-10，经作者明确授权）：
+#   SYNC_PROTO（deviceToken / pinnedCert / TokenSecret / lan_sync）
+#   SYNC_PORT（23541）
+# 原因：局域网同步（PC 主控 / 安卓接收端）已随本次同步**一并开源**，
+# 其协议字段名与监听端口不再是「秘密」——它们是本仓代码的一部分，藏起来反而让
+# 同步功能无法被其他实现对接。原先的规则会把 data/sync/** 与相关设置项、字符串
+# 全部拦下，等于禁止开源该功能。
+# 保留不变的是**真正私有的**那些：内网网段、口令、序列号、本机路径、私有仓库名。
 
 ALLOW_MARKER = "desensitize-allow"
 SKIP_EXT = {

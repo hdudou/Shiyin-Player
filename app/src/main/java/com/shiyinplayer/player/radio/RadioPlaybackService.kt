@@ -79,17 +79,7 @@ class RadioPlaybackService : android.app.Service() {
             }
         }
         // M5：锁屏叠加层自动唤起 —— 电台播放开始时若 lockscreen_overlay_enabled 开关为 true，则自动启动叠加层
-        var overlayAutoLaunched = false
-        fun launchOverlay() {
-            val intent = android.content.Intent(
-                this@RadioPlaybackService,
-                com.shiyinplayer.lockscreen.LockScreenOverlayActivity::class.java
-            ).apply {
-                putExtra(com.shiyinplayer.lockscreen.LockScreenOverlayActivity.EXTRA_MANUAL_MODE, false)
-                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            runCatching { startActivity(intent) }
-        }
+        // 注：launchOverlay 已提升为类成员（补漏巡检也在类作用域用它），见下方方法区。
         scope.launch {
             radioPlayer.playbackState.collect { state ->
                 if ((state.isPlaying || state.isBuffering) && state.streamUrl != null && !overlayAutoLaunched) {
@@ -99,22 +89,56 @@ class RadioPlaybackService : android.app.Service() {
                 if (!state.isPlaying && !state.isBuffering) {
                     overlayAutoLaunched = false
                 }
-            }
-        }
-        // 补漏重建：叠加层/进程被系统回收后，若仍在播放且系统锁屏仍激活、叠加层已不在，则自动重建拉起。
-        scope.launch {
-            while (true) {
-                delay(3_000)
-                val s = radioPlayer.playbackState.value
-                if ((s.isPlaying || s.isBuffering) && s.streamUrl != null
+                // B3-3：与 PlaybackService 同一套改法 —— 补漏巡检只在"正在播/缓冲中且开关打开"时存活
+                if ((state.isPlaying || state.isBuffering) && state.streamUrl != null
                     && settingsRepository.lockscreenOverlayEnabledSync()
-                    && !com.shiyinplayer.lockscreen.LockScreenOverlayActivity.isShowing
                 ) {
-                    val km = getSystemService(android.content.Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
-                    if (km.isKeyguardLocked) launchOverlay()
+                    startOverlayWatchdog()
+                } else {
+                    stopOverlayWatchdog()
                 }
             }
         }
+    }
+
+    /** 锁屏叠加层自动拉起（M5）；提升到类成员以便补漏巡检复用。 */
+    private var overlayAutoLaunched = false
+
+    private fun launchOverlay() {
+        val intent = android.content.Intent(
+            this@RadioPlaybackService,
+            com.shiyinplayer.lockscreen.LockScreenOverlayActivity::class.java
+        ).apply {
+            putExtra(com.shiyinplayer.lockscreen.LockScreenOverlayActivity.EXTRA_MANUAL_MODE, false)
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        runCatching { startActivity(intent) }
+    }
+
+    /** 叠加层补漏巡检（B3-3）：随播放态起停，不再常驻空转。 */
+    private var overlayWatchdog: Job? = null
+
+    private fun startOverlayWatchdog() {
+        if (overlayWatchdog?.isActive == true) return
+        overlayWatchdog = scope.launch {
+            while (true) {
+                delay(3_000)
+                val s = radioPlayer.playbackState.value
+                if ((!s.isPlaying && !s.isBuffering) || s.streamUrl == null) {
+                    return@launch
+                }
+                if (com.shiyinplayer.lockscreen.LockScreenOverlayActivity.isShowing) continue
+
+                val km = getSystemService(android.content.Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
+                // 仅在系统锁屏激活时重建，避免用户在解锁后误把叠加层重新弹回
+                if (km.isKeyguardLocked) launchOverlay()
+            }
+        }
+    }
+
+    private fun stopOverlayWatchdog() {
+        overlayWatchdog?.cancel()
+        overlayWatchdog = null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

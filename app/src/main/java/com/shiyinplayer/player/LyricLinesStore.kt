@@ -1,5 +1,6 @@
 package com.shiyinplayer.player
 
+import com.shiyinplayer.data.metadata.LyricLineIndex
 import com.shiyinplayer.data.metadata.MergedLine
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +16,21 @@ class LyricLinesStore @Inject constructor() {
     var songKey: String? = null
 
     @Volatile
-    var lines: List<MergedLine> = emptyList()
+    private var _lines: List<MergedLine> = emptyList()
+
+    /**
+     * 行列表是否升序。B4-7：随 [lines] 一起缓存 —— 定位当前行是每 ~200ms 一次的热调用，
+     * 每次都重算排序性等于把省下的扫描又花回去。
+     */
+    @Volatile
+    private var sortedAscending: Boolean = true
+
+    var lines: List<MergedLine>
+        get() = _lines
+        set(value) {
+            _lines = value
+            sortedAscending = LyricLineIndex.isSortedAscending(value)
+        }
 
     fun clear() {
         songKey = null
@@ -24,14 +39,14 @@ class LyricLinesStore @Inject constructor() {
 
     /** 取给定时间点命中的歌词行文本（副歌翻译合并显示）。 */
     fun lineAt(positionMs: Long): String? {
-        val list = lines
+        val list = _lines
         if (list.isEmpty()) return null
-        // §12 R4：全量扫描取最后一个 timeMs <= position 的行（对乱序/相等时间戳稳健，不提前 break）。
-        var idx = -1
-        for (i in list.indices) {
-            if (positionMs >= list[i].timeMs) idx = i
-        }
+
+        // §12 R4：取最后一个 timeMs <= position 的行（对乱序/相等时间戳稳健）。
+        // B4-7：升序时走上界二分，乱序时回退全量扫描 —— 语义完全一致，见 LyricLineIndex。
+        val idx = LyricLineIndex.indexOf(list, positionMs, sortedAscending)
         if (idx < 0) return null
+
         val line = list[idx]
         return line.translated?.takeIf { it.isNotBlank() && it != line.text }
             ?.let { "${line.text} / ${it}" }

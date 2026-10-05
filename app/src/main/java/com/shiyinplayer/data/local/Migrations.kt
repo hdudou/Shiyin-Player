@@ -93,8 +93,8 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
     }
 }
 
-/** 探测表中是否存在指定列（PRAGMA table_info）。 */
-private fun columnExists(db: SupportSQLiteDatabase, table: String, column: String): Boolean {
+/** 探测表中是否存在指定列（PRAGMA table_info）。供本文件与 MIGRATION_13_14 共用。 */
+internal fun columnExists(db: SupportSQLiteDatabase, table: String, column: String): Boolean {
     db.query("PRAGMA table_info(\"$table\")").use { cursor ->
         while (cursor.moveToNext()) {
             if (cursor.getString(1) == column) return true
@@ -299,10 +299,23 @@ val MIGRATION_9_10 = object : Migration(9, 10) {
     }
 }
 
-/** v10 → v11：为 radio_station 表新增 isFavorite 列。 */
+/**
+ * v10 → v11：补足 radio_station.isFavorite 列。
+ *
+ * ⚠️ **必须幂等（缺列才加）**。这里原本是一句裸 `ALTER TABLE ... ADD COLUMN isFavorite`，
+ * 但 Room 导出的 schema 显示 **v10 与 v11 的 identityHash 完全相同**（33a0a590…），
+ * 也就是说 `radio_station.isFavorite` 在 v10 上就已经存在。真机上的 10→11 于是直接抛
+ * `duplicate column name: isFavorite` —— 停在 v10 的用户一升级就崩在启动路径上。
+ * 这条 bug 是靠 `MigrationMatrixTest` 从 v10 起点跑出来的，单测 schema 本身看不出来。
+ *
+ * 为什么不是"干脆删掉这一步"：本地的 v10 导出未必与用户手上的真实 v10 库完全一致
+ * （历史上发生过重新导出）。幂等写法在"有列 / 没列"两种情况下都成立，不必赌哪一种。
+ *
+ * @see ensureColumn 先探测 PRAGMA table_info 再决定是否 ADD COLUMN
+ */
 val MIGRATION_10_11 = object : Migration(10, 11) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE `radio_station` ADD COLUMN `isFavorite` INTEGER NOT NULL DEFAULT 0")
+        ensureColumn(db, "radio_station", "isFavorite", "`isFavorite` INTEGER NOT NULL DEFAULT 0")
     }
 }
 

@@ -25,6 +25,9 @@ interface SongDao {
          */
         const val MERGE_KEY_EXPR =
             "lower(trim(coalesce(title,''))||char(0)||trim(coalesce(artistName,''))||char(0)||trim(coalesce(albumName,'')))"
+
+        // LWW 时间戳：SQL 表达式必须在各 @Query 里**内联字面量**——KSP 解析不了跨文件 const 插值
+        // （会把 DAO 报成 MissingType）。说明与表达式全文见同包 SqlExpr.kt。
     }
 
     @Query("SELECT * FROM songs ORDER BY title COLLATE LOCALIZED")
@@ -33,6 +36,14 @@ interface SongDao {
     /** 2026-08-28：分页拉取全表（导出/重建/目录树等后台批量场景替代 observeAll().first()，防 CursorWindow 溢出）。 */
     @Query("SELECT * FROM songs ORDER BY title COLLATE LOCALIZED LIMIT :limit OFFSET :offset")
     suspend fun getAllPaged(offset: Int, limit: Int): List<SongEntity>
+
+    /**
+     * 游标（keyset）分页：按主键递增逐页拉取。
+     * **遍历中要删行的场景必须用它**，不能用 OFFSET 分页 —— 每删一行结果集就左移一行，
+     * 下一页的 OFFSET 会跳过等量未处理行（「清理失效曲目」曾因此漏删大部分失效项）。
+     */
+    @Query("SELECT * FROM songs WHERE id > :afterId ORDER BY id LIMIT :limit")
+    suspend fun getPagedAfterId(afterId: Long, limit: Int): List<SongEntity>
 
     /**
      * [8] SQL 层多源合并（首屏加载优化）：每组合并键返回一行主曲目。主行 = 来源优先级最高
@@ -161,6 +172,25 @@ interface SongDao {
     @Query("UPDATE songs SET albumArtUri = :url WHERE id = :id")
     suspend fun setAlbumArt(id: Long, url: String)
 
+    /**
+     * 需求⑤：删除曲目**之前**先把它们的封面地址取出来 —— 删完就查不到了。
+     * 拿到的地址交给 `MediaCacheCleaner` 做引用计数，只有「再没人引用」的才真删文件。
+     */
+    @Query("SELECT albumArtUri FROM songs WHERE id IN (:ids)")
+    suspend fun getAlbumArtUrisByIds(ids: List<Long>): List<String?>
+
+    /** 需求⑤：还有多少曲目行引用这个封面（与 `AlbumDao.countByAlbumArtUri` 一起构成引用计数）。 */
+    @Query("SELECT COUNT(*) FROM songs WHERE albumArtUri = :uri")
+    suspend fun countByAlbumArtUri(uri: String): Int
+
+    /**
+     * 播放统计（**不刷新 updatedAt**，这是刻意的）。
+     *
+     * updatedAt 是 LWW 的「内容被本机改过」凭据。播放统计是每台设备各自的消费数据，
+     * 与曲目元数据无关：若播一次就把 updatedAt 推到「现在」，该曲目在本机就永久变成
+     * 「比 PC 新」，此后 PC 推来的标签/评分订正会被 [com.shiyinplayer.data.sync.SyncApplyEngine]
+     * 的 LWW 判定整体挡掉（skipped_local_newer）——表现为「PC 改了标签推不过去」。
+     */
     @Query("UPDATE songs SET playCount = :count, lastPlayedMs = :lastPlayedMs WHERE id = :id")
     suspend fun updatePlayStats(id: Long, count: Int, lastPlayedMs: Long)
 
@@ -168,19 +198,19 @@ interface SongDao {
     @Query("SELECT COUNT(*) AS totalSongs, COALESCE(SUM(playCount), 0) AS totalPlays, SUM(CASE WHEN playCount > 0 THEN 1 ELSE 0 END) AS playedSongs FROM songs")
     fun observePlayStats(): Flow<PlayStatsRow>
 
-    @Query("UPDATE songs SET rating = :rating WHERE id = :id")
+    @Query("UPDATE songs SET rating = :rating, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun setRating(id: Long, rating: Int)
 
     /** [7] 手工修正元数据（标题/艺术家/专辑）写回主库（不触碰 year，避免清空已抓取的年份）。 */
-    @Query("UPDATE songs SET title = :title, artistName = :artist, albumName = :album WHERE id = :id")
+    @Query("UPDATE songs SET title = :title, artistName = :artist, albumName = :album, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun updateMetadata(id: Long, title: String, artist: String?, album: String?)
 
     /** [7] 在线匹配写回（含年份，决策 6）。 */
-    @Query("UPDATE songs SET title = :title, artistName = :artist, albumName = :album, year = :year WHERE id = :id")
+    @Query("UPDATE songs SET title = :title, artistName = :artist, albumName = :album, year = :year, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun updateMetadataWithYear(id: Long, title: String, artist: String?, album: String?, year: Int?)
 
     /** §12 歌词时间偏移写回（仅写 DB）。 */
-    @Query("UPDATE songs SET lyricOffsetMs = :ms WHERE id = :id")
+    @Query("UPDATE songs SET lyricOffsetMs = :ms, updatedAt = CAST((julianday('now') - 2440587.5) * 86400000 AS INTEGER) WHERE id = :id")
     suspend fun setLyricOffset(id: Long, ms: Long)
 
     /** 自动同步元数据：取所有本地歌曲（sourceType=LOCAL，path 可解析）。 */
@@ -208,6 +238,20 @@ interface SongDao {
             "ORDER BY id LIMIT :limit OFFSET :offset"
     )
     suspend fun getSongsMissingMetadataPaged(limit: Int, offset: Int): List<SongEntity>
+
+    /**
+     * 手动批量同步的**游标分页**版本。批量同步会把已处理的曲目补齐元数据，使其不再匹配
+     * WHERE 条件 → 结果集在遍历过程中持续收缩，OFFSET 分页会成片跳过未处理的曲目
+     * （「全库手动同步」曾因此只覆盖一部分）。游标按 id 推进，不受结果集收缩影响。
+     */
+    @Query(
+        "SELECT * FROM songs WHERE id > :afterId AND " +
+            "(title IS NULL OR title = '' " +
+            "OR artistName IS NULL OR artistName = '' " +
+            "OR albumName IS NULL OR albumName = '') " +
+            "ORDER BY id LIMIT :limit"
+    )
+    suspend fun getSongsMissingMetadataAfterId(afterId: Long, limit: Int): List<SongEntity>
 
     /** 手动批量同步元数据：统计全库仍缺元数据的歌曲总数（用于进度显示）。缺失判定同上（仅标题/歌手/专辑）。 */
     @Query(
@@ -237,6 +281,9 @@ interface SongDao {
     /**
      * 自动同步元数据（fill-in 策略）：仅当 DB 字段为空/0 时用文件内嵌标签填充，
      * 不覆盖已有值（含用户手工匹配 / 在线元数据结果）。返回受影响行数。
+     *
+     * **不刷新 updatedAt**：这是扫描期的自动回填，不是用户在本机的编辑。
+     * 若刷新，任何被扫描/富化过的曲目都会永久比 PC 新，PC 推来的订正会被 LWW 挡掉。
      */
     @Query(
         "UPDATE songs SET " +
@@ -256,7 +303,11 @@ interface SongDao {
         track: Int?
     ): Int
 
-    /** 2026-08-19：标题清洗——用真实歌名/歌手覆盖文件名回退的 title（仅文件名风格标题会触发）。 */
+    /**
+     * 2026-08-19：标题清洗——用真实歌名/歌手覆盖文件名回退的 title（仅文件名风格标题会触发）。
+     *
+     * **不刷新 updatedAt**：同样是自动清洗而非用户编辑，理由见 [fillTagsFromFile]。
+     */
     @Query("UPDATE songs SET title = :title, artistName = COALESCE(:artist, artistName) WHERE id = :id")
     suspend fun updateTitleArtist(id: Long, title: String, artist: String?): Int
 
@@ -283,18 +334,14 @@ interface SongDao {
     @Query("SELECT id FROM songs WHERE sourceType = :sourceType AND instr(uri, :uriPrefix) = 1")
     suspend fun getIdsByUriPrefix(sourceType: String, uriPrefix: String): List<Long>
 
-    /** F1-1 删源兜底：按 dedupKey 前缀取命中 id。ZT/base 改写 host 后旧曲目 uri 前缀匹配不到，
-     *  而 dedupKey 保留扫描键（可能未被改写），用同一源根前缀匹配 dedupKey 仍可命中，避免删源残留。 */
-    @Query("SELECT id FROM songs WHERE sourceType = :sourceType AND instr(dedupKey, :prefix) = 1")
-    suspend fun getIdsByDedupKeyPrefix(sourceType: String, prefix: String): List<Long>
-
     /** P1-4：按来源取轻量键（id + dedupKey），供扫描后清理失效曲目。 */
     @Query("SELECT id, dedupKey FROM songs WHERE sourceType = :sourceType")
     suspend fun getIdsAndDedupKeysBySource(sourceType: String): List<SourceSongKey>
 
-    /** 需求：按源根前缀取某网络源的轻量键（instr=1 前缀匹配，避免 LIKE 通配符误伤 URL/路径）；供网源失效清理。 */
-    @Query("SELECT id, dedupKey FROM songs WHERE sourceType = :sourceType AND instr(dedupKey, :prefix) = 1")
-    suspend fun getIdsAndDedupKeysByPrefix(sourceType: String, prefix: String): List<SourceSongKey>
+    /** 需求：按源根前缀取某网络源的轻量键（instr=1 前缀匹配，避免 LIKE 通配符误伤 URL/路径）；供网源失效清理。
+     *  2026-09-16：dedupKey 改为 `{sourceType}:{sha256(路径)}`，不再携带路径前缀，归属判定改用 uri 前缀。 */
+    @Query("SELECT id, dedupKey FROM songs WHERE sourceType = :sourceType AND instr(uri, :prefix) = 1")
+    suspend fun getIdsAndDedupKeysByUriPrefix(sourceType: String, prefix: String): List<SourceSongKey>
 
     /** P1-4：按 id 批量删除（分块调用，规避 SQLite 变量数上限）。 */
     @Query("DELETE FROM songs WHERE id IN (:ids)")

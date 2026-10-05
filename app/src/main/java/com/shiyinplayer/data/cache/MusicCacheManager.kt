@@ -62,7 +62,10 @@ class MusicCacheManager @Inject constructor(
 
     private val cacheDir = File(context.cacheDir, "music_cache")
     private val indexFile = File(cacheDir, "index.json")
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // ⚠️ 用 IO 而不是 Default：本作用域里的下载/校验/索引写盘都是**阻塞 IO**，
+    // 而播放侧构建 MediaItem 也跑在 Dispatchers.Default（PlayerManager / QueueManager）。
+    // 放 Default 上会与播放准备抢同一批线程（downloadSem 允许 2 并发），表现为边缓存边切歌时卡顿。
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val downloadSem = Semaphore(2)
     private val lock = Any()
     private val entries = LinkedHashMap<String, CacheEntry>() // url -> entry
@@ -76,27 +79,89 @@ class MusicCacheManager @Inject constructor(
         startMonitoring()
     }
 
-    /** 命中本地缓存则返回本地文件绝对路径，并刷新访问时间（LRU 依据）；未命中返回 null。 */
+    /**
+     * 命中本地缓存则返回本地文件绝对路径，并刷新访问时间（LRU 依据）；未命中返回 null。
+     *
+     * ⚠️ B3-4：这里**只查内存索引**，不做任何磁盘 IO。
+     *
+     * 原先在此处做 `exists() / isFile / length() / 读 64 字节头` 四次 IO，而本方法就在**播放主路径**上
+     * （构建 MediaItem 时调用）：一首一首地 stat 文件，边缓存边切歌时会明显卡顿。
+     *
+     * 完整性校验改到两个离线的时点，见 [verifyOnDisk]：
+     *   ① 下载完成时（[transferFile] 之后）立刻校验；
+     *   ② 后台水位巡检里分批校验。
+     * 于是"缓存文件被外部删掉/损坏"最坏表现为**播放失败一次**而不是长期命中坏文件；
+     * 播放侧遇到失败时调 [markBroken] 把该条剔除并触发重下。
+     */
     fun filePathFor(url: String): String? {
+        // 开关关闭时不再走缓存命中：此前只在 ensureCached 里判开关，已缓存的文件仍会被优先播放，
+        // 用户感知为「关掉缓存没生效」。开关读内存快照，避免在主线程 runBlocking 拉 DataStore。
+        if (!runCatching { settings.cacheEnabledSync() }.getOrDefault(true)) return null
         synchronized(lock) {
             val e = entries[url] ?: return null
-            val f = File(cacheDir, e.fileName)
-            if (!f.exists() || !f.isFile) {
-                entries.remove(url)
-                return null
-            }
-            // 完整性（2026-08-22）：尺寸不符或头部明显异常 → 判定缓存损坏，剔除并强制重新下载，
-            // 避免把早期切段续传产生的坏文件一直命中 READY 重播。
-            // 中危-E：按目标扩展名做魔数校验，缺位时仍做通用过小/全空拦截。
-            if (f.length() != e.sizeBytes || !validAudioHeader(f, extOf(url))) {
-                Log.w(TAG, "缓存损坏剔除 ${e.fileName}（记录=${e.sizeBytes}B 实际=${f.length()}B）")
-                entries.remove(url)
-                runCatching { f.delete() }
-                return null
-            }
             e.lastAccessMs = System.currentTimeMillis()
-            return f.absolutePath
+            return File(cacheDir, e.fileName).absolutePath
         }
+    }
+
+    /**
+     * 播放失败时由调用方通知：该缓存条目不可用 → 剔除并删文件，下次走重新下载。
+     *
+     * 这是"只在离线时点校验"的代价补偿：坏文件可能被命中一次，但绝不会被长期重复命中。
+     */
+    fun markBroken(url: String) {
+        if (url.isBlank()) return
+        scope.launch {
+            val file = synchronized(lock) {
+                val e = entries.remove(url) ?: return@launch
+                File(cacheDir, e.fileName)
+            }
+            runCatching { file.delete() }
+            Log.w(TAG, "缓存不可用已剔除：${file.name}")
+        }
+    }
+
+    /**
+     * 校验磁盘上的缓存条目是否仍然有效（尺寸 + 魔数）。**阻塞 IO，只在 IO 线程调用。**
+     *
+     * @param limit 本次最多校验多少条（巡检分批用，避免一次扫全量造成卡顿）
+     * @return 被剔除的条目数
+     */
+    /**
+     * 刚下载完的那一条：立刻做一次尺寸 + 魔数校验（阻塞 IO，仅 IO 线程）。
+     * 通过返回绝对路径；不通过则剔除并返回 null（让调用方回退到直链播放）。
+     */
+    private fun verifyFresh(url: String): String? {
+        val e = synchronized(lock) { entries[url] } ?: return null
+        val f = File(cacheDir, e.fileName)
+        if (!f.isFile || f.length() != e.sizeBytes || !validAudioHeader(f, extOf(url))) {
+            synchronized(lock) { entries.remove(url) }
+            runCatching { f.delete() }
+            Log.w(TAG, "下载完成校验未通过，已剔除：${e.fileName}")
+            return null
+        }
+        return f.absolutePath
+    }
+
+    private suspend fun verifyOnDisk(limit: Int = Int.MAX_VALUE): Int {
+        var removed = 0
+        // 快照出需要的三个字段（CacheEntry 不是 data class，没有 copy()；且必须在锁内取）
+        val snapshot = synchronized(lock) {
+            entries.entries.take(limit).map { Triple(it.key, it.value.fileName, it.value.sizeBytes) }
+        }
+        for ((url, fileName, sizeBytes) in snapshot) {
+            val f = File(cacheDir, fileName)
+            if (!f.isFile || f.length() != sizeBytes || !validAudioHeader(f, extOf(url))) {
+                synchronized(lock) { entries.remove(url) }
+                runCatching { f.delete() }
+                removed++
+                Log.w(TAG, "巡检剔除损坏缓存 $fileName（记录=${sizeBytes}B）")
+            }
+        }
+        if (removed > 0) {
+            runCatching { saveIndex() }
+        }
+        return removed
     }
 
     /** 已缓存（含大小），供 UI 展示/统计。 */
@@ -147,7 +212,8 @@ class MusicCacheManager @Inject constructor(
                 synchronized(lock) { downloading.add(url) }
                 try {
                     downloadSem.withPermit { transferFile(url) }
-                    d.complete(filePathFor(url))
+                    // B3-4：下载完成即校验（原先是等下次播放命中时才校验）
+                    d.complete(verifyFresh(url))
                 } catch (e: CancellationException) {
                     d.complete(null)
                     throw e
@@ -169,7 +235,14 @@ class MusicCacheManager @Inject constructor(
         scope.launch {
             while (true) {
                 kotlinx.coroutines.delay(60_000)
-                if (runningCount() == 0) withContext(Dispatchers.IO) { enforceBudget() }
+                if (runningCount() == 0) {
+                    withContext(Dispatchers.IO) {
+                        // B3-4：完整性校验挪到这里分批做（播放主路径上不再 stat 文件）。
+                        // 每轮最多 50 条，避免首轮缓存很多时一次性扫全量造成可感知的卡顿。
+                        verifyOnDisk(limit = 50)
+                        enforceBudget()
+                    }
+                }
             }
         }
     }

@@ -5,14 +5,13 @@ import android.net.Uri
 /** 路由定义。设置子屏与网络/ZeroTier 单独列出。 */
 sealed class Screen(val route: String) {
     object Library : Screen("library")
-    object Songs : Screen("songs")
-    object Albums : Screen("albums")
-    object Artists : Screen("artists")
+    // B1-2：songs / albums / artists / folders 四条独立路由已删除 ——
+    // 曲库改成内联 Pane 后（见 LibraryScreen），它们没有任何一处 navigate，
+    // 只剩导航图里的注册项，属于"注册了但永远走不到"的死路由。
     object Playlists : Screen("playlists")
     object More : Screen("more")
     object NowPlaying : Screen("nowplaying")
     object Queue : Screen("queue")
-    object Folders : Screen("folders")
     object Search : Screen("search")
     object ZeroTier : Screen("zerotier")
     object Network : Screen("network")
@@ -48,6 +47,9 @@ sealed class Screen(val route: String) {
     object SettingsMetadataSources : Screen("settings_metadata_sources")
     object SettingsSound : Screen("settings_sound")
     object SettingsIntegration : Screen("settings_integration")
+
+    // 局域网同步（PC 主控 / 安卓接收端，端口 23541）
+    object SettingsLanSync : Screen("settings_lan_sync")
 
     // 播放器数据导出/导入（入口弹窗选择后进入各自独立界面）
     object DataExport : Screen("data_export")

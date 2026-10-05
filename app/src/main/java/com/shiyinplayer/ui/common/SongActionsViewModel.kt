@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shiyinplayer.data.local.dao.PlaylistItemDao
 import com.shiyinplayer.data.local.dao.SongDao
+import com.shiyinplayer.data.media.MediaCacheCleaner
 import com.shiyinplayer.data.metadata.SongMatch
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.Playlist
@@ -36,6 +37,7 @@ class SongActionsViewModel @Inject constructor(
     private val libraryRepository: LibraryRepository,
     private val playerManager: PlayerManager,
     private val metadataRepository: MetadataRepository,
+    private val mediaCacheCleaner: MediaCacheCleaner,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -76,6 +78,9 @@ class SongActionsViewModel @Inject constructor(
     /** 从曲库删除（含歌单引用清理；本地文件按 allow_delete_file 决定是否物理删除）。 */
     fun deleteSongs(songs: List<Song>) = viewModelScope.launch(Dispatchers.IO) {
         val deleteFile = settings.allowDeleteFile.firstOrNull() ?: true
+        // 需求⑤：封面地址要在**删行之前**取（删完就查不到了），删完再做引用计数回收
+        val artworkUris = songs.map { it.albumArtUri }
+        val ids = songs.map { it.id }
         for (song in songs) {
             playlistItemDao.removeAllForSong(song.id)
             songDao.deleteById(song.id)
@@ -84,6 +89,7 @@ class SongActionsViewModel @Inject constructor(
                 if (path != null) runCatching { File(path).delete() }
             }
         }
+        runCatching { mediaCacheCleaner.cleanAfterDelete(ids, artworkUris) }
         if (songs.isNotEmpty()) runCatching { libraryRepository.refreshAggregates() }
     }
 

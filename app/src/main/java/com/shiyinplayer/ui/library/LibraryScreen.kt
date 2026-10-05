@@ -58,6 +58,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -252,7 +253,6 @@ fun LibraryScreen(navController: NavController? = null) {
                 onSelectionChange = { songsSelectionMode = it }
             )
             1 -> FolderPane(
-                navController = navController,
                 selectionMode = foldersSelectionMode,
                 onSelectionChange = { foldersSelectionMode = it }
             )
@@ -414,7 +414,11 @@ private fun SongsPane(
     var selectedIds by remember { mutableStateOf(setOf<Long>()) }
     var showPlaylistPicker by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    val selectedSongs = filtered.filter { it.id in selectedIds }
+    // 只在选中集合变化时重算：此前写在组合体内，每次重组（滚动、播放态刷新…）都要
+    // 对整张列表（万级曲库）做一次 filter，纯属浪费。
+    val selectedSongs by remember(filtered, selectedIds) {
+        derivedStateOf { filtered.filter { it.id in selectedIds } }
+    }
 
     // 退出选择模式时清空选中，避免下次进入残留旧勾选
     LaunchedEffect(selectionMode) { if (!selectionMode) selectedIds = emptySet() }

@@ -34,5 +34,4 @@ class PlayerViewModel @Inject constructor(
     fun setRepeat(mode: com.shiyinplayer.player.RepeatMode) = playerManager.setRepeatMode(mode)
     fun toggleShuffle() = playerManager.toggleShuffle()
     fun setSleepTimer(minutes: Int) = playerManager.setSleepTimer(minutes)
-    fun setPlaybackSpeed(speed: Float) = playerManager.setPlaybackSpeed(speed)
 }

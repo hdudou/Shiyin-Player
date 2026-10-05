@@ -17,5 +17,14 @@ data class RadioStationEntity(
     val source: String = "user",
     @ColumnInfo(name = "isFavorite") val isFavorite: Boolean = false,
     @ColumnInfo(name = "createdAt") val createdAt: Long = System.currentTimeMillis(),
-    @ColumnInfo(name = "updatedAt") val updatedAt: Long = System.currentTimeMillis()
+    @ColumnInfo(name = "updatedAt") val updatedAt: Long = System.currentTimeMillis(),
+    // ===== 局域网同步（PC 主控推送，DB v13） =====
+    /** 备用流地址数组（契约 alternateUrls，存 JSON 数组文本；与封面 logoUrl 语义无关，勿混用）。 */
+    val alternateUrls: String? = null,
+    /** 码率（kbps，契约 bitrate）。 */
+    val bitrate: Int = 0,
+    /** 收听次数（契约 listenCount）。 */
+    val listenCount: Int = 0,
+    /** 最后播放时间（Unix ms，契约 lastPlayedAt）。 */
+    val lastPlayedAt: Long = 0
 )

@@ -74,6 +74,39 @@ class TheAudioDBApi @Inject constructor(
         }
     }
 
+    /**
+     * 歌手资料（需求③「能力按实际标记」）。
+     *
+     * 改造前本类声明了 [MetaCapability.ARTIST] 却**没有实现这个方法** —— 属于能力虚标：
+     * 设置页的能力矩阵会显示它有「歌手」，getArtistInfo 也会按优先级白跑一轮。
+     * 本次顺手补实现（而不是撤声明），因为需求①本来就要用 TheAudioDB 的中文简介。
+     *
+     * 注意与 searchtrack.php 的区别：那个接口只返回曲目、**不含**歌手头像/简介；
+     * 歌手资料必须走 search.php（s=歌手名）→ strArtistThumb / strBiographyCN。
+     * strBiographyCN 是现成的中文简介（实测有值），其它西方源很少给，故优先取它。
+     */
+    override suspend fun artist(name: String): ArtistMetadata? {
+        val clean = name.trim().ifBlank { return null }
+        val raw = http.get(
+            "https://theaudiodb.com/api/v1/json/2/search.php?s=${urlEncode(clean)}",
+            headers = mapOf("User-Agent" to UA)
+        ) ?: return null
+        return try {
+            val artists = JSONObject(raw).optJSONArray("artists") ?: return null
+            for (i in 0 until artists.length()) {
+                val a = artists.getJSONObject(i)
+                val thumb = a.optString("strArtistThumb").takeIf { it.isNotBlank() }
+                val bio = a.optString("strBiographyCN").takeIf { it.isNotBlank() }
+                    ?: a.optString("strBiographyEN").takeIf { it.isNotBlank() }
+                if (thumb == null && bio == null) continue
+                return ArtistMetadata(name = clean, avatarUrl = thumb, bio = bio)
+            }
+            null
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     private fun urlEncode(s: String): String = java.net.URLEncoder.encode(s, "UTF-8")
 
     companion object {

@@ -3,9 +3,14 @@ package com.shiyinplayer
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import com.shiyinplayer.data.DefaultSourceSeeder
+import com.shiyinplayer.data.media.ShiyinImageLoader
 import com.shiyinplayer.data.metasync.MetadataSyncManager
 import com.shiyinplayer.data.network.NetworkMonitor
 import com.shiyinplayer.data.network.zerotier.ZeroTierManager
+import com.shiyinplayer.data.radio.RadioBuiltInUpdater
 import com.shiyinplayer.data.radio.RadioStationSeeder
 import com.shiyinplayer.data.repository.LibraryRepository
 import com.shiyinplayer.ui.settings.SettingsRepository
@@ -24,12 +29,11 @@ import kotlinx.coroutines.launch
  * 2026-08-19：启动时触发一次「自动同步曲库文件元数据」检查（开关开启且当前网络允许才执行，
  * 独立 IO 线程，不阻塞冷启动与播放）；并启动网络状态监听——连接 WiFi 时自动触发后台同步（需求3）。
  *
- * 2026-08-22：首启播种（IO 协程，不阻塞冷启动）。
- * 2026-09-11（开源版）：去除默认 ZT 网络 ID / 默认 ZT WebDAV 源播种与更新检查、内置电台远程拉取，
- * 不内嵌任何私有网络与更新源，仅保留内置电台本地清单播种。
+ * 2026-08-22：首启播种（IO 协程，不阻塞冷启动）——预填 ZeroTier 默认网络 ID + 幂等播种
+ * ZT WebDAV 源（见 [DefaultSourceSeeder]）。
  */
 @HiltAndroidApp
-class MusicPlayerApplication : Application() {
+class MusicPlayerApplication : Application(), ImageLoaderFactory {
 
     @Inject lateinit var metadataSyncManager: MetadataSyncManager
 
@@ -37,13 +41,27 @@ class MusicPlayerApplication : Application() {
 
     @Inject lateinit var settingsRepository: SettingsRepository
 
+    @Inject lateinit var sourceSeeder: DefaultSourceSeeder
+
     @Inject lateinit var libraryRepository: LibraryRepository
 
     @Inject lateinit var zeroTierManager: ZeroTierManager
 
     @Inject lateinit var radioStationSeeder: RadioStationSeeder
 
+    @Inject lateinit var radioBuiltInUpdater: RadioBuiltInUpdater
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    /**
+     * 需求⑤ / D7=A：把 Coil 的单例换成**自定义 ImageLoader**。
+     *
+     * 默认那个有两处不符合「图片永不过期」：磁盘缓存落在 `cacheDir`（系统存储紧张时会清掉它）、
+     * 且默认听服务端的 `Cache-Control`（服务端说过期就过期）。自定义版把缓存放进 `filesDir`、
+     * 不看服务端缓存头、容量给到远超实际用量；真正生效的淘汰只发生在**删曲目**时
+     * （`MediaCacheCleaner` 显式 evict）。详见 [ShiyinImageLoader] 的类注释。
+     */
+    override fun newImageLoader(): ImageLoader = ShiyinImageLoader.build(this)
 
     /**
      * 前台追踪回调：任一 Activity STARTED 视为前台；全部 STOPPED（真正退到后台）时
@@ -92,12 +110,15 @@ class MusicPlayerApplication : Application() {
         // 2026-08-23 需求4：删去冷启立即执行的 [maybeRunSync]，首轮同步统一由「周期自动同步」承担，
         // 并延迟数秒执行——避免整库元数据同步与曲库首屏查询在冷启时争抢 IO，造成「打开加载慢」。
         metadataSyncManager.startContinuousSync()
-        // 预热库快照，确保首屏加载有缓存数据
-        appScope.launch { libraryRepository.preloadSnapshot() }
+        // 2026-08-22：首启播种（ZeroTier 网络 ID + 默认 ZT WebDAV 源），幂等、不阻塞启动
+        // 先播种再预热快照，确保首屏包含默认源
+        appScope.launch { sourceSeeder.seed(); libraryRepository.preloadSnapshot() }
         // 2026-09-02：首启播种内置电台清单（幂等、不阻塞启动）
-        // 2026-09-11：去除「启动时从更新服务器自动拉取内置电台清单」功能（开源版，不依赖远程更新源）。
         appScope.launch {
             radioStationSeeder.seedIfNeeded()
+            // 2026-09-09：播种完成后尝试从更新服务器拉取内置电台清单远程版本更新；
+            // 版本不变或网络不可达时静默跳过，不影响既有收音机功能。
+            radioBuiltInUpdater.updateIfNeeded()
         }
         // ZeroTier 自动连接：进程启动即恢复虚拟网，不再依赖 MainActivity
         appScope.launch { zeroTierManager.autoConnect() }

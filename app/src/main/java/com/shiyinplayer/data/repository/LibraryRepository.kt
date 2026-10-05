@@ -16,6 +16,7 @@ import com.shiyinplayer.data.mapper.EntityMappers.toEntity
 import com.shiyinplayer.data.mapper.EntityMappers.toModel
 import com.shiyinplayer.data.util.SongSearchKey
 import com.shiyinplayer.data.media.LibraryScanner
+import com.shiyinplayer.data.media.MediaCacheCleaner
 import com.shiyinplayer.data.media.FolderStructureBuilder
 import com.shiyinplayer.data.media.ScanMode
 import com.shiyinplayer.data.model.Album
@@ -46,6 +47,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,6 +69,7 @@ class LibraryRepository @Inject constructor(
     private val dispatcher: DispatcherProvider,
     // AZ-删除对账：删曲/删源写库后通知播放器剔除内存队列失效曲目（解耦，避免依赖环）。
     private val queueReconciler: com.shiyinplayer.player.QueueReconciler,
+    private val mediaCacheCleaner: MediaCacheCleaner,
     @ApplicationContext private val context: Context
 ) {
     /**
@@ -309,11 +312,15 @@ class LibraryRepository @Inject constructor(
     /** 合并一组重复曲：歌单引用重定向到保留曲，删除其余行（分块防 SQLite 变量上限）。 */
     suspend fun mergeDuplicateGroup(keepId: Long, deleteIds: List<Long>) {
         if (deleteIds.isEmpty()) return
+        // 需求⑤：封面地址在**删行之前**取；删完再按引用计数回收（重复曲常常共用同一张封面）
+        val artworkUris = runCatching { mediaCacheCleaner.collectArtworkBeforeDelete(deleteIds) }
+            .getOrDefault(emptyList())
         db.withTransaction {
-            playlistItemDao.deleteConflictingForMerge(keepId, deleteIds)
-            playlistItemDao.remapSongRefs(keepId, deleteIds)
+            // LWW：引用重定向 + 前移受影响歌单的时间戳（内部含「先删冲突条目」绕开唯一索引）
+            playlistItemDao.mergeDuplicateSongRefs(keepId, deleteIds)
             deleteIds.chunked(500).forEach { songDao.deleteByIds(it) }
         }
+        runCatching { mediaCacheCleaner.cleanAfterDelete(deleteIds, artworkUris) }
         invalidateSongsSnapshot()
     }
 
@@ -356,11 +363,15 @@ class LibraryRepository @Inject constructor(
     fun getMusicSources(): Flow<List<MusicSource>> =
         musicSourceDao.observeAll().map { it.map { e -> e.toModel() } }.flowOn(dispatcher.io)
 
-    suspend fun addMusicSource(source: MusicSource): Long =
-        musicSourceDao.insert(source.toEntity())
+    /** LWW：新增来源必须写入 createdAt/updatedAt，否则该行时间戳恒为 0（两端比对时永远"最旧"）。 */
+    suspend fun addMusicSource(source: MusicSource): Long {
+        val now = System.currentTimeMillis()
+        return musicSourceDao.insert(source.toEntity().copy(createdAt = now, updatedAt = now))
+    }
 
+    /** LWW：来源配置被修改时前移 updatedAt。 */
     suspend fun updateMusicSource(source: MusicSource) =
-        musicSourceDao.update(source.toEntity())
+        musicSourceDao.update(source.toEntity().copy(updatedAt = System.currentTimeMillis()))
 
     /** L-实时监控重扫前置：LOCAL 源根是否仍可访问（透传 LibraryScanner.localSourceAccessible）。 */
     fun localSourceAccessible(source: MusicSource): Boolean = scanner.localSourceAccessible(source)
@@ -380,16 +391,20 @@ class LibraryRepository @Inject constructor(
             org.json.JSONObject(source.configJson).optString("url").trimEnd('/')
         }.getOrNull().orEmpty()
         if (prefix.isNotBlank()) {
-            val uriHit = runCatching { songDao.getIdsByUriPrefix(source.type.name, prefix) }
+            // 2026-09-16：dedupKey 改为 `{sourceType}:{sha256(路径)}`、不再携带路径前缀，
+            // 删源归属一律按 uri 前缀（ZeroTier mapToLocal 只作用于连接层，库内 uri 保持扫描期原样）。
+            val affected = runCatching { songDao.getIdsByUriPrefix(source.type.name, prefix) }
                 .getOrDefault(emptyList())
-            val dedupHit = runCatching { songDao.getIdsByDedupKeyPrefix(source.type.name, prefix) }
-                .getOrDefault(emptyList())
-            val affected = (uriHit + dedupHit).distinct()
+                .distinct()
             if (affected.isNotEmpty()) {
+                // 需求⑤：删行之前先把封面地址留下来，删完再回收无人引用的封面文件
+                val artworkUris = runCatching { mediaCacheCleaner.collectArtworkBeforeDelete(affected) }
+                    .getOrDefault(emptyList())
                 db.withTransaction {
                     affected.forEach { playlistItemDao.removeAllForSong(it) }
                     songDao.deleteByIds(affected)
                 }
+                runCatching { mediaCacheCleaner.cleanAfterDelete(affected, artworkUris) }
             }
             scanningScope.launch { runCatching { cacheManager.purgeByUrlPrefix(prefix) } }
         }
@@ -466,14 +481,22 @@ class LibraryRepository @Inject constructor(
     /** 按当前歌曲表重建专辑/艺术家聚合（删除曲目等改动后调用，保证计数/年份一致）。 */
     suspend fun refreshAggregates() = scanner.rebuildAlbumsArtists()
 
-    /** 清理失效曲目（P3）：本地文件已不存在则删除（含歌单引用清理）。分页处理避免全表加载。返回清理数量。 */
-    suspend fun pruneMissingLocal(): Int {
+    /**
+     * 清理失效曲目（P3）：本地文件已不存在则删除（含歌单引用清理）。返回清理数量。
+     *
+     * 两处要点：
+     * 1. **游标分页**（`WHERE id > :afterId`）而不是 OFFSET —— 循环里边遍历边删，OFFSET 分页会漏删；
+     * 2. 整个检查过程放在 **IO 调度器**上 —— 逐首 `File.exists()` / `openInputStream()` 是阻塞 IO，
+     *    此前跑在调用方的 Main 上（设置页按钮），大曲库下直接 ANR。
+     */
+    suspend fun pruneMissingLocal(): Int = withContext(dispatcher.io) {
         val pageSize = 500
-        var offset = 0
+        var lastId = 0L
         var removed = 0
         while (true) {
-            val batch = songDao.getAllPaged(offset, pageSize)
+            val batch = songDao.getPagedAfterId(lastId, pageSize)
             if (batch.isEmpty()) break
+            lastId = batch.last().id
             for (song in batch) {
                 if (song.sourceType != MediaSourceType.LOCAL) continue
                 val exists = if (song.uri.startsWith("content://")) {
@@ -488,51 +511,52 @@ class LibraryRepository @Inject constructor(
                     removed++
                 }
             }
-            offset += pageSize
         }
         if (removed > 0) {
             scanner.rebuildAlbumsArtists()
             queueReconciler.notifyDeleted()
         }
-        return removed
+        removed
     }
 
     /**
      * F1-3：「清理失效曲目」设置项对网络源场景的兜底。
      * 清理「已删除网络源」遗留在库中的孤儿曲目：网络源曲目（SMB/WEBDAV/HTTP）若其 uri 与
-     * dedupKey 前缀均不属于任一当前有效网络源（config.url / scheme://authority），即视为该源已
-     * 删除遗留的脏数据，删除（含歌单引用、播放队列对账、聚合重建）。返回清理数量。
+     * path（扫描期原始键）前缀均不属于任一当前有效网络源（config.url / scheme://authority），
+     * 即视为该源已删除遗留的脏数据，删除（含歌单引用、播放队列对账、聚合重建）。返回清理数量。
+     * 2026-09-16：dedupKey 为路径哈希、无前缀语义，不再参与归属判定（改用 path 兜底）。
      * 与删源级联（F1-1）互补：删源负责移除时立即清理，本方法作为历史遗留 / 删源匹配死角的手动兜底。
      */
-    suspend fun pruneMissingNetworkOrphans(): Int {
+    suspend fun pruneMissingNetworkOrphans(): Int = withContext(dispatcher.io) {
         val validPrefixes = getMusicSources().first()
             .filterNot { it.type == MediaSourceType.LOCAL }
             .mapNotNull { networkRootPrefixOf(it) }
             .map { it.trimEnd('/') }
             .distinct()
         val pageSize = 500
-        var offset = 0
+        // 游标分页（同 pruneMissingLocal：边遍历边删时 OFFSET 分页会漏删）
+        var lastId = 0L
         var removed = 0
         while (true) {
-            val batch = songDao.getAllPaged(offset, pageSize)
+            val batch = songDao.getPagedAfterId(lastId, pageSize)
             if (batch.isEmpty()) break
+            lastId = batch.last().id
             for (song in batch) {
                 if (song.sourceType == MediaSourceType.LOCAL) continue
                 val belongs = validPrefixes.any { p ->
-                    song.uri.startsWith(p) || song.dedupKey.startsWith(p)
+                    song.uri.startsWith(p) || (song.path ?: "").startsWith(p)
                 }
                 if (belongs) continue
                 runCatching { playlistItemDao.removeAllForSong(song.id) }
                 runCatching { songDao.deleteById(song.id) }
                 removed++
             }
-            offset += pageSize
         }
         if (removed > 0) {
             scanner.rebuildAlbumsArtists()
             queueReconciler.notifyDeleted()
         }
-        return removed
+        removed
     }
 
     /** 网络源根前缀：SMB/WEBDAV 取 config.url；用于孤儿归属判定。LOCAL 返回 null。 */

@@ -35,7 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -60,8 +60,8 @@ fun DataImportScreen(
 ) {
     val snackbar = SnackbarHostState()
     val context = LocalContext.current
-    val busy by viewModel.busy.collectAsState()
-    val importing by viewModel.importing.collectAsState()
+    val busy by viewModel.busy.collectAsStateWithLifecycle()
+    val importing by viewModel.importing.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.message.value) {
         viewModel.message.value?.let {
@@ -74,7 +74,7 @@ fun DataImportScreen(
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? -> uri?.let { viewModel.prepareImport(it) } }
 
-    val preview by viewModel.preview.collectAsState()
+    val preview by viewModel.preview.collectAsStateWithLifecycle()
     preview?.let { p ->
         AlertDialog(
             onDismissRequest = { viewModel.cancelImport() },
@@ -91,7 +91,7 @@ fun DataImportScreen(
         )
     }
 
-    val needImportPassword by viewModel.needImportPassword.collectAsState()
+    val needImportPassword by viewModel.needImportPassword.collectAsStateWithLifecycle()
     if (needImportPassword) {
         var importPassword by rememberSaveable { androidx.compose.runtime.mutableStateOf("") }
         AlertDialog(

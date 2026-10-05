@@ -32,4 +32,40 @@ class FileNameTitleParserTest {
         assertEquals(pair(null, "PEGASUS FANTASY"), parseFileNameTitle("PEGASUS FANTASY-"))
         assertEquals(pair("Sittin' On", "The Dock of the Bay"), parseFileNameTitle("(Sittin' On) The Dock of the Bay"))
     }
+
+    /**
+     * 艺术家标签里带「-003.」序号前缀的回归（与 PC 端 MetadataNameNormalizer 同一批事故）。
+     *
+     * 真实文件名形如 `cd08-007.Alizee - A Contre Courant.flac`，其 ARTIST 标签被写成 `-007.Alizee`，
+     * 于是艺术家页出现「-003.Dido」「-004.Madonna」这类条目，把同一歌手裂成多行。
+     * cleanArtist 的既有链路（先剥两端符号 → 再循环剥序号）本就能还原，这里用测试把该行为钉住，
+     * 避免以后有人收窄规则时无声退化。
+     */
+    @Test
+    fun cleanArtistStripsLeadingTrackIndexWithDot() {
+        assertEquals("Dido", cleanArtist("-003.Dido"))
+        assertEquals("Dido", cleanArtist("-014.Dido"))
+        assertEquals("Madonna", cleanArtist("-004.Madonna"))
+        assertEquals("Willie Nelson", cleanArtist("-021.Willie Nelson"))
+        assertEquals("Delta Goodrem", cleanArtist("-010.Delta Goodrem"))
+        assertEquals("Dido", cleanArtist("003. Dido"))
+    }
+
+    /** 反向锚点：合法艺术家名不许被这套规则改写。 */
+    @Test
+    fun cleanArtistKeepsLegitimateNames() {
+        assertEquals("Dido", cleanArtist("Dido"))
+        assertEquals("恩雅(Enya)", cleanArtist("恩雅(Enya)"))
+        assertEquals("A-Lin（黄丽玲）", cleanArtist("A-Lin（黄丽玲）"))
+        assertEquals("2 Unlimited", cleanArtist("2 Unlimited"))
+        assertEquals("Maroon 5", cleanArtist("Maroon 5"))
+    }
+
+    /** 整串只是序号（剥完没有名字）⇒ 判无效，不入库。 */
+    @Test
+    fun cleanArtistRejectsBareIndex() {
+        assertEquals(null, cleanArtist("003."))
+        assertEquals(null, cleanArtist("-007."))
+        assertEquals(null, cleanArtist("000"))
+    }
 }

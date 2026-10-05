@@ -2,9 +2,14 @@
 <resources>
     <string name="app_name">拾音</string>
 
+    <!-- Batch 0 / §6.2 E3+E6：迁移前被拦下（本次什么都没改）时的说明页 -->
+    <string name="unsupported_data_blocked_backup_title">暂缓升级以保护你的曲库</string>
+    <string name="unsupported_data_blocked_backup_body">本次升级需要先给曲库做一份完整备份，但这台设备上没能做出来（通常是可用空间不足）。为保证万无一失，这次没有改动任何数据：你的曲库（v%1$d）仍在原处，安装的应用兼容 v%2$d 之前的结构。腾出一些存储空间后重新打开应用，即可正常完成升级。</string>
+    <string name="unsupported_data_blocked_space_title">存储空间不足，暂缓升级</string>
+    <string name="unsupported_data_blocked_space_body">升级需要约 3 倍曲库大小的可用空间（用于备份与迁移临时文件），清理缓存后仍然不够，因此本次没有改动任何数据：你的曲库（v%1$d）仍在原处。腾出存储空间后重新打开应用，即可正常完成升级。</string>
+    <string name="unsupported_data_untouched">原始数据（未被改动）：%1$s</string>
+
     <!-- 底部导航 -->
-    <string name="tab_playlists">播放列表</string>
-    <string name="tab_more">更多</string>
 
     <!-- 通用 -->
     <string name="action_search">搜索</string>
@@ -12,23 +17,10 @@
     <string name="action_cancel">取消</string>
     <string name="action_confirm">确定</string>
     <string name="action_delete">删除</string>
-    <string name="action_rescan">重新扫描</string>
-    <string name="action_scan_all">全部重新扫描</string>
-    <string name="empty_hint">暂无内容</string>
 
     <!-- 歌曲页 -->
-    <string name="add_song_title">从音乐源添加歌曲</string>
-    <string name="no_sources_hint">尚未添加音乐源？请先到「设置 → 音乐库 → 音乐库来源管理」添加本地 / WebDAV / SMB 来源。</string>
 
     <!-- 设置 -->
-    <string name="settings_title">设置</string>
-    <string name="cat_interface">界面</string>
-    <string name="cat_sound">声音引擎</string>
-    <string name="cat_playback">回放</string>
-    <string name="cat_playlist">播放列表</string>
-    <string name="cat_library">音乐库</string>
-    <string name="cat_control">控制</string>
-    <string name="cat_integration">整合</string>
 
     <!-- ZeroTier -->
     <string name="zerotier_title">ZeroTier 虚拟网络</string>
@@ -255,12 +247,12 @@
     <string name="network_pass_edit">密码（留空则不修改）</string>
     <string name="network_note_local">扫描本机文件夹，无需账号密码</string>
     <string name="network_smb_title">浏览局域网主机 / 共享</string>
-    <string name="network_smb_manual_host">无结果时输入主机 IP</string>
     <string name="network_browse_scanning">正在扫描局域网，请稍候…</string>
     <string name="network_browse_none">未发现局域网 SMB 主机，可手动输入主机地址</string>
     <string name="network_smb_cred_title">连接 SMB 主机</string>
     <string name="network_anon">匿名访问</string>
     <string name="network_connect">连接</string>
+    <string name="network_smb_manual_host">无结果时输入主机 IP</string>
     <string name="network_use_dir">使用此目录</string>
     <string name="action_edit">修改</string>
     <string name="action_open">打开</string>
@@ -321,7 +313,6 @@
         <string name="label_artist_optional">歌手（可空）</string>
 
         <!-- 通用控件：无障碍描述 -->
-        <string name="content_back">返回</string>
         <string name="content_cover">封面</string>
         <string name="content_album_cover">专辑封面</string>
 
@@ -377,14 +368,18 @@
         <string name="selected_count_albums">已选 %1$d 张</string>
         <string name="selected_count_artist">已选 %1$d 位</string>
         <string name="sort_by_name">名称</string>
+    <!-- Batch 0 / B2-6：曲库排序（此前 sort_by 键既无界面也无消费方） -->
+    <string name="sort_by_title">标题</string>
+    <string name="sort_by_album">专辑</string>
+    <string name="sort_by_duration">时长</string>
+    <string name="sort_by_date_added">入库时间</string>
+    <string name="set_sec_sort">排序</string>
+    <string name="set_fade_in">淡入</string>
+    <string name="set_fade_out">淡出</string>
         <string name="sort_by_year">年代</string>
         <string name="sort_by_artist">艺术家</string>
 
         <!-- 通用控件：Toast -->
-        <string name="toast_cannot_access_file">无法访问该本地音频文件</string>
-        <string name="toast_no_permission_audio">无权限访问该音频</string>
-        <string name="toast_unsupported_source">不支持的音频来源</string>
-        <string name="external_audio">外部音频</string>
     <string name="theme_zaicai">玄素映彩</string>
     <string name="set_theme_follow_system">跟随系统</string>
     <string name="set_theme_light">浅色</string>
@@ -529,8 +524,8 @@
     <string name="set_metadata_sources">元数据来源</string>
     <string name="set_metadata_sources_hint">点击开关仅启用/禁用对应源，不改变排列顺序；播放器按下方顺序从上到下获取并跳过关闭的源。如需调整优先级请使用每个源的 ▲/▼ 按钮。</string>
     <string name="set_source_disabled">（关）</string>
-    <string name="set_reset_sources">恢复默认（网易云 / QQ / 酷我 三源及官方排列顺序）</string>
-    <string name="set_metadata_sources_hint2">默认仅启用 网易云 / QQ / 酷我 三个中文源，其余源关闭以节省流量与请求；可按需点击开关启用，并用 ▲/▼ 调整排列顺序。</string>
+    <string name="set_reset_sources">恢复默认（网易云 / QQ / 酷我 / 咪咕 / 酷狗 / TheAudioDB 及官方排列顺序）</string>
+    <string name="set_metadata_sources_hint2">默认启用 网易云 / QQ / 酷我 / 咪咕 / 酷狗 五家中文源，以及提供歌手头像与中文简介的 TheAudioDB；Genius 与维基百科默认关闭以节省流量与请求。可按需点击开关启用，并用 ▲/▼ 调整排列顺序。</string>
     <string name="set_auto_sync_metadata">自动同步音乐元数据</string>
     <string name="set_sync_running">运行中</string>
     <string name="set_sync_idle">待机（每 %1$d 分钟自动同步）</string>
@@ -658,7 +653,6 @@
     <string name="radio_edit">修改</string>
     <string name="radio_station_info">电台信息</string>
     <string name="radio_uncategorized">未分类</string>
-    <string name="radio_yes">是</string>
     <string name="radio_no">否</string>
     <string name="radio_recent">最近收听</string>
     <string name="radio_no_match">没有找到匹配的电台</string>
@@ -675,15 +669,10 @@
     <string name="radio_delete_station_title">删除电台</string>
     <string name="radio_delete_station_confirm">确定要删除「%1$s」吗？此操作不可恢复。</string>
     <string name="radio_delete_station_confirm_multi">确定要删除「%1$s」（共 %2$d 个线路）吗？此操作不可恢复。</string>
-    <string name="radio_delete_station_suffix">（共 %1$d 个线路）</string>
 
     <!-- 关于页 -->
     <string name="about_version_build">版本 %1$s · 构建 %2$d</string>
     <string name="about_view_changelog">查看版本更新内容</string>
-    <string name="about_open_source_title">开源许可</string>
-    <string name="about_open_source_desc">本项目遵循 GPL-3.0 协议开源（详见仓库 LICENSE 文件）。基于本项目修改、再分发或发布衍生作品者，同样须以 GPL-3.0 授权并完整开源，同时保留版权声明。</string>
-    <string name="about_github_prefix">GitHub: %1$s</string>
-    <string name="about_github_url">https://github.com/hdudou/Shiyin-Player</string>
     <string name="about_third_party_title">第三方依赖库</string>
     <string name="about_third_party_desc">播放器当前使用的第三方依赖（与构建配置对齐）。详见各库官方许可证。</string>
     <string name="about_purpose_prefix">用途: %1$s</string>
@@ -915,5 +904,46 @@
     <string name="dup_keep">保留</string>
     <string name="dup_merge_done">已合并「%1$s」，保留 1 个，移除 %2$d 个重复项</string>
     <string name="dup_merge_failed">合并失败：%1$s</string>
+
+    <!-- ===== 局域网同步（PC 主控 / 安卓接收端，端口 23541） ===== -->
+    <string name="more_lan_sync">局域网同步</string>
+    <string name="more_lan_sync_summary">接收 PC 推送的曲库与歌单变更</string>
+    <string name="lan_sync_section_basic">同步开关</string>
+    <string name="lan_sync_enable_label">允许局域网同步</string>
+    <string name="lan_sync_enable_summary">开启后在 23541 端口监听 PC 的同步请求（仅私有网段，TLS 加密）</string>
+    <string name="lan_sync_listen_ok">正在监听 https://%1$s:%2$d</string>
+    <string name="lan_sync_listen_starting">正在启动监听…</string>
+    <string name="lan_sync_listen_error">启动失败：%1$s（请确认已连接 WLAN）</string>
+    <string name="lan_sync_section_device">本机名称</string>
+    <string name="lan_sync_device_name_label">设备名称</string>
+    <string name="lan_sync_device_name_default">留空则使用机型名称</string>
+    <string name="lan_sync_device_name_save">保存名称</string>
+    <string name="lan_sync_section_pair">配对码</string>
+    <string name="lan_sync_pin_expired">------</string>
+    <string name="lan_sync_pin_remaining">%1$s 后失效。在 PC 端输入该配对码完成配对。</string>
+    <string name="lan_sync_pin_hint">配对码未生成或已失效，点「刷新」生成新的 6 位配对码。</string>
+    <string name="lan_sync_pin_refresh">刷新</string>
+    <string name="lan_sync_section_paired">已配对设备</string>
+    <string name="lan_sync_paired_empty">暂无已配对设备。PC 首次配对需要上面的配对码。</string>
+    <string name="lan_sync_paired_at">配对于 %1$s · %2$s</string>
+    <string name="lan_sync_paired_remove">移除</string>
+    <string name="lan_sync_section_folder">同步接收文件夹</string>
+    <string name="lan_sync_folder_hint">PC 推送的音频文件按 dedupKey 命名后落在该目录下的 synced/ 子目录，收到后自动接入曲库；PC 勾选删除本机文件时只清理该目录内的文件</string>
+    <string name="lan_sync_channel_name">局域网同步</string>
+    <string name="lan_sync_channel_desc">同步服务运行状态</string>
+    <string name="lan_sync_notify_running_title">局域网同步已开启</string>
+    <string name="lan_sync_notify_running_text">监听 %1$s:%2$d，等待 PC 连接</string>
+
+    <!-- Batch 0 / B0-3：降级安装（库里的结构版本高于当前 APK 能认的版本）时的说明页 -->
+    <string name="unsupported_data_title">数据版本高于当前应用</string>
+    <string name="unsupported_data_body">你的曲库数据由更新版本的播放器创建（数据版本 v%1$d），当前安装的应用只支持 v%2$d。为避免损坏曲库，本次已改用临时空曲库启动，你的原始数据没有被修改。</string>
+    <string name="unsupported_data_original">原始数据：%1$s</string>
+    <string name="unsupported_data_backup">已备份到：%1$s</string>
+    <string name="unsupported_data_exit">退出应用</string>
+    <string name="unsupported_data_copy">复制路径</string>
+    <string name="unsupported_data_copied">路径已复制</string>
+    <string name="unsupported_data_recover_title">曲库升级未成功</string>
+    <string name="unsupported_data_recover_body">本次升级没能安全地完成数据迁移，已放弃改动你的原始数据。当前显示的是空白曲库，你的文件仍保存在下面这个位置，请保留它以便恢复。</string>
+    <string name="unsupported_data_recover_source">原始数据：%1$s</string>
 
 </resources>

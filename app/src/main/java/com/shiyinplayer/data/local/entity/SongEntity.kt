@@ -55,5 +55,12 @@ data class SongEntity(
     val lyricOffsetMs: Long = 0,
     // ===== 搜索拼音索引（F6-2，DB v12） =====
     /** 归一化搜索键：原文去空白 + 全拼 + 中文首字母（全小写），供拼音/首字母/原文匹配；扫描入录时计算。 */
-    val searchKey: String = ""
+    val searchKey: String = "",
+    // ===== 局域网同步（PC 主控推送，DB v13） =====
+    /** 收藏标记（契约字段 favorite；注意历史列 isFavorite 已在 6→7 迁移中删除，勿复用该名）。 */
+    val favorite: Boolean = false,
+    /** 光盘号（契约 discNo）。 */
+    val discNo: Int = 0,
+    /** PC 侧记录最后修改时间（Unix ms，契约 updatedAt；本地新增歌曲为 0）。 */
+    val updatedAt: Long = 0
 )

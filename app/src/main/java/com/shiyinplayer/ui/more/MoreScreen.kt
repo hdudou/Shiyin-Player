@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material.icons.filled.SettingsInputComponent
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -70,6 +71,7 @@ private fun moreCategories(): List<MoreCategory> = listOf(
     MoreCategory(stringResource(R.string.more_sound), stringResource(R.string.more_sound_summary), Icons.Default.Hearing, Screen.SettingsSound.route),
     MoreCategory(stringResource(R.string.more_stats), stringResource(R.string.more_stats_summary), Icons.Default.BarChart, Screen.Stats.route),
     MoreCategory(stringResource(R.string.more_integration), stringResource(R.string.more_integration_summary), Icons.Default.SettingsInputComponent, Screen.SettingsIntegration.route),
+    MoreCategory(stringResource(R.string.more_lan_sync), stringResource(R.string.more_lan_sync_summary), Icons.Default.Sync, Screen.SettingsLanSync.route),
     MoreCategory(stringResource(R.string.more_export), stringResource(R.string.more_export_summary), Icons.Default.FileDownload, Screen.DataExport.route),
     MoreCategory(stringResource(R.string.more_import), stringResource(R.string.more_import_summary), Icons.Default.FileUpload, Screen.DataImport.route),
     MoreCategory(stringResource(R.string.more_about), stringResource(R.string.more_about_summary), Icons.Default.Info, Screen.About.route)
@@ -128,6 +130,8 @@ private fun PortraitMoreList(navController: NavController) {
             HorizontalDivider()
         }
         item {
+            HorizontalDivider()
+            CheckVersionSection()
             HorizontalDivider()
         }
     }
@@ -194,6 +198,7 @@ private fun LandscapeMoreGrid(navController: NavController) {
         }
         item(span = { GridItemSpan(maxLineSpan) }) {
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            CheckVersionSection()
         }
     }
 }

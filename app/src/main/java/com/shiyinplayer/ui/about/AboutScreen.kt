@@ -1,7 +1,5 @@
 package com.shiyinplayer.ui.about
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.shiyinplayer.BuildConfig
 import com.shiyinplayer.R
 import com.shiyinplayer.util.AppVersion
 import com.shiyinplayer.player.decoder.OpenSourceLibraryRegistry
@@ -42,7 +41,9 @@ private val thirdPartyLibraries = listOf(
     ThirdPartyLibrary("Lifecycle", "2.8.4", "Apache-2.0", R.string.about_purpose_lifecycle),
     ThirdPartyLibrary("OkHttp", "4.12.0", "Apache-2.0", R.string.about_purpose_okhttp),
     ThirdPartyLibrary("jcifs-ng", "2.1.9", "LGPL-2.1", R.string.about_purpose_smb),
-    ThirdPartyLibrary("AndroidX Security-Crypto", "1.1.0-alpha06", "Apache-2.0", R.string.about_purpose_security),
+    // B1-9：版本由构建注入（与 app/build.gradle.kts 的 securityCrypto 同源），
+    // 不再在此处另写一份 —— 原先硬编码的 "1.1.0-alpha06" 早已与实际依赖漂移。
+    ThirdPartyLibrary("AndroidX Security-Crypto", BuildConfig.VERSION_SECURITY_CRYPTO, "Apache-2.0", R.string.about_purpose_security),
     ThirdPartyLibrary("AndroidX DocumentFile", "1.0.1", "Apache-2.0", R.string.about_purpose_documentfile),
     ThirdPartyLibrary("AndroidX Media", "1.7.0", "Apache-2.0", R.string.about_purpose_media),
     ThirdPartyLibrary("FFmpeg (软解库)", "6.1.1", "LGPL-2.1", R.string.about_purpose_ffmpeg)
@@ -89,11 +90,9 @@ fun AboutScreen(navController: NavController) {
     val assets = OpenSourceLibraryRegistry.allAssets
     val violations = OpenSourceLibraryRegistry.validateConsistency()
     val complianceNotice = OpenSourceLibraryRegistry.complianceNoticeText()
-    val context = LocalContext.current
     val appVersion = AppVersion.displayName
     val buildInfo = stringResource(R.string.about_version_build, appVersion, AppVersion.code)
     val changelog = rememberChangelog()
-    val githubUrl = stringResource(R.string.about_github_url)
     var showNotes by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -132,42 +131,6 @@ fun AboutScreen(navController: NavController) {
                 Spacer(Modifier.height(4.dp))
                 TextButton(onClick = { showNotes = true }) {
                     Text(stringResource(R.string.about_view_changelog))
-                }
-            }
-
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            stringResource(R.string.about_open_source_title),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            stringResource(R.string.about_open_source_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        TextButton(
-                            onClick = {
-                                runCatching {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl)))
-                                }
-                            }
-                        ) {
-                            Text(
-                                stringResource(R.string.about_github_prefix, githubUrl),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
                 }
             }
 

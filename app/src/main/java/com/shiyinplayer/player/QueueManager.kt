@@ -1,5 +1,6 @@
 package com.shiyinplayer.player
 
+import android.util.Log
 import androidx.media3.exoplayer.ExoPlayer
 import com.shiyinplayer.data.model.Song
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,8 @@ import javax.inject.Singleton
 @Singleton
 class QueueManager @Inject constructor(
     private val queueController: QueueController,
-    private val mediaItemBuilder: MediaItemBuilder
+    private val mediaItemBuilder: MediaItemBuilder,
+    private val playbackActor: PlaybackActor
 ) {
     companion object {
         private const val WINDOW = 500
@@ -83,7 +85,19 @@ class QueueManager @Inject constructor(
         exo.prepare()
     }
 
-    /** 靠近窗口尾部时向前追加（不收缩头部，保持 fullToExo 映射简单正确；窗口上限由播放进度自然推进）。 */
+    /**
+     * 靠近窗口尾部时向前追加（不收缩头部，保持 fullToExo 映射简单正确；窗口上限由播放进度自然推进）。
+     *
+     * ⚠️ B3-1：整段动作必须走 [PlaybackActor] 串行通道。
+     * 原先这里直接 `scope.launch`：读到 `windowStart + count` 之后在 `withContext(Default)`
+     * 构建 MediaItem 时**挂起让出主线程**，期间 `removeAt` / `moveQueueItem` / `enqueueNext`
+     * 这类队列编辑可以插入执行；恢复后本协程按**过期的** windowStart / mediaItemCount
+     * 写回 `fullToExo` 并 `addMediaItems` ⇒ 全量索引与窗口索引的映射键值错位，
+     * 表现为"切歌切错歌 / 播到一半跳到不相干的曲目"。
+     *
+     * 走 actor 后：本动作执行期间其它会改队列/窗口的动作只能排队，
+     * 本动作看到的始终是"前序动作已完成"的最新状态。
+     */
     fun maybeExtendWindow() {
         val fullSize = queueController.queue.size
         val count = player().mediaItemCount
@@ -93,7 +107,13 @@ class QueueManager @Inject constructor(
         if (end >= fullSize) return
         val grow = minOf(WINDOW, fullSize - end)
         val tail = queueController.queue.subList(end, end + grow)
-        scope.launch {
+
+        // 记录发起时的现场，写回前用于重校验（actor 已经串行了，这里是第二道保险：
+        // 万一将来有人绕过 actor 直接改窗口，至少不会静默写错映射）
+        val startAtDispatch = windowStart
+        val countAtDispatch = count
+
+        playbackActor.dispatch {
             val currentExo = player()
             val tailExo = mutableListOf<Song>()
             tail.forEachIndexed { offset, song ->
@@ -103,9 +123,16 @@ class QueueManager @Inject constructor(
                     tailExo.add(song)
                 }
             }
-            if (tailExo.isEmpty()) return@launch
+            if (tailExo.isEmpty()) return@dispatch
             val items = withContext(Dispatchers.Default) { tailExo.map { mediaItemBuilder.build(it) } }
-            currentExo.addMediaItems(items)
+
+            // 重校验：窗口若在挂起期间被改动，这次扩展的基准已失效 —— 丢弃重来（下一帧会再次触发）
+            if (windowStart != startAtDispatch || player().mediaItemCount != countAtDispatch) {
+                Log.w("QueueManager", "窗口在扩展期间被改动，丢弃本次扩展（start=$startAtDispatch→$windowStart）")
+                return@dispatch
+            }
+
+            player().addMediaItems(items)
             onChanged()
         }
     }

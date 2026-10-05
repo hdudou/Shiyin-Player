@@ -29,7 +29,7 @@ class SourceRegistry @Inject constructor(
 
     private val byIdMap: Map<String, MetadataSource> = all.associateBy { it.id }
 
-    /** 默认启用源（仅前 3 个中文核心源；其余源默认不启用，用户在「元数据来源」设置中手动开启）。 */
+    /** 默认启用源（5 家中文源 + TheAudioDB，后者提供歌手头像/中文简介）；单一真源在 [SettingsRepository.defaultEnabledSources]。 */
     val defaultEnabled: List<String> = SettingsRepository.defaultEnabledSources
 
     /** 全部源 id（供设置界面确认可用 id 全集）。 */

@@ -142,7 +142,7 @@ class ZtNode @Inject constructor() {
             return
         }
         val nid = parseNetworkId(networkId) ?: run {
-            _events.tryEmit(ZtEvent.Error("网络 ID 无效：应为 16 位十六进制网络 ID", retriable = false))
+            _events.tryEmit(ZtEvent.Error("网络 ID 无效：应为 16 位十六进制（如 0123456789abcdef）", retriable = false))
             return
         }
         pendingNetworkId = nid

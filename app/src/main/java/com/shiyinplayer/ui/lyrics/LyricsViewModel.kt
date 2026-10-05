@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shiyinplayer.data.metadata.LrcParser
+import com.shiyinplayer.data.metadata.LyricLineIndex
 import com.shiyinplayer.data.metadata.MergedLine
 import com.shiyinplayer.data.metasync.MetadataSyncManager
 import com.shiyinplayer.data.model.Song
@@ -18,10 +19,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -66,13 +71,27 @@ class LyricsViewModel @Inject constructor(
     private val _state = MutableStateFlow(LyricsUiState())
     val state: StateFlow<LyricsUiState> = _state.asStateFlow()
 
-    /** §12 R5：稳定 tick 的实时播放位置（毫秒），供 NowPlaying 驱动当前歌词行。 */
+    /**
+     * §12 R5：稳定 tick 的实时播放位置（毫秒），供 [currentLineIndex] 派生。
+     *
+     * B4-7：**故意不对外暴露**。原先它有个公开的 `positionTick`，界面于是收集它、
+     * 每次重组再自己算行号 —— 每 200ms 一次全量扫描 + 整页重组。
+     * 现在只用于派生行号（已去重），不提供对外读法，免得下次又有人绕开去。
+     */
     private val _positionTick = MutableStateFlow(0L)
-    val positionTick: StateFlow<Long> = _positionTick.asStateFlow()
 
-    /** 性能优化：当前歌词行索引，仅在行号变化时更新。
-     *  NowPlaying 只收集本流，避免每 200ms 的 positionTick 整帧逼使整页重组。 */
-    val currentLineIndex: StateFlow<Int> = MutableStateFlow(-1)
+    /**
+     * 当前歌词行索引，**仅在行号变化时**发射 —— NowPlaying 收集这一条即可，
+     * 于是播放页不会因为 200ms 的位置 tick 而每 5 秒重组 25 次。
+     *
+     * ⚠️ B4-7 修正：原先是 `MutableStateFlow(-1)` 且**从未被写入**过的死流，
+     * 界面只能自己去收集 [positionTick] 再算索引，等于这道防护没生效。
+     * 现在真正从 tick 派生出来（map + distinctUntilChanged），并且只在有订阅者时工作。
+     */
+    val currentLineIndex: StateFlow<Int> = _positionTick
+        .map { indexForPosition(it) }
+        .distinctUntilChanged()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), -1)
 
     private var loadJob: Job? = null
     private var lastSongKey: String? = null
@@ -302,15 +321,28 @@ class LyricsViewModel @Inject constructor(
         _state.value = _state.value.copy(showTranslation = !_state.value.showTranslation)
     }
 
-    /** 计算当前播放位置对应的歌词行索引（R4：全量扫描取最后一个 timeMs<=position 的行）。 */
+    /** 上次算排序性时用的行列表（按引用比较，列表是不可变的、整体替换）。 */
+    private var sortedLinesRef: List<MergedLine>? = null
+    private var sortedLinesAscending = true
+
+    /**
+     * 计算当前播放位置对应的歌词行索引（R4：取最后一个 timeMs &lt;= position 的行）。
+     *
+     * B4-7：升序列表走上界二分（原先每次调用都全量扫描，而它是每 ~200ms 一次的热路径）；
+     * 乱序时保持原来的全量扫描，语义不变。排序性按行列表**引用**缓存 ——
+     * 列表是不可变对象且整体替换，引用没变就不用重算。
+     * 调用方都在主线程（UI 与 viewModelScope），因此这两个缓存字段无需加锁。
+     */
     fun indexForPosition(positionMs: Long): Int {
         val lines = _state.value.lines
         if (lines.isEmpty()) return -1
-        var idx = -1
-        for (i in lines.indices) {
-            if (positionMs >= lines[i].timeMs) idx = i
+
+        if (sortedLinesRef !== lines) {
+            sortedLinesRef = lines
+            sortedLinesAscending = LyricLineIndex.isSortedAscending(lines)
         }
-        return idx
+
+        return LyricLineIndex.indexOf(lines, positionMs, sortedLinesAscending)
     }
 
     // ===== 2026-08-19 需求4：歌词手工匹配 =====

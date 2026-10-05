@@ -8,6 +8,15 @@ package com.shiyinplayer.player.decoder
  */
 object FormatSpecificDurationProber {
 
+    /**
+     * APE（Monkey's Audio）典型码率估算值，单位 **bps**（对应约 800 kbps 的常规压缩档）。
+     * 单位为 bps 而非 kbps —— 时长公式 `字节数 × 8 ÷ 码率` 得到的才是秒。
+     */
+    private const val APE_ESTIMATED_BPS = 800_000L
+
+    /** OptimFROG 典型码率估算值，单位 bps（约 900 kbps）。 */
+    private const val OFR_ESTIMATED_BPS = 900_000L
+
     /** 返回时长（毫秒），0 表示探测失败。 */
     fun probe(ext: String, prefixBytes: ByteArray, fileSize: Long): Long {
         return try {
@@ -158,8 +167,9 @@ object FormatSpecificDurationProber {
         if (b.size < 4) return 0L
         if (String(b, 0, 4, Charsets.US_ASCII) != "MAC ") return 0L
         if (fileSize <= 0) return 0L
-        val estimatedBitrate = 800L
-        return fileSize * 8L / estimatedBitrate * 1000L
+        // ⚠️ 单位：kbps → bps 必须 ×1000。此前写成 `fileSize * 8 / 800 * 1000`，
+        //    等于把 800kbps 当成 800bps，结果放大约 1000 倍（5MB 的 APE 会算成 ~14 小时）。
+        return fileSize * 8L * 1000L / APE_ESTIMATED_BPS
     }
 
     /**
@@ -169,7 +179,6 @@ object FormatSpecificDurationProber {
         if (b.size < 4) return 0L
         if (String(b, 0, 4, Charsets.US_ASCII) != "OFR ") return 0L
         if (fileSize <= 0) return 0L
-        val estimatedBitrate = 900L
-        return fileSize * 8L / estimatedBitrate * 1000L
+        return fileSize * 8L * 1000L / OFR_ESTIMATED_BPS
     }
 }

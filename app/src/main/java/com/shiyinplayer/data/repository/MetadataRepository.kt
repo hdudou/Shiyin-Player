@@ -58,6 +58,13 @@ class MetadataRepository @Inject constructor(
     private val metadataCacheDao: MetadataCacheDao,
     private val songDao: SongDao
 ) {
+    /**
+     * 缓存新鲜度 —— **只剩曲目标签缓存（`getSongInfo`）还在用**。
+     *
+     * 需求⑤ / D7=A 点名的「永不过期」是**图片与歌词**：歌词、`getAlbumCover`、`getArtistInfo`
+     * 现在都不再看时间（见各自的注释）。`getSongInfo` 是**曲目标签**（专辑名 / 年份），
+     * 不在其列 —— 用户可能在别处改过标签，留着 TTL 才有机会自动刷新一次。
+     */
     private val cacheTtlMs = 7 * 24 * 60 * 60 * 1000L
 
     /** 源可靠度权重（中文源偏高，西方源兜底偏低），用于 pick 评分。 */
@@ -85,10 +92,13 @@ class MetadataRepository @Inject constructor(
                     )
                 }
             }
-            // 2) 回退：按 title|artist key（旧缓存，TTL 内有效）
+            // 2) 回退：按 title|artist key（旧缓存）
+            //    需求⑤/D7：**歌词永不过期** —— 原来这里有 7 天 TTL，到点就删条目、逼得重新联网取一次；
+            //    现在命中即用（`force` 仍可强制重取）。下架时机只有两个：曲目被删（MediaCacheCleaner）、
+            //    以及用户主动重新匹配。
             val cached = lyricCacheDao.get(key)
-            if (!force && cached != null && System.currentTimeMillis() - cached.updatedAt < cacheTtlMs) {
-                // 2026-08-19 需求：命中旧缓存时若当前歌曲未绑定则补绑 songId（此后永不过期）
+            if (!force && cached != null) {
+                // 2026-08-19 需求：命中旧缓存时若当前歌曲未绑定则补绑 songId（此后按 songId 命中）
                 if (song != null && song.id > 0 && cached.songId == null) {
                     lyricCacheDao.bindSong(key, song.id)
                 }
@@ -96,16 +106,17 @@ class MetadataRepository @Inject constructor(
                     LyricDocument(cached.lrcText, cached.translatedText, cached.source),
                     cached = true
                 )
-            } else if (cached != null) {
-                // DC：读到期的旧条目即删，防止过期缓存永久堆积
-                lyricCacheDao.deleteByKey(key)
             }
             // 3) 本地文件内嵌/侧车 .lrc 优先
+            // 来源标识如实区分 embedded / sidecar（需求⑧：与 PC 端 OnlineSourceIds 同一套取值）。
+            // 改造前这里写死 "local"，同步到 PC 后会被当成未知来源 —— 两端对不上就是来源漂移。
             if (song != null && !force) {
-                val local = localLyrics.load(song)
-                if (local != null && local.isNotBlank()) {
-                    lyricCacheDao.upsert(LyricCacheEntity(key, local, null, "local", System.currentTimeMillis(), song.id))
-                    return@withContext LyricsFetchResult(LyricDocument(local, null, "local"), cached = false)
+                val local = localLyrics.loadWithSource(song)
+                if (local != null && local.text.isNotBlank()) {
+                    lyricCacheDao.upsert(
+                        LyricCacheEntity(key, local.text, null, local.source, System.currentTimeMillis(), song.id)
+                    )
+                    return@withContext LyricsFetchResult(LyricDocument(local.text, null, local.source), cached = false)
                 }
             }
             // 4) 在线多源（统一顺序兜底）；online=false（如手动批量同步期间）时不联网，只走本地/缓存
@@ -201,10 +212,9 @@ class MetadataRepository @Inject constructor(
     suspend fun getAlbumCover(albumName: String, artist: String?): SongMetadata? = withContext(Dispatchers.IO) {
         val key = "album|" + songKey(albumName, artist)
         val cached = metadataCacheDao.get(key, MetadataCacheType.ALBUM)
-        if (cached != null && System.currentTimeMillis() - cached.updatedAt < cacheTtlMs) {
+        // 需求⑤/D7：**封面永不过期**，命中即用（不再按 cacheTtlMs 判新鲜度）
+        if (cached != null) {
             return@withContext MetadataCacheType.decodeSong(cached.payload)
-        } else if (cached != null) {
-            metadataCacheDao.deleteByKey(key, MetadataCacheType.ALBUM)
         }
         val album = albumName.trim()
         var bestCover: String? = null
@@ -224,22 +234,48 @@ class MetadataRepository @Inject constructor(
         } else null
     }
 
-    /** 歌手信息（头像 + 简介）。 */
+    /**
+     * 歌手信息（头像 + 简介）。
+     *
+     * 取源规则（1.0.16 与 PC 端 `OnlineMetadataService.LookupArtistAsync` **对齐**）：
+     * **按字段分别取首家**，而不是"整条取首家" —— 头像取第一家能出图的，
+     * 简介单独取第一家能出简介的（**可以来自不同源**）。
+     *
+     * 为什么必须拆开（实测结论，不是设计洁癖）：各源分布是**互补**的 ——
+     * 网易云 / QQ 有中文歌手的**头像**但**没有简介**（网易云 `briefDesc` 恒为空串、
+     * QQ 压根没这个字段），TheAudioDB 恰好相反（有 `strBiographyCN` 中文简介，
+     * 但对中文歌手命中率仅约 17%）。
+     * 若仍按"整条取首家"，网易云一旦给出头像就会**短路掉 TheAudioDB 的简介** ——
+     * 就成了「明明接了 TheAudioDB 却永远拿不到它的中文简介」，直接违背需求①。
+     */
     suspend fun getArtistInfo(artistName: String): ArtistInfo = withContext(Dispatchers.IO) {
         val key = "artist|" + songKey(artistName, null)
         val cached = metadataCacheDao.get(key, MetadataCacheType.ARTIST)
-        if (cached != null && System.currentTimeMillis() - cached.updatedAt < cacheTtlMs) {
+        // 需求⑤/D7：**歌手头像/简介永不过期**，命中即用
+        if (cached != null) {
             val artist = MetadataCacheType.decodeArtist(cached.payload)
             return@withContext ArtistInfo(artist, cached = true)
-        } else if (cached != null) {
-            metadataCacheDao.deleteByKey(key, MetadataCacheType.ARTIST)
         }
-        var artist: ArtistMetadata? = null
+
+        var avatar: String? = null
+        var bio: String? = null
         for (src in registry.orderedEnabled()) {
             if (!src.capabilities.contains(com.shiyinplayer.data.metadata.MetaCapability.ARTIST)) continue
-            try { artist = src.artist(artistName) } catch (_: Exception) { }
-            if (artist != null) break
+            if (avatar != null && bio != null) break      // 两个字段都齐了就不用再问
+            val one = try {
+                src.artist(artistName)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                null
+            } ?: continue
+
+            if (avatar == null && !one.avatarUrl.isNullOrBlank()) avatar = one.avatarUrl
+            if (bio == null && !one.bio.isNullOrBlank()) bio = one.bio
         }
+
+        // 一个字段都没拿到 = 本次没结果（落 null，下次再试），不要往缓存里写空壳
+        val artist = if (avatar == null && bio == null) null else ArtistMetadata(artistName, avatar, bio)
         if (artist != null) {
             metadataCacheDao.upsert(
                 MetadataCacheEntity(key, MetadataCacheType.ARTIST, MetadataCacheType.encodeArtist(artist), System.currentTimeMillis())

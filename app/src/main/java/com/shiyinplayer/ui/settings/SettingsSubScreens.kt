@@ -51,6 +51,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -210,8 +211,21 @@ fun LibrarySettingsScreen(navController: NavController, viewModel: SettingsViewM
     val maintenanceResult by viewModel.maintenanceResult.collectAsStateWithLifecycle()
     val scanExtensions by viewModel.scanExtensions.collectAsStateWithLifecycle()
     val playlistAutosave by viewModel.playlistAutosave.collectAsStateWithLifecycle()
+    val sortBy by viewModel.sortBy.collectAsStateWithLifecycle()
 
     SettingsScaffold(stringResource(R.string.set_library), navController) {
+        // B2-6：sort_by 此前既没有界面也没有消费方（曲库一直硬编码按标题排序）。
+        // 这里给出入口，SongsViewModel 那头读取同一个键排序。
+        SectionLabel(stringResource(R.string.set_sec_sort))
+        SelectRow(listOf(
+            stringResource(R.string.sort_by_title) to "title",
+            stringResource(R.string.sort_by_artist) to "artist",
+            stringResource(R.string.sort_by_album) to "album",
+            stringResource(R.string.sort_by_duration) to "duration",
+            stringResource(R.string.sort_by_date_added) to "date_added",
+        ), sortBy) {
+            viewModel.setSortBy(it)
+        }
         SectionLabel(stringResource(R.string.set_sec_browse_playlist))
         SwitchRow(stringResource(R.string.set_playlist_autosave), stringResource(R.string.set_playlist_autosave_summary), playlistAutosave) {
             viewModel.setPlaylistAutosave(it)
@@ -338,7 +352,7 @@ fun MetadataSettingsScreen(navController: NavController, viewModel: SettingsView
     }
 }
 
-// ===== 元数据来源子屏（需求：恢复获取源优先级设置，默认仅启用网易/QQ/酷我） =====
+// ===== 元数据来源子屏（需求：恢复获取源优先级设置，默认 5 中文源 + TheAudioDB） =====
 
 @Composable
 fun MetadataSourcesScreen(navController: NavController, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -557,6 +571,8 @@ fun SoundSettingsScreen(navController: NavController, viewModel: SettingsViewMod
     val replaygainMode by viewModel.replaygainMode.collectAsStateWithLifecycle()
     val volumeCurve by viewModel.volumeCurve.collectAsStateWithLifecycle()
     val fadeInMs by viewModel.fadeInMs.collectAsStateWithLifecycle()
+    // B2-6：fade_out_ms 一直"有消费（PlaybackController）无界面"，等于用户永远开不了
+    val fadeOutMs by viewModel.fadeOutMs.collectAsStateWithLifecycle()
     val silenceRemover by viewModel.silenceRemover.collectAsStateWithLifecycle()
 
     SettingsScaffold(stringResource(R.string.set_sound), navController) {
@@ -587,7 +603,9 @@ fun SoundSettingsScreen(navController: NavController, viewModel: SettingsViewMod
         }
         SelectRow(listOf(stringResource(R.string.set_curve_log) to "log", stringResource(R.string.set_curve_loudness) to "loudness"), volumeCurve) { viewModel.setVolumeCurve(it) }
         SectionLabel(stringResource(R.string.set_sec_mix))
-        SliderRow(stringResource(R.string.set_fade_in_out), "${fadeInMs}ms", fadeInMs.toFloat(), 0f..3000f) { viewModel.setFadeInMs(it.toInt()) }
+        // 原先只有一条标着"淡入淡出"的滑块，实际只写 fade_in_ms —— fade_out_ms 无从设置
+        SliderRow(stringResource(R.string.set_fade_in), "${fadeInMs}ms", fadeInMs.toFloat(), 0f..5000f) { viewModel.setFadeInMs(it.toInt()) }
+        SliderRow(stringResource(R.string.set_fade_out), "${fadeOutMs}ms", fadeOutMs.toFloat(), 0f..5000f) { viewModel.setFadeOutMs(it.toInt()) }
         SwitchRow(stringResource(R.string.set_silence_remover), stringResource(R.string.set_silence_remover_summary), silenceRemover) { viewModel.setSilenceRemover(it) }
         Text(
             stringResource(R.string.set_sound_core_hint),
@@ -600,7 +618,6 @@ fun SoundSettingsScreen(navController: NavController, viewModel: SettingsViewMod
 
 @Composable
 fun IntegrationSettingsScreen(navController: NavController, viewModel: SettingsViewModel = hiltViewModel()) {
-    val isDefaultPlayer by viewModel.isDefaultPlayer.collectAsStateWithLifecycle()
     val acceptExternalOpen by viewModel.acceptExternalOpen.collectAsStateWithLifecycle()
 
     // 2026-08-21 接线：设为默认播放器 → Android 系统「音乐与音频」角色（ROLE_MUSIC）。
@@ -609,7 +626,19 @@ fun IntegrationSettingsScreen(navController: NavController, viewModel: SettingsV
     val role = "android.app.role.MUSIC"
     val context = LocalContext.current
     val roleManager = remember(context) { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) context.getSystemService(RoleManager::class.java) else null }
-    var roleHeld by remember { mutableStateOf(roleManager?.isRoleHeld(role) ?: false) }
+
+    // B2-6：is_default_player 此前"只写不读" —— 这里让它承担两个职责：
+    //   ① 作为开关的初始值（上次状态，避免每次进页都闪一下"关"）；
+    //   ② 进入页面时立即用系统真实角色校正，并把校正结果写回去。
+    val persistedDefaultPlayer by viewModel.isDefaultPlayer.collectAsStateWithLifecycle()
+    var roleHeld by remember { mutableStateOf(persistedDefaultPlayer) }
+    LaunchedEffect(Unit) {
+        val actual = roleManager?.isRoleHeld(role)
+        if (actual != null && actual != persistedDefaultPlayer) {
+            roleHeld = actual
+            viewModel.setIsDefaultPlayer(actual)
+        }
+    }
     val roleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         roleHeld = roleManager?.isRoleHeld(role) ?: false
         viewModel.setIsDefaultPlayer(roleHeld)
@@ -646,7 +675,7 @@ fun IntegrationSettingsScreen(navController: NavController, viewModel: SettingsV
 // ===== 通用组件 =====
 
 @Composable
-private fun SettingsScaffold(
+internal fun SettingsScaffold(
     title: String,
     navController: NavController,
     content: @Composable ColumnScope.() -> Unit
@@ -672,14 +701,14 @@ private fun SettingsScaffold(
 }
 
 @Composable
-private fun SectionLabel(text: String) {
+internal fun SectionLabel(text: String) {
     Spacer(Modifier.height(16.dp))
     Text(text, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
     Spacer(Modifier.height(4.dp))
 }
 
 @Composable
-private fun SwitchRow(label: String, summary: String? = null, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+internal fun SwitchRow(label: String, summary: String? = null, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         Modifier.fillMaxWidth().padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -711,7 +740,7 @@ private fun StyleChip(label: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun NavRow(label: String, summary: String? = null, onClick: () -> Unit) {
+internal fun NavRow(label: String, summary: String? = null, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically

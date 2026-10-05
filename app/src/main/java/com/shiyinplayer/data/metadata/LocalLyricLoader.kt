@@ -15,7 +15,8 @@ import javax.inject.Singleton
 
 /**
  * 本地歌词加载（文件内嵌歌词优先）：
- * 0. read_embed_lyrics 开启时，解析音频文件开头的 ID3v2 USLT/ULT 帧（MP3 等）取内嵌歌词。
+ * 0. read_embed_lyrics 开启时解析**内嵌歌词**（需求⑦：ID3v2 USLT（MP3）/ FLAC LYRICS / MP4 ©lyr
+ *    三种容器，对齐 PC 的 TagLib 能力）—— 字节解析细节见 [EmbeddedLyrics]，那边是纯函数、可单测。
  * 1. 音频文件同目录、同文件名的 `.lrc` 侧车文件（覆盖 file / content URI / smb / webdav 路径）。
  * 2. 回退到 `{专辑名}.lrc` 与 `{标题}.lrc`。
  * 返回的是相对音频文件起点的原始 LRC 文本；CUE 分轨的偏移在 [LrcParser] 侧统一按 clipStartMs 校正。
@@ -30,23 +31,70 @@ class LocalLyricLoader @Inject constructor(
     private val smbBrowser: SmbBrowser,
     private val webDavBrowser: WebDavBrowser
 ) {
-    fun load(song: Song): String? {
+    /**
+     * 本地歌词 + 它的**来源标识**（需求⑧：两端来源取值统一，防止同步时来源漂移）。
+     *
+     * 改造前调用方只能拿到文本，于是落库时统一写死 `"local"` ——
+     * 既分不清是内嵌还是侧车，也与 PC 端的 `embedded` / `sidecar` 对不上，
+     * 同步到 PC 后同一首歌会变成「未知来源」。
+     */
+    data class LocalLyric(val text: String, val source: String)
+
+    /** 只要文本（不需要来源标识的调用方用这个）。 */
+    fun load(song: Song): String? = loadWithSource(song)?.text
+
+    fun loadWithSource(song: Song): LocalLyric? {
         if (song.uri.isBlank()) return null
         return try {
             // P0-4：改读内存快照（SettingsRepository readEmbedLyricsSync），消除主线程 runBlocking 阻塞。
             val embedEnabled = settings.readEmbedLyricsSync()
             val embedded = if (embedEnabled) loadEmbedded(song) else null
-            embedded ?: loadSidecar(song) ?: loadByAlbumOrTitle(song)
+            if (embedded != null) return LocalLyric(embedded, SOURCE_EMBEDDED)
+
+            // 侧车与「按专辑/标题猜」读的都是 .lrc 文件，来源同属一类
+            val sidecar = loadSidecar(song) ?: loadByAlbumOrTitle(song)
+            if (sidecar != null) return LocalLyric(sidecar, SOURCE_SIDECAR)
+
+            null
         } catch (_: Exception) {
             null
         }
     }
 
-    // ===== 内嵌歌词（ID3v2 USLT/ULT 帧） =====
+    // ===== 内嵌歌词（需求⑦：ID3v2 USLT / FLAC LYRICS / MP4 ©lyr，对齐 PC 的 TagLib）=====
 
+    /**
+     * 读文件头部的内嵌歌词；MP4 还要补一次**尾部窗口**。
+     *
+     * 为什么 MP4 要读两处：`moov`（歌词在 `moov/udta/meta/ilst/©lyr` 下）**可能在文件末尾** ——
+     * ffmpeg 不加 `-movflags faststart` 转出来的 m4a 就是这样，头部窗口里根本没有 `moov`。
+     * 只取尾部窗口来定位是安全的：判据是「这个 atom 的结束位置正好等于文件长度」，
+     * 而 moov 在末尾时必然满足（并且能避开正文里恰好出现的 "moov" 字样）。
+     *
+     * 限制（如实记下）：远程源（smb / http）没有「只取尾部」的通道，故只对本地文件做这一步；
+     * 且尾部窗口上限 [MAX_TAIL] —— 带大图封面的 moov 若超过该窗口会读不到。
+     */
     private fun loadEmbedded(song: Song): String? {
-        val bytes = readPrefix(song.uri, MAX_HEADER) ?: return null
-        return parseId3Uslt(bytes)
+        val head = readPrefix(song.uri, MAX_HEADER) ?: return null
+        EmbeddedLyrics.parse(head)?.let { return it }
+
+        if (EmbeddedLyrics.sniff(head) != EmbeddedLyrics.Container.MP4) return null
+        val uri = song.uri
+        if (uri.startsWith("content://") || uri.startsWith("smb:") || uri.startsWith("http")) return null
+
+        return runCatching {
+            val f = File(uri)
+            if (!f.isFile) return@runCatching null
+            val len = f.length()
+            if (len <= MAX_HEADER) return@runCatching null   // 整个文件都在头部窗口里读过了
+            val window = minOf(MAX_TAIL, len)
+            java.io.RandomAccessFile(f, "r").use { raf ->
+                raf.seek(len - window)
+                val buf = ByteArray(window.toInt())
+                raf.readFully(buf)
+                EmbeddedLyrics.parseMp4Tail(buf, len)
+            }
+        }.getOrNull()
     }
 
     private fun readPrefix(uriString: String, max: Int): ByteArray? {
@@ -75,68 +123,6 @@ class LocalLyricLoader @Inject constructor(
             total += n
         }
         return buffer.copyOf(total)
-    }
-
-    private fun parseId3Uslt(b: ByteArray): String? {
-        if (b.size < 10) return null
-        if (b[0] != 'I'.code.toByte() || b[1] != 'D'.code.toByte() || b[2] != '3'.code.toByte()) return null
-        val major = b[3].toInt() and 0xff
-        if (major !in 2..4) return null
-        var pos = 10
-        val tagEnd = pos + minOf(syncSafe(b, 6), b.size - 10)
-        if (major == 2) {
-            while (pos + 6 <= tagEnd) {
-                val id = String(b, pos, 3, Charsets.ISO_8859_1); pos += 3
-                val fs = ((b[pos].toInt() and 0xff) shl 16) or
-                    ((b[pos + 1].toInt() and 0xff) shl 8) or (b[pos + 2].toInt() and 0xff); pos += 3
-                if (fs <= 0) break
-                if (id == "ULT" && fs > 1 && pos + fs <= b.size) return decodeUslt(b, pos + 1, fs - 1)
-                pos += fs
-            }
-        } else {
-            while (pos + 10 <= tagEnd) {
-                val id = String(b, pos, 4, Charsets.ISO_8859_1); pos += 4
-                val fs = ((b[pos].toInt() and 0xff) shl 24) or
-                    ((b[pos + 1].toInt() and 0xff) shl 16) or
-                    ((b[pos + 2].toInt() and 0xff) shl 8) or (b[pos + 3].toInt() and 0xff); pos += 4
-                pos += 2 // frame flags
-                if (fs <= 0) break
-                if (id == "USLT" && fs > 1 && pos + fs <= b.size) return decodeUslt(b, pos + 1, fs - 1)
-                pos += fs
-            }
-        }
-        return null
-    }
-
-    private fun syncSafe(b: ByteArray, off: Int): Int =
-        ((b[off].toInt() and 0x7f) shl 21) or
-            ((b[off + 1].toInt() and 0x7f) shl 14) or
-            ((b[off + 2].toInt() and 0x7f) shl 7) or
-            (b[off + 3].toInt() and 0x7f)
-
-    /** 取语言[3] + 描述 + 正文，返回 LRC 风格文本（过滤空/非时间轴文本）。 */
-    private fun decodeUslt(b: ByteArray, start: Int, len: Int): String? {
-        if (len < 4) return null
-        val encoding = b[start].toInt() and 0xff
-        var idx = start + 4 // 跳过编码字节 + 语言[3]
-        val end = start + len
-        if (encoding == 1 || encoding == 2) {
-            while (idx + 1 < end) {
-                if (b[idx] == 0.toByte() && b[idx + 1] == 0.toByte()) { idx += 2; break }
-                idx += 1
-            }
-        } else {
-            while (idx < end && b[idx] != 0.toByte()) idx += 1
-            idx += 1
-        }
-        if (idx >= end) return null
-        val text = when (encoding) {
-            1 -> String(b, idx, end - idx, Charsets.UTF_16LE)
-            2 -> String(b, idx, end - idx, Charsets.UTF_16BE)
-            3 -> String(b, idx, end - idx, Charsets.UTF_8)
-            else -> String(b, idx, end - idx, Charsets.ISO_8859_1)
-        }
-        return text.trim().takeIf { it.startsWith("[") && it.contains("]") }
     }
 
     // ===== 侧车 / 专辑 / 标题歌词 =====
@@ -312,7 +298,19 @@ class LocalLyricLoader @Inject constructor(
     }
 
     companion object {
-        private const val MAX_HEADER = 512 * 1024 // ID3 头只出现在文件开头
+        /**
+         * 来源标识：**与 PC 端 `Shiyin.Core.Online.OnlineSourceIds` 同一套取值**（需求⑧）。
+         *
+         * 落库的 source 只允许是这两个值之一，或某个 provider id
+         * （netease / qq / kuwo / migu / kugou / genius / theaudiodb）——
+         * 不要写展示名（「网易云音乐」），也不要写 "local" 这类自定义串。
+         */
+        const val SOURCE_EMBEDDED = "embedded"
+        const val SOURCE_SIDECAR = "sidecar"
+
+        private const val MAX_HEADER = 512 * 1024 // ID3 头 / FLAC 元数据块 / moov 都只出现在文件两端
+        // MP4 的 moov 可能在文件末尾，尾部窗口；带大图封面的 moov 超过它就读不到（见 loadEmbedded 注释）
+        private const val MAX_TAIL = 1024 * 1024L
         private const val MAX_LRC_BYTES = 64 * 1024 // 远程 .lrc 最大下载字节
         // 本地 .lrc 也设大小上限，避免超大歌词文件一次性整载入内存
         private const val MAX_LOCAL_LRC_BYTES = 128 * 1024L

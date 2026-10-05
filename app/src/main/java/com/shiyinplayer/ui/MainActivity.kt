@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import com.shiyinplayer.data.local.StartupDataGuard
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.Song
 import com.shiyinplayer.data.network.zerotier.ZeroTierManager
@@ -58,6 +59,15 @@ class MainActivity : LocalizedComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Batch 0 / B0-3：用外部 Intent（"用本应用播放音频"）打开时会绕过 SplashActivity
+        // 直接到这里；降级状态下曲库是空的，必须同样跳到说明页，而不是给人一个空界面。
+        if (StartupDataGuard.isActive) {
+            startActivity(UnsupportedDataActivity.intent(this))
+            finish()
+            return
+        }
+
         permissionLauncher = PermissionsHelper.registerPermissionLauncher(this) { /* 已授予后 MediaStore 本地歌曲即可读，无需额外处理 */ }
         setContent {
             val appMode by settingsRepository.appMode.collectAsState(initial = "music")
@@ -114,15 +124,18 @@ class MainActivity : LocalizedComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // playlist_autosave：进程内一次性保存当前队列为「上次播放队列」歌单快照（防旋转等重复保存）。
+        // playlist_autosave：把当前队列保存为「上次播放队列」歌单快照。
         // 注意：onDestroy 时 lifecycleScope 已取消，必须用独立作用域完成保存。
-        if (!queueSnapshotSaved) {
-            queueSnapshotSaved = true
-            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-                val enabled = runCatching { settingsRepository.playlistAutosave.first() }.getOrDefault(true)
-                if (enabled) {
-                    runCatching { playlistRepository.saveQueueSnapshot(playerManager.playbackState.value.queue) }
-                }
+        //
+        // ⚠️ 用 isChangingConfigurations 判「旋转/主题切换等重建」而不是原来的进程级静态标志：
+        // 静态标志一旦置 true 就再不复位 ⇒ 同进程内后续真正退出时**永远不会**再保存快照，
+        // 用户换过的队列在下次启动就丢了。配置变更跳过、真退出保存，才符合原意。
+        if (isChangingConfigurations) return
+
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val enabled = runCatching { settingsRepository.playlistAutosave.first() }.getOrDefault(true)
+            if (enabled) {
+                runCatching { playlistRepository.saveQueueSnapshot(playerManager.playbackState.value.queue) }
             }
         }
     }
@@ -196,7 +209,4 @@ class MainActivity : LocalizedComponentActivity() {
         return if (cleaned.length > max) cleaned.take(max) else cleaned
     }
 
-    private companion object {
-        @Volatile var queueSnapshotSaved = false
-    }
 }

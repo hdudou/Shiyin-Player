@@ -1,5 +1,6 @@
 package com.shiyinplayer.ui.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.annotation.StringRes
@@ -10,9 +11,15 @@ import com.shiyinplayer.data.metadata.MetadataSource
 import com.shiyinplayer.data.metadata.SourceRegistry
 import com.shiyinplayer.data.repository.LibraryRepository
 import com.shiyinplayer.data.repository.MetadataRepository
+import com.shiyinplayer.data.sync.PairedDevice
+import com.shiyinplayer.data.sync.SyncAcceptService
+import com.shiyinplayer.data.sync.SyncAuth
+import com.shiyinplayer.data.sync.SyncPairingStore
 import com.shiyinplayer.player.PlayerManager
 import com.shiyinplayer.ui.theme.ThemePrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +41,11 @@ class SettingsViewModel @Inject constructor(
     private val libraryRepo: LibraryRepository,
     private val metadataSyncManager: MetadataSyncManager,
     private val playerManager: PlayerManager,
-    private val sourceRegistry: SourceRegistry
+    private val sourceRegistry: SourceRegistry,
+    // ===== 局域网同步 =====
+    private val syncAuth: SyncAuth,
+    private val pairingStore: SyncPairingStore,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     /** 公开 SettingsRepository 供导航图访问（模式切换等）。 */
@@ -75,8 +86,8 @@ class SettingsViewModel @Inject constructor(
     val listShowArt = repo.listShowArt.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val listTwoLine = repo.listTwoLine.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val listDensity = repo.listDensity.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "standard")
-    // 注（P1-6）：notify_enabled / lockscreen_control 仅持久化，通知/锁屏链路尚未接线——
-    // 前台服务必须常驻 MediaStyle 通知，锁屏控制由 MediaSession 机制承载，改造风险大，标记"暂未生效"，待后续批次。
+    // notify_enabled 已接线：PlaybackService 按它选择「完整媒体控制卡」或「极简占位通知」；
+    // lockscreen_control 由 MediaSessionManager 消费（锁屏控制开关）。
     val notifyEnabled = repo.notifyEnabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val lockscreenControl = repo.lockscreenControl.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val miniBarEnabled = repo.miniBarEnabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
@@ -93,15 +104,18 @@ class SettingsViewModel @Inject constructor(
     val lowLatency = repo.lowLatency.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val bufferMs = repo.bufferMs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 200)
     val float32Processing = repo.float32Processing.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-    val volumeNormalize = repo.volumeNormalize.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    val replaygainMode = repo.replaygainMode.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "off")
+    // ⚠️ 初值必须与 SettingsRepository 里对应 Flow 的缺省值一致（此前写 false/"off"，
+    //    而仓库缺省是 true/"track" ⇒ 进设置页首帧显示错误开关状态，异步加载后再跳变）。
+    //    有同步快照访问器的一律用它，保证首帧就是真值。
+    val volumeNormalize = repo.volumeNormalize.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), repo.volumeNormalizeSync())
+    val replaygainMode = repo.replaygainMode.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), repo.replaygainModeSync())
     val volumeCurve = repo.volumeCurve.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "log")
     val fadeInMs = repo.fadeInMs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
     val fadeOutMs = repo.fadeOutMs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
     // 注（P1-9）：eq_enabled 由 EqualizerManager 观察 DataStore 流运行时即时切换；
     // replaygain_mode / silence_remover 为构建期音频链开关，由 PlayerManager 热重建按
     // PlayerFactory 重新读取生效。均已接线，非"暂未生效"。
-    val silenceRemover = repo.silenceRemover.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    val silenceRemover = repo.silenceRemover.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), repo.silenceRemoverSync())
     val eqEnabled = repo.eqEnabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val channelBalance = repo.channelBalance.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0f)
     val eqPreset = repo.eqPreset.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "Flat")
@@ -110,7 +124,8 @@ class SettingsViewModel @Inject constructor(
     val startupAction = repo.startupAction.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "resume")
     val defaultRepeat = repo.defaultRepeat.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "all")
     val skipOnError = repo.skipOnError.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-    val autoEqByGenre = repo.autoEqByGenre.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    // 仓库缺省为 true（见 SettingsRepository.autoEqByGenre），初值须一致
+    val autoEqByGenre = repo.autoEqByGenre.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val autoResume = repo.autoResume.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     /** 自动同步曲库文件元数据（默认开）。 */
     val autoSyncMetadata = repo.autoSyncMetadata.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
@@ -127,7 +142,8 @@ class SettingsViewModel @Inject constructor(
     fun stopManualMetadataSync() = metadataSyncManager.stopManualSync()
     /** 流量保护（默认开）：移动网络下不联网获取元数据/歌词，WiFi 下自动同步。 */
     val dataSaver = repo.dataSaver.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-    val gapless = repo.gapless.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    // 仓库缺省为 true（SettingsRepository.gapless），初值须一致
+    val gapless = repo.gapless.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
     val rememberPosition = repo.rememberPosition.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     // 播放列表
@@ -138,8 +154,9 @@ class SettingsViewModel @Inject constructor(
     val allowDeleteFile = repo.allowDeleteFile.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     // 音乐库
-    val watchFolders = repo.watchFolders.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    val readEmbedLyrics = repo.readEmbedLyrics.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    // 仓库缺省均为 true（SettingsRepository.watchFolders / readEmbedLyrics），初值须一致
+    val watchFolders = repo.watchFolders.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+    val readEmbedLyrics = repo.readEmbedLyrics.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), repo.readEmbedLyricsSync())
     val hideShortClips = repo.hideShortClips.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val scanHidden = repo.scanHidden.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val scanExtensions = repo.scanExtensions.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
@@ -257,9 +274,63 @@ class SettingsViewModel @Inject constructor(
     /** 写入元数据获取源排列顺序（仅手工排序时调用）。 */
     fun setMetadataSourcesOrder(v: List<String>) = viewModelScope.launch { repo.setMetadataSourcesOrder(v) }
 
-    /** 恢复元数据来源默认：仅启用 网易云/QQ/酷我 三源，并恢复默认统一排列顺序。 */
+    /** 恢复元数据来源默认：启用集回到 [SettingsRepository.defaultEnabledSources]（5 中文源 + TheAudioDB），并恢复默认统一排列顺序。 */
     fun resetMetadataSources() = viewModelScope.launch {
         repo.setMetadataSourcesEnabled(sourceRegistry.defaultEnabled)
         repo.setMetadataSourcesOrder(SettingsRepository.defaultSourceOrder)
+    }
+
+    // ===== 局域网同步（PC 主控 / 安卓接收端，端口 23541） =====
+
+    init {
+        // 开关持久化在 DataStore：进程重启后要把服务拉回来，否则设置页显示「已开启」但 23541 没人监听
+        // （真机实测：开关打开→进程被系统回收→再进设置页，状态显示开、实际无监听）。ViewModel 构造发生在
+        // App 前台场景，正好满足 Android 12+ 不允许后台随意启动前台服务的限制。
+        if (repo.lanSyncEnabledSync()) SyncAcceptService.start(appContext)
+    }
+
+    val lanSyncEnabled = repo.lanSyncEnabled
+    val lanSyncDeviceName = repo.lanSyncDeviceName
+    val lanSyncPin = repo.lanSyncPin
+    val lanSyncPinCreatedAt = repo.lanSyncPinCreatedAt
+    val lanSyncLastSyncAt = repo.lanSyncLastSyncAt
+
+    /** 已配对 PC 列表（存 EncryptedSharedPreferences，非 Flow → 用可变状态承载）。 */
+    private val _pairedDevices = MutableStateFlow<List<PairedDevice>>(emptyList())
+    val pairedDevices: StateFlow<List<PairedDevice>> = _pairedDevices
+
+    /** 实际监听地址（服务启动是异步的，开关切换后需再刷一次）。 */
+    private val _syncBoundAddress = MutableStateFlow<String?>(null)
+    val syncBoundAddress: StateFlow<String?> = _syncBoundAddress
+
+    /** 启动失败原因（无私有网段地址 / 端口被占），供设置页提示。 */
+    private val _syncStartError = MutableStateFlow<String?>(null)
+    val syncStartError: StateFlow<String?> = _syncStartError
+
+    fun refreshLanSyncRuntimeState() {
+        _pairedDevices.value = runCatching { pairingStore.getAll() }.getOrDefault(emptyList())
+        _syncBoundAddress.value = SyncAcceptService.boundAddress
+        _syncStartError.value = SyncAcceptService.lastError
+    }
+
+    fun setLanSyncEnabled(enabled: Boolean) = viewModelScope.launch {
+        // 先落库再触发服务：Service 的 onStartCommand 读该开关决定是否监听
+        repo.setLanSyncEnabled(enabled)
+        if (enabled) SyncAcceptService.start(appContext) else SyncAcceptService.stop(appContext)
+        delay(400) // 等服务完成 socket 绑定后再读实际地址
+        refreshLanSyncRuntimeState()
+    }
+
+    fun setLanSyncDeviceName(name: String) = viewModelScope.launch { repo.setLanSyncDeviceName(name.trim()) }
+
+    /** 刷新配对码（6 位、5 分钟时效；过期后设置页提示重新刷新）。 */
+    fun refreshLanSyncPin() = viewModelScope.launch {
+        val pin = syncAuth.issueNewPin()
+        repo.setLanSyncPin(pin, syncAuth.pinCreatedAt())
+    }
+
+    fun removePairedDevice(deviceId: String) {
+        pairingStore.remove(deviceId)
+        refreshLanSyncRuntimeState()
     }
 }

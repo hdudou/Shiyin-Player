@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.shiyinplayer.R
 import com.shiyinplayer.data.VersionUpgradeCoordinator
+import com.shiyinplayer.data.local.StartupDataGuard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -42,6 +43,15 @@ class SplashActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Batch 0 / B0-3：降级安装（库版本高于本 APK）时不进主界面 —— 主界面此时会是空曲库，
+        // 用户只会以为"数据没了"。直接跳到说明页，把真实库的位置讲清楚。
+        if (StartupDataGuard.isActive) {
+            startActivity(UnsupportedDataActivity.intent(this))
+            finish()
+            return
+        }
+
         setContent { SplashScreen() }
         lifecycleScope.launch {
             val upgrading = runCatching { upgradeCoordinator.needsUpgrade() }.getOrDefault(false)

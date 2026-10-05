@@ -24,6 +24,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -94,13 +95,33 @@ class PlaybackController @Inject constructor(
         this.fallbackSourceFor = fallbackSourceFor
         this.startFallbackDownload = startFallbackDownload
         this.stopFallback = stopFallback
+        bound = true
     }
 
     private fun exo(): ExoPlayer = playerRef()
-    private val fb: MediaPlayerFallback get() = mediaPlayerFallback ?: error("PlaybackController 未绑定 MediaPlayer 兜底")
+
+    /**
+     * MediaPlayer 兜底。**刻意可空**：挂钩由 [PlayerManager.init] 经 [bind] 注入，
+     * 而本类被 HeadsetMediaButtonReceiver 等入口直接注入 —— 系统在进程未运行时派发
+     * 媒体键会先构造本类（此时 PlayerManager 尚未 init），原来的 `error(...)` 会直接
+     * 抛 IllegalStateException 并在接收器里无人捕获 → 崩进程。
+     */
+    private val fb: MediaPlayerFallback? get() = mediaPlayerFallback
+
+    /**
+     * 播放状态流。保留 `error(...)`：所有对外命令在进入时先做 [bound] 判断，
+     * 未绑定时根本走不到这里（见 [handleMediaButton] 等入口的守卫）。
+     */
     private val st: MutableStateFlow<PlaybackState> get() = state ?: error("PlaybackController 未绑定播放状态")
 
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    /** 运行时挂钩是否已由 PlayerManager 注入。未绑定时所有播放命令安全空转。 */
+    @Volatile
+    private var bound = false
+
+    // ⚠️ 必须用 SupervisorJob：本 scope 内挂着十余个 settings.X.collect { ... }（音频路由、
+    // 音量曲线、淡入淡出、睡眠定时等），父 Job 下一个子协程失败会取消**整个** scope，
+    // 于是所有设置观察静默失效、且没有任何日志 —— 用户表现为「开关全都不生效」。
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     // P2 音频设置接线（fade / 音量曲线）
     private var headsetPause = true
@@ -138,21 +159,40 @@ class PlaybackController @Inject constructor(
     private var focusRequest: AudioFocusRequest? = null
     /** Z-开关：音频焦点被永久抢占(LOSS)时的策略——true 则自动把队列指针移到下一曲；false 保留当前曲待手动续播。 */
     @Volatile private var focusLossAutoSkip = false
-    /** Q-音量收敛：可 duck 暂失时经 ADJUST_LOWER 调低系统媒体流的次数，GAIN 时按相同次数 ADJUST_RAISE 恢复。 */
-    private var duckLowerCount = 0
+    /**
+     * Q-音量收敛：可 duck 暂失时经 ADJUST_LOWER 调低系统媒体流的次数；
+     * 恢复时按相同次数 ADJUST_RAISE 还原（见 [restoreDuckedVolume]）。
+     *
+     * ⚠️ 计数只在主线程改，但焦点回调也可能来自 binder 线程，这里用原子整型以免
+     * 「一次 duck 被记成 0 次」→ 音量再也回不去（B3-2 的直接后果：系统媒体音量永久偏低）。
+     */
+    private val duckLowerCount = java.util.concurrent.atomic.AtomicInteger(0)
+
+    /**
+     * 把 duck 期间调低的系统媒体流音量**按次数**还原（B3-2）。
+     *
+     * 为什么必须有多条出口：duck 之后可能收到 GAIN（正常归还），也可能直接收到
+     * LOSS（通话转永久抢占）走到 [abandonFocus]。后者不会再有 GAIN，
+     * 原先只在 GAIN 分支还原 ⇒ 音量永远停在低值，用户以为"手机声音坏了"。
+     * 这里做成幂等的单一出口，三条路径都调它。
+     */
+    private fun restoreDuckedVolume() {
+        val count = duckLowerCount.getAndSet(0)
+        if (count <= 0) return
+        repeat(count) {
+            runCatching {
+                audioManager.adjustStreamVolume(
+                    AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0
+                )
+            }
+        }
+    }
     private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
         when (change) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 hasFocus = true
-                // Q-音量收敛：恢复 duck 暂失时被调低的系统媒体流音量，避免系统音量长期悬置在低值
-                if (duckLowerCount > 0) {
-                    repeat(duckLowerCount) {
-                        audioManager.adjustStreamVolume(
-                            AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0
-                        )
-                    }
-                    duckLowerCount = 0
-                }
+                // Q-音量收敛：还原 duck 暂失时被调低的系统媒体流音量
+                restoreDuckedVolume()
                 if (resumeOnGain && playRequiresAudioFocus) {
                     resumeOnGain = false
                     play()
@@ -168,6 +208,9 @@ class PlaybackController @Inject constructor(
                     if (ni >= 0) queueController.setCurrentIndex(ni)
                 }
                 pause()
+                // B3-2：永久让权不会再有 GAIN —— 必须在这里把 duck 调低的音量还原并清零计数，
+                // 否则系统媒体音量会永久偏低（用户只会觉得"手机声音变小了"却找不到原因）。
+                restoreDuckedVolume()
                 abandonFocus()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
@@ -183,10 +226,14 @@ class PlaybackController @Inject constructor(
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // 采用回避策略：非持久丢失时降音量播放，保持焦点不中断；GAIN 时按相同次数恢复
-                audioManager.adjustStreamVolume(
-                    AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0
-                )
-                duckLowerCount++
+                runCatching {
+                    audioManager.adjustStreamVolume(
+                        AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0
+                    )
+                }
+                // 只在真的调低成功时才计数：ADJUST_LOWER 已经到 0 时不会改变音量，
+                // 若照样计数，恢复时会把音量抬得比原值更高。
+                duckLowerCount.incrementAndGet()
             }
         }
     }
@@ -463,6 +510,8 @@ class PlaybackController @Inject constructor(
     private fun abandonFocus() {
         hasFocus = false
         resumeOnGain = false
+        // B3-2：放弃焦点后就再也收不到 GAIN 了 —— 这里兜底还原一次（幂等，无计数则直接返回）。
+        restoreDuckedVolume()
         runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 focusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
@@ -482,6 +531,7 @@ class PlaybackController @Inject constructor(
     }
 
     fun play() {
+        if (!bound) return
         // CK-开始播放即作废陈旧蓝牙重连恢复标记：用户已手动/经其它路径主动续播后，蓝牙重连不应再触发第二次自动播放
         // （resumeOnBtReconnectIfNeeded 在恢复前已自行清标记，此处对手动 play 同样收敛）。
         resumeOnBtReconnect = false
@@ -490,8 +540,8 @@ class PlaybackController @Inject constructor(
         if (!ensureFocusForPlay()) return
         ensureForeground()
         cancelFadeAndPauseTasks()
-        if (fb.active) {
-            fb.resume()
+        if (fb?.active == true) {
+            fb?.resume()
             return
         }
         exo().play()
@@ -499,9 +549,10 @@ class PlaybackController @Inject constructor(
     }
 
     fun pause() {
-        if (fb.active) {
+        if (!bound) return
+        if (fb?.active == true) {
             cancelFadeAndPauseTasks()
-            fb.pause()
+            fb?.pause()
             return
         }
         if (fadeOutMs > 0 && exo().isPlaying) {
@@ -517,8 +568,9 @@ class PlaybackController @Inject constructor(
     }
 
     fun togglePlayPause() {
-        if (fb.active) {
-            if (fb.state.value.isPlaying) pause() else play()
+        if (!bound) return
+        if (fb?.active == true) {
+            if (fb?.state?.value?.isPlaying == true) pause() else play()
             return
         }
         if (exo().isPlaying) pause() else play()
@@ -528,6 +580,12 @@ class PlaybackController @Inject constructor(
 
     /** 有线/蓝牙耳机媒体按键分发（由 HeadsetMediaButtonReceiver 调用）。单键播放/暂停切换。 */
     fun handleMediaButton(keyCode: Int) {
+        // 进程被媒体键冷启动时，PlayerManager 可能还没 init（本类由接收器直接注入）。
+        // 未绑定时没有可操作的引擎，安全忽略而不是抛异常崩进程。
+        if (!bound) {
+            Log.w("PlaybackController", "handleMediaButton keyCode=$keyCode 忽略：运行时挂钩尚未绑定")
+            return
+        }
         if (!headsetButtonControl) {
             Log.i("PlaybackController", "handleMediaButton keyCode=$keyCode 被开关门控忽略")
             return
@@ -546,29 +604,32 @@ class PlaybackController @Inject constructor(
     }
 
     fun next() {
+        if (!bound) return
         // 2026-08-18：不经过交叉淡化（避免 crossfade 延迟导致切歌卡住；crossfade 仅保留 ExoPlayer 自动连播场景）
         val idx = queueController.nextIndex()
         Log.i("PlaybackController", "next() idx=$idx currentIndex=${queueController.currentIndex} repeat=${queueController.repeatMode} queueSize=${queueController.queue.size}")
         if (idx >= 0) navigateTo(idx) else {
-            if (fb.active) fb.stop()
+            fb?.takeIf { it.active }?.stop()
             exo().pause()
         }
     }
 
     fun previous() {
+        if (!bound) return
         // 2026-08-18：上一首不经过交叉淡化（避免 crossfade 延迟导致切歌卡住）
         val idx = queueController.prevIndex()
         if (idx >= 0) navigateTo(idx) else {
-            if (fb.active) fb.stop()
+            fb?.takeIf { it.active }?.stop()
             exo().seekTo(0, 0)
         }
     }
 
     /** 停止播放（P5 需求 15）：回到待机态——暂停、归零、停兜底；**保留当前歌曲**（停止后仍显示当前歌曲，仅进度归零、暂停）；队列保留以便下次播放。 */
     fun stop() {
+        if (!bound) return
         // Q-音量收敛：停止同时取消在途 fade 与延迟暂停，避免 fade 协程继续写已停止的播放器音量
         cancelFadeAndPauseTasks()
-        if (fb.active) fb.stop()
+        fb?.takeIf { it.active }?.stop()
         runCatching { exo().pause() }
         runCatching { exo().seekTo(0, 0) }
         abandonFocus()
@@ -592,8 +653,9 @@ class PlaybackController @Inject constructor(
     }
 
     fun seekTo(ms: Long) {
-        if (fb.active) {
-            fb.seekTo(ms)
+        if (!bound) return
+        if (fb?.active == true) {
+            fb?.seekTo(ms)
             return
         }
         exo().seekTo(ms)
@@ -601,8 +663,8 @@ class PlaybackController @Inject constructor(
 
     /** §12 R5：返回播放位置的实时毫秒值（供 LyricsViewModel 稳定 tick 驱动当前歌词行）。 */
     fun livePositionMs(): Long =
-        if (fb.active) fb.state.value.positionMs
-        else exo().currentPosition.coerceAtLeast(0)
+        if (fb?.active == true) fb?.state?.value?.positionMs ?: 0L
+        else runCatching { exo().currentPosition }.getOrDefault(0L).coerceAtLeast(0)
 
     /** 跳转到队列指定项（P-09 队列编辑）。 */
     fun seekToIndex(index: Int) {
@@ -629,7 +691,7 @@ class PlaybackController @Inject constructor(
                 runCatching { exo().pause() }
                 stopFallback()
                 if (ensureFocusForPlay()) {
-                    fb.play(target, fallbackSourceFor(target))
+                    fb?.play(target, fallbackSourceFor(target))
                     st.value = st.value.copy(
                         currentSong = target, isPlaying = true, positionMs = 0, durationMs = target.durationMs
                     )
@@ -688,7 +750,7 @@ class PlaybackController @Inject constructor(
         val v = mappedVolume()
         // X-音量：同时作用于 ExoPlayer 与兜底 MediaPlayer（两套引擎逐一同步，避免"调了不响"）
         if (fadeJob?.isActive != true) exo().volume = v
-        if (fb.active) fb.setVolume(v)
+        if (fb?.active == true) fb?.setVolume(v)
     }
 
     private fun fadeTo(target: Float, rampMs: Int) {

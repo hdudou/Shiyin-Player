@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.shiyinplayer.R
 import com.shiyinplayer.data.local.dao.SongDao
 import com.shiyinplayer.data.local.entity.SongEntity
+import com.shiyinplayer.data.media.DedupKey
 import com.shiyinplayer.data.model.MediaSourceType
 import com.shiyinplayer.data.model.MusicSource
 import com.shiyinplayer.data.model.Song
@@ -20,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -36,12 +38,30 @@ class SongsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     settings: SettingsRepository
 ) : ViewModel() {
-    /** 曲库歌曲：固定按歌曲名（title）排序平铺显示（不分组）。 */
+    /**
+     * 曲库歌曲排序依据（B2-6）：此前硬编码 `sortedBy { it.title }`，
+     * 设置里的 `sort_by` 键既没有界面也没有消费方 —— 一个彻底的悬空键。
+     *
+     * 取值见 [SettingsRepository.SORT_BY] 注释：title / artist / album / duration / date_added / random。
+     * 未知取值一律退回按标题，绝不因为设置里存了脏值就让列表乱序。
+     */
+    private val sortBy: StateFlow<String> = settings.sortBy
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "title")
+
+    /** 曲库歌曲：按 [sortBy] 排序平铺显示（不分组）。 */
     val songs: StateFlow<List<Song>> =
-        repo.getSongs()
-            .map { list -> list.sortedBy { it.title } }
+        combine(repo.getSongs(), sortBy) { list, key -> sortSongs(list, key) }
             .flowOn(Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private fun sortSongs(list: List<Song>, key: String): List<Song> = when (key) {
+        "artist" -> list.sortedBy { it.artistName ?: "" }
+        "album" -> list.sortedBy { it.albumName ?: "" }
+        "duration" -> list.sortedBy { it.durationMs }
+        "date_added" -> list.sortedByDescending { it.dateAdded }
+        "random" -> list.shuffled()
+        else -> list.sortedBy { it.title }
+    }
 
     /** 列表分组（预留状态；曲库现固定不分组，不再按此值分组）。 */
     val listGroupBy: StateFlow<String> = settings.listGroupBy
@@ -92,7 +112,7 @@ class SongsViewModel @Inject constructor(
                 sourceType = MediaSourceType.LOCAL,
                 path = uri.toString(),
                 dateAdded = System.currentTimeMillis(),
-                dedupKey = uri.toString(),
+                dedupKey = DedupKey.forLocalFile(uri.toString()),
                 trackNumber = track,
                 genre = genre,
                 year = year,

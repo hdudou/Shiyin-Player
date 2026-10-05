@@ -5,8 +5,16 @@ package com.shiyinplayer.util
  */
 object Constants {
     const val DATABASE_NAME = "musicplayer.db"
-    const val DATABASE_VERSION = 12
+    const val DATABASE_VERSION = 16
     const val DATASTORE_METADATA_DB = "metadata.db"
+
+/**
+ * 缓存库（歌词/元数据）的当前版本号，**必须与 [com.shiyinplayer.data.local.cache.MetadataDatabase]
+ * 注解里的 `version` 一致**。
+ *
+ * 迁移安全管线要用它判断"是否需要升级"，写死在别处会逐渐漂移。
+ */
+const val DATASTORE_METADATA_VERSION = 3
 
     // 全新通道 ID：IMPORTANCE_LOW 用于媒体控制卡片（下拉栏显示）。
     const val NOTIFICATION_CHANNEL_ID = "playback_channel_v2"
@@ -34,7 +42,34 @@ object Constants {
     /**
      * ZeroTier 默认网络 ID。
      *
-     * 开源版置空：不内嵌任何默认网络，由用户在 ZeroTier 页手动输入自己的 Network ID。
+     * 开源版**留空**：每个使用者必须在自己的 ZeroTier 页填入自己的 Network ID。
+     *
+     * 为什么不内置默认值：内嵌任何具体网络 ID 都会让**所有安装者静默加入作者的网络** ——
+     * 既泄露私人网络信息，使用者也拿不到任何服务。留空时
+     * [com.shiyinplayer.data.network.zerotier.ZeroTierConfig.ensureDefaultNetwork] 什么都不写，
+     * 用户自行输入后持久化，之后手动清空也不会被再次覆盖。
      */
     const val ZEROTIER_DEFAULT_NETWORK_ID = ""
+
+    /**
+     * 版本更新仓库（新版本安装包 + latest.json 清单所在处）。
+     *
+     * 开源版**留空**：不内嵌任何更新服务器。填上自己的 WebDAV / HTTP 地址后，
+     * 「关于 › 检查更新」才会去该地址拉取清单；留空即等于**关闭应用内更新检查**。
+     *
+     * 经 ZeroTier 托管时可用 ZT 虚拟地址，运行时由 ZeroTierManager.mapToLocal
+     * 解析到可达地址（系统 ZT 网卡直连原地址，或内嵌 libzt 回环映射）。
+     */
+    const val UPDATE_BASE_URL = ""
+
+    /**
+     * 默认 ZeroTier WebDAV 源（首启播种，见 DefaultSourceSeeder）。
+     *
+     * 开源版**留空**：不预置任何默认音乐源与凭据（地址、账号、口令都属于部署者的私人信息）。
+     * URL 留空时 [DefaultSourceSeeder] 直接跳过播种，使用者在「音乐来源」页自行添加即可。
+     */
+    const val ZT_WEBDAV_DEFAULT_NAME = "WebDAV-ZT"
+    const val ZT_WEBDAV_DEFAULT_URL = ""
+    const val ZT_WEBDAV_DEFAULT_USER = ""
+    const val ZT_WEBDAV_DEFAULT_PASS = ""
 }

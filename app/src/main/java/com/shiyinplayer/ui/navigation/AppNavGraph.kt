@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,12 +60,9 @@ import android.content.res.Configuration
 import android.net.Uri
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.shiyinplayer.ui.albums.AlbumsScreen
 import com.shiyinplayer.ui.albumsdetail.AlbumDetailScreen
-import com.shiyinplayer.ui.artists.ArtistsScreen
 import com.shiyinplayer.ui.artistsdetail.ArtistDetailScreen
 import com.shiyinplayer.ui.equalizer.EqualizerScreen
-import com.shiyinplayer.ui.folders.FoldersScreen
 import com.shiyinplayer.ui.foldersdetail.FolderDetailScreen
 import com.shiyinplayer.ui.library.LibraryScreen
 import com.shiyinplayer.ui.library.DuplicateCleanupScreen
@@ -85,6 +83,7 @@ import com.shiyinplayer.ui.stats.StatsScreen
 import com.shiyinplayer.ui.settings.InterfaceSettingsScreen
 import com.shiyinplayer.ui.settings.IntegrationSettingsScreen
 import com.shiyinplayer.ui.settings.LibrarySettingsScreen
+import com.shiyinplayer.ui.settings.LanSyncSettingsScreen
 import com.shiyinplayer.ui.settings.MetadataSettingsScreen
 import com.shiyinplayer.ui.settings.MetadataSourcesScreen
 import com.shiyinplayer.ui.settings.PlaybackSettingsScreen
@@ -92,7 +91,6 @@ import com.shiyinplayer.ui.settings.SettingsRepository
 import com.shiyinplayer.ui.settings.SettingsViewModel
 import com.shiyinplayer.ui.settings.SoundSettingsScreen
 import com.shiyinplayer.ui.settings.SourcesSettingsScreen
-import com.shiyinplayer.ui.songs.SongsScreen
 import com.shiyinplayer.ui.theme.MusicPlayerTheme
 import com.shiyinplayer.ui.zerotier.ZeroTierScreen
 import com.shiyinplayer.ui.about.AboutScreen
@@ -130,6 +128,7 @@ private val hideBottomBarRoutes = setOf(
     Screen.SettingsMetadataSources.route,
     Screen.SettingsSound.route,
     Screen.SettingsIntegration.route,
+    Screen.SettingsLanSync.route,
     Screen.Equalizer.route,
     Screen.About.route,
     Screen.Stats.route,
@@ -151,10 +150,14 @@ private val hideLandscapeMiniBarRoutes = setOf(
     Screen.SettingsMetadataSources.route,
     Screen.SettingsSound.route,
     Screen.SettingsIntegration.route,
+    Screen.SettingsLanSync.route,
     Screen.Equalizer.route,
     Screen.About.route,
     Screen.Stats.route,
     Screen.Duplicates.route,
+    // 网络源与 ZeroTier 是并列的「音乐源」整页，竖屏 hideBottomBarRoutes 两者都在；
+    // 横屏此前漏了 Network，导致横屏进「网络源」页仍压着迷你播放条（两端口径不一致）。
+    Screen.Network.route,
     Screen.ZeroTier.route,
     Screen.DataExport.route,
     Screen.DataImport.route
@@ -176,7 +179,6 @@ fun AppNavGraph() {
     val haptic = LocalHapticFeedback.current
     val settingsRepository = settingsViewModel.settingsRepository
     val playerManager = playerViewModel.playerManagerRef
-    val radioPlayer = hiltViewModel<com.shiyinplayer.ui.radio.RadioViewModel>().radioPlayerRef
 
     // 共享「播放/切换」行为：单击进入正在播放页；双击切换音乐↔收音机模式（竖屏/横屏同一 handler）
     val enterNowPlaying: () -> Unit = {
@@ -209,8 +211,14 @@ fun AppNavGraph() {
             scope.launch { settingsRepository.setFirstLaunchDone() }
             return@LaunchedEffect
         }
+        // NavHost 要到首帧才 setGraph：库迁移（v12→13，1.6 万行 songs）等首帧较慢时本协程会先于
+        // setGraph 执行，此刻读 navController.graph 会抛 "You must call setGraph() before calling
+        // getGraph()"（真机升级后首次启动必现的竞态）。先等图就绪，且 popUpTo 用路由而非 graph 对象。
+        while (navController.currentDestination == null) {
+            withFrameNanos { }
+        }
         navController.navigate(Screen.Playlists.route) {
-            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            popUpTo(Screen.Library.route) { inclusive = true }
         }
         navController.navigate(Screen.NowPlaying.route) { launchSingleTop = true }
     }
@@ -301,15 +309,13 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier = Mo
         startDestination = Screen.Library.route,
         modifier = modifier
     ) {
+        // B1-2：songs / albums / artists / folders 四条路由已删除（曲库改为内联 Pane，
+        // 这些独立页面没有任何入口；专辑/艺术家/文件夹的**详情**页仍在下面）。
         composable(Screen.Library.route) { LibraryScreen(navController) }
-        composable(Screen.Songs.route) { SongsScreen() }
-        composable(Screen.Albums.route) { AlbumsScreen(navController) }
-        composable(Screen.Artists.route) { ArtistsScreen(navController) }
         composable(Screen.Playlists.route) { PlaylistsScreen(navController) }
         composable(Screen.More.route) { MoreScreen(navController) }
         composable(Screen.NowPlaying.route) { NowPlayingScreen(navController) }
         composable(Screen.Queue.route) { QueueScreen() }
-        composable(Screen.Folders.route) { FoldersScreen(navController) }
         composable(Screen.Search.route) { SearchScreen(navController) }
         composable(Screen.ZeroTier.route) { ZeroTierScreen() }
         composable(Screen.Network.route) { NetworkScreen() }
@@ -364,6 +370,7 @@ private fun AppNavHost(navController: NavHostController, modifier: Modifier = Mo
         composable(Screen.SettingsMetadataSources.route) { MetadataSourcesScreen(navController) }
         composable(Screen.SettingsSound.route) { SoundSettingsScreen(navController) }
         composable(Screen.SettingsIntegration.route) { IntegrationSettingsScreen(navController) }
+        composable(Screen.SettingsLanSync.route) { LanSyncSettingsScreen(navController) }
         composable(Screen.DataExport.route) { DataExportScreen(navController) }
         composable(Screen.DataImport.route) { DataImportScreen(navController) }
 

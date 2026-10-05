@@ -99,8 +99,10 @@ class PlaybackService : MediaSessionService() {
             lastSession = session
             lastCommandButtons = commandButtons
             lastActionFactory = actionFactory
-            // 始终构建完整媒体控制卡（含 MediaStyle + setMediaSession），确保锁屏/下拉栏显示控制按钮。
-            return MediaNotification(Constants.NOTIFICATION_ID, buildFullCard(session))
+            // 播放通知开关（notify_enabled）：关闭时只给满足前台服务约束的极简占位通知
+            // （用户端不可见），不再推送媒体控制卡。
+            val card = if (notifyEnabled) buildFullCard(session) else placeholderNotification()
+            return MediaNotification(Constants.NOTIFICATION_ID, card)
         }
 
         override fun handleCustomCommand(
@@ -171,9 +173,10 @@ class PlaybackService : MediaSessionService() {
         ).joinToString("|")
         if (sig == lastNotifiedSig) return
         lastNotifiedSig = sig
-        // 始终构建完整媒体控制卡（含 MediaStyle + setMediaSession），确保锁屏/下拉栏显示控制按钮。
-        // 之前的 placeholderNotification 使用占位通道，导致系统不渲染媒体控件。
-        val card = buildFullCard(session)
+        // 播放通知开关（notify_enabled）为开时构建完整媒体控制卡（含 MediaStyle + setMediaSession，
+        // 确保锁屏/下拉栏显示控制按钮）；关闭时只保留极简占位通知 —— 此前该开关只进了去重签名，
+        // 卡片恒为完整卡，导致「关掉播放通知」完全无效。
+        val card = if (notifyEnabled) buildFullCard(session) else placeholderNotification()
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ServiceCompat.startForeground(
@@ -309,17 +312,7 @@ class PlaybackService : MediaSessionService() {
         }
 
         // M5：锁屏叠加层自动唤起 —— 播放开始时若 lockscreen_overlay_enabled 开关为 true，则自动启动叠加层
-        var overlayAutoLaunched = false
-        fun launchOverlay() {
-            val intent = android.content.Intent(
-                this@PlaybackService,
-                com.shiyinplayer.lockscreen.LockScreenOverlayActivity::class.java
-            ).apply {
-                putExtra(com.shiyinplayer.lockscreen.LockScreenOverlayActivity.EXTRA_MANUAL_MODE, false)
-                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            runCatching { startActivity(intent) }
-        }
+        // 注：launchOverlay 已提升为类成员（补漏巡检也在类作用域用它），见下方方法区。
         scope.launch {
             playerManager.playbackState.collect { state ->
                 if (state.isPlaying && state.currentSong != null && !overlayAutoLaunched) {
@@ -329,23 +322,64 @@ class PlaybackService : MediaSessionService() {
                 if (!state.isPlaying) {
                     overlayAutoLaunched = false
                 }
-            }
-        }
-        // 补漏重建：叠加层/进程被系统回收后，若仍在播放且系统锁屏仍激活、叠加层已不在，则自动重建拉起。
-        // 仅在系统锁屏激活时重建，避免用户在解锁后误把叠加层重新弹回。
-        scope.launch {
-            while (true) {
-                delay(3_000)
-                val s = playerManager.playbackState.value
-                if (s.isPlaying && s.currentSong != null
+                // B3-3：补漏巡检**只在播放中且开关打开时**跑。
+                // 原先是一个 `while(true) { delay(3s) }` 的常驻循环 —— 服务活着就一直轮询，
+                // 哪怕什么都没播、开关也关着。这里改成随播放态起停。
+                if (state.isPlaying && state.currentSong != null
                     && settings.lockscreenOverlayEnabledSync()
-                    && !com.shiyinplayer.lockscreen.LockScreenOverlayActivity.isShowing
                 ) {
-                    val km = getSystemService(android.content.Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
-                    if (km.isKeyguardLocked) launchOverlay()
+                    startOverlayWatchdog()
+                } else {
+                    stopOverlayWatchdog()
                 }
             }
         }
+    }
+
+    /**
+     * 锁屏叠加层自动拉起（M5）。
+     *
+     * 提升到类成员：补漏巡检协程也在类作用域下，需要同一个入口。
+     */
+    private var overlayAutoLaunched = false
+
+    private fun launchOverlay() {
+        val intent = android.content.Intent(
+            this@PlaybackService,
+            com.shiyinplayer.lockscreen.LockScreenOverlayActivity::class.java
+        ).apply {
+            putExtra(com.shiyinplayer.lockscreen.LockScreenOverlayActivity.EXTRA_MANUAL_MODE, false)
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        runCatching { startActivity(intent) }
+    }
+
+    /** 叠加层补漏巡检（B3-3）：仅播放中存活，停止播放即取消，不再常驻空转。 */
+    private var overlayWatchdog: Job? = null
+
+    private fun startOverlayWatchdog() {
+        if (overlayWatchdog?.isActive == true) return
+        overlayWatchdog = scope.launch {
+            while (true) {
+                delay(3_000)
+                // 叠加层/进程被系统回收后，若仍在播放且系统锁屏仍激活、叠加层已不在，则自动重建拉起。
+                val s = playerManager.playbackState.value
+                if (!s.isPlaying || s.currentSong == null) {
+                    // 状态已变：collect 那边会取消本协程，这里只是提前退出这一轮
+                    return@launch
+                }
+                if (com.shiyinplayer.lockscreen.LockScreenOverlayActivity.isShowing) continue
+
+                val km = getSystemService(android.content.Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
+                // 仅在系统锁屏激活时重建，避免用户在解锁后误把叠加层重新弹回
+                if (km.isKeyguardLocked) launchOverlay()
+            }
+        }
+    }
+
+    private fun stopOverlayWatchdog() {
+        overlayWatchdog?.cancel()
+        overlayWatchdog = null
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession =
@@ -400,17 +434,6 @@ class PlaybackService : MediaSessionService() {
         )
         return NotificationCompat.Action(icon, label, pi)
     }
-
-    /** 极简占位通知：仅用于满足前台服务约束，无需封面/歌词（真正卡片由 Provider 随后刷新）。
-     *  使用 IMPORTANCE_MIN 通道，用户端不可见。 */
-    private fun foregroundPlaceholder() =
-        NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_PLACEHOLDER_ID)
-            .setSmallIcon(android.R.drawable.ic_media_play)
-            .setContentTitle(getString(com.shiyinplayer.R.string.app_name))
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-            .build()
 
     /** EM/P1-11：划掉最近任务/通知时保活——播放中不停止服务（前台通知常驻，后台播放不被系统回收），
      *  停播才走默认清理。不调用 super 的 stopSelf 分支即可保持前台服务，无 Android 12+ 启动时序问题。

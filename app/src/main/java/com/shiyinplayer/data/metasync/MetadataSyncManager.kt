@@ -260,12 +260,13 @@ class MetadataSyncManager @Inject constructor(
 
         val semaphore = Semaphore(MANUAL_SYNC_CONCURRENCY)
         val processed = AtomicInteger(0)
-        var page = 0
+        // 游标分页：每处理完一批，这批曲目就不再「缺元数据」，结果集会收缩 ——
+        // 用 OFFSET 翻页会整批跳过未处理行（见 SongDao.getSongsMissingMetadataAfterId 注释）。
+        var lastId = 0L
         while (currentCoroutineContext().isActive) {
-            val offset = page * MANUAL_SYNC_PAGE
-            if (offset >= total) break
-            val batch = songDao.getSongsMissingMetadataPaged(MANUAL_SYNC_PAGE, offset)
+            val batch = songDao.getSongsMissingMetadataAfterId(lastId, MANUAL_SYNC_PAGE)
             if (batch.isEmpty()) break
+            lastId = batch.last().id
             coroutineScope {
                 batch.forEach { song ->
                     launch(Dispatchers.IO) {
@@ -287,7 +288,6 @@ class MetadataSyncManager @Inject constructor(
                     }
                 }
             }
-            page++
         }
     }
 
@@ -298,8 +298,9 @@ class MetadataSyncManager @Inject constructor(
             if (tags != null) {
                 // fill-in：只补空字段
                 songDao.fillTagsFromFile(song.id, tags.artist, tags.album, tags.year, tags.genre, tags.track)
-                if (song.title.isNotBlank() && looksLikeFileNameTitle(song.title)) {
-                    val (parsedArtist, parsedTitle) = parseFileNameTitle(song.title)
+                // B1-10：先解析、再按"是否有差异"决定要不要清洗（不再靠"标题里有分隔符"猜测）
+                val (parsedArtist, parsedTitle) = parseFileNameTitle(song.title)
+                if (titleNeedsCleaning(song.title, song.artistName, parsedTitle, parsedArtist)) {
                     val newTitle = tags.title ?: parsedTitle ?: song.title
                     val newArtist = tags.artist ?: parsedArtist ?: song.artistName
                     if (newTitle != song.title || newArtist != song.artistName) {
@@ -386,10 +387,11 @@ class MetadataSyncManager @Inject constructor(
                         scanned++
                         try {
                             var changed = false
-                            // 2026-08-19 标题清洗：DB title 疑似文件名回退（含 " - "/"-" 等分隔符）
-                            // → 用内嵌元数据 title 覆盖；元数据也没有时从文件名解析「歌手 - 歌名」。
-                            if (looksLikeFileNameTitle(song.title)) {
-                                val (parsedArtist, parsedTitle) = parseFileNameTitle(song.title)
+                            // 标题清洗：DB title 疑似文件名回退 → 用内嵌元数据 title 覆盖；
+                            // 元数据也没有时从文件名解析「歌手 - 歌名」。
+                            // B1-10：判据改为"解析结果与现状确有差异"，而不是"标题里有分隔符"。
+                            val (parsedArtist, parsedTitle) = parseFileNameTitle(song.title)
+                            if (titleNeedsCleaning(song.title, song.artistName, parsedTitle, parsedArtist)) {
                                 val newTitle = tags.title ?: parsedTitle ?: song.title
                                 val newArtist = tags.artist ?: parsedArtist ?: song.artistName
                                 if (newTitle != song.title || newArtist != song.artistName) {
@@ -498,14 +500,30 @@ class MetadataSyncManager @Inject constructor(
         val track: Int?
     )
 
-    /** DB title 疑似「文件名/未清洗」：含常见分隔符或括注符号（可能是 歌手-歌名 或 [歌手]歌名 文件名）。 */
-    private fun looksLikeFileNameTitle(title: String): Boolean =
-        title.contains(" - ") || title.contains("-") || title.contains("_") ||
-            title.contains(".") || title.contains("[") || title.contains("]") ||
-            title.contains("(") || title.contains(")") ||
-            title.contains("（") || title.contains("）") ||
-            title.contains("《") || title.contains("》") ||
-            title.contains("/") || title.contains("：") || title.contains(":")
+    /**
+     * DB title 是否值得做一次「文件名 → 歌手/歌名」的清洗。
+     *
+     * ⚠️ 判据**不是**"标题里有没有分隔符"（B1-10 之前就是这么写的）：
+     * 那过宽了 —— 带 `.`、`:`、`-`、括号的正经标题（"Vol.1"、"Live: 2019"、"Intro (Reprise)"）
+     * 全都命中，于是每首都白解析一次，而真正决定要不要改库的是后面那句
+     * `newTitle != song.title || newArtist != song.artistName`（有守卫，所以只是浪费）。
+     *
+     * 现在直接按**解析结果是否真有差异**来判：没差异就不进清洗分支，省掉一次解析与一次比较。
+     *
+     * @param parsedTitle 已解析出的标题（由 [parseFileNameTitle] 得到）
+     * @param parsedArtist 已解析出的艺术家
+     */
+    private fun titleNeedsCleaning(
+        currentTitle: String,
+        currentArtist: String?,
+        parsedTitle: String?,
+        parsedArtist: String?
+    ): Boolean {
+        if (currentTitle.isBlank()) return false
+        val titleDiffers = parsedTitle != null && parsedTitle != currentTitle
+        val artistDiffers = parsedArtist != null && parsedArtist != (currentArtist ?: "")
+        return titleDiffers || artistDiffers
+    }
 
     /** 读取单个本地文件的内嵌标签；非本地/读取失败返回 null。 */
     private fun readTags(song: SongEntity): FileTags? {

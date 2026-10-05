@@ -1,10 +1,19 @@
 package com.shiyinplayer.data.local.cache
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/** 歌词缓存：键 = "title|artist"。2026-08-19：加 songId 与歌曲条目绑定（绑定后永不过期）。 */
-@Entity(tableName = "lyrics")
+/**
+ * 歌词缓存：键 = "title|artist"。2026-08-19：加 songId 与歌曲条目绑定（绑定后永不过期）。
+ *
+ * `songId` 单列索引：播放页加载歌词时按 `WHERE songId = ?` 优先取绑定歌词，
+ * 删曲目时按 `songId IN (...)` 清缓存 —— 没有索引这两个查询都是全表扫描（歌词表随曲库增长）。
+ */
+@Entity(
+    tableName = "lyrics",
+    indices = [Index(value = ["songId"])]
+)
 data class LyricCacheEntity(
     @PrimaryKey val key: String,
     val lrcText: String,

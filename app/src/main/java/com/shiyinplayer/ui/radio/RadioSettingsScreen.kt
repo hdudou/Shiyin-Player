@@ -81,7 +81,6 @@ fun RadioSettingsScreen(
     val showProgramInfo by viewModel.showProgramInfo.collectAsStateWithLifecycle()
     val autoReconnect by viewModel.autoReconnect.collectAsStateWithLifecycle()
     val sleepTimerEnabled by viewModel.sleepTimerEnabled.collectAsStateWithLifecycle()
-    val sleepTimerMinutes by viewModel.sleepTimerMinutes.collectAsStateWithLifecycle()
     val alarmEnabled by viewModel.alarmEnabled.collectAsStateWithLifecycle()
     val alarmHour by viewModel.alarmHour.collectAsStateWithLifecycle()
     val alarmMinute by viewModel.alarmMinute.collectAsStateWithLifecycle()

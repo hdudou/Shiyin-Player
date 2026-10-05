@@ -394,7 +394,7 @@ class ZeroTierManager @Inject constructor(
     /** 判断目标是否属于 ZeroTier 虚拟网段（2026-08-19 修复：/8 太宽会误伤局域网）。
      *  libzt 用户态绑定未暴露网络前缀长度、也无虚拟网卡可扫掩码，故按 /24 精确匹配：
      *  仅当目标与虚拟 IP 同前三段（/24）才视为 ZT 网段。
-     *  旧实现按第一段（/8）匹配，会把同段局域网设备（如同网段的 NAS vs ZT 虚拟网 IP）
+     *  旧实现按第一段（/8）匹配，会把同段局域网设备（NAS 的 192.168.x.x 与 ZT 虚拟网段）
      *  误映射到 127.0.0.1 回环转发 → WebDAV/SMB 连接全部超时卡死。 */
     private fun isZeroTierSubnet(host: String): Boolean {
         val vip = virtualIp.value ?: return false

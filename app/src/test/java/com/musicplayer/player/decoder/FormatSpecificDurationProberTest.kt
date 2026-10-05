@@ -56,12 +56,31 @@ class FormatSpecificDurationProberTest {
         assertEquals(0L, result)
     }
 
+    /**
+     * 5 MB 的 APE 按 800 kbps 估算 ≈ 50 秒。
+     * 断言"量级合理"而不是仅"非 0"：曾出现过把 kbps 当 bps 用（`fileSize*8/800*1000`）
+     * 导致结果放大 1000 倍的缺陷（5 MB 算成约 14 小时），而 `result > 0` 完全放过了它。
+     * 区间取 20 秒 ~ 5 分钟：容纳真实码率差异，但任何 1000× 级错误都会被拒。
+     */
     @Test
-    fun `probe ape with MAC header returns non-zero estimate`() {
+    fun `probe ape with MAC header returns plausible duration`() {
         val header = ByteArray(100)
         "MAC ".toByteArray().copyInto(header, 0)
         val result = FormatSpecificDurationProber.probe("ape", header, 5_000_000L)
-        assertTrue("APE should return non-zero estimate", result > 0)
+        assertTrue(
+            "APE 5MB 估算应落在 20s~5min，实际 ${result}ms（若约 5000万说明码率单位用了 kbps 而非 bps）",
+            result in 20_000L..300_000L
+        )
+    }
+
+    @Test
+    fun `probe ape duration scales linearly with file size`() {
+        val header = ByteArray(100)
+        "MAC ".toByteArray().copyInto(header, 0)
+        val one = FormatSpecificDurationProber.probe("ape", header, 1_000_000L)
+        val five = FormatSpecificDurationProber.probe("ape", header, 5_000_000L)
+        // 估算公式对文件大小线性，5 倍大小应得 5 倍时长（允许 ±10% 取整误差）
+        assertTrue("时长应随文件大小线性增长：1MB=$one, 5MB=$five", five in (one * 4.5).toLong()..(one * 5.5).toLong())
     }
 
     @Test
@@ -71,11 +90,14 @@ class FormatSpecificDurationProberTest {
     }
 
     @Test
-    fun `probe ofr with OFR header returns non-zero estimate`() {
+    fun `probe ofr with OFR header returns plausible duration`() {
         val header = ByteArray(100)
         "OFR ".toByteArray().copyInto(header, 0)
         val result = FormatSpecificDurationProber.probe("ofr", header, 5_000_000L)
-        assertTrue("OptimFROG should return non-zero estimate", result > 0)
+        assertTrue(
+            "OptimFROG 5MB 估算应落在 20s~5min，实际 ${result}ms",
+            result in 20_000L..300_000L
+        )
     }
 
     @Test

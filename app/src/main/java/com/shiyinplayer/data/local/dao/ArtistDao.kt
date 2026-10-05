@@ -19,11 +19,19 @@ interface ArtistDao {
     @Query("SELECT * FROM artists WHERE name LIKE :q ESCAPE '\\'")
     fun search(q: String): Flow<List<ArtistEntity>>
 
+    /** 局域网同步：按艺术家名定位（命中则更新，否则插入）。 */
+    @Query("SELECT * FROM artists WHERE name = :name LIMIT 1")
+    suspend fun getByName(name: String): ArtistEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(artist: ArtistEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(artists: List<ArtistEntity>)
+
+    /** 局域网同步：按主键删除（远端下发的删除指令）。 */
+    @Query("DELETE FROM artists WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("DELETE FROM artists")
     suspend fun clear()

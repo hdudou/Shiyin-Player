@@ -12,5 +12,10 @@ data class MusicSourceEntity(
     val type: MediaSourceType,
     val configJson: String = "{}",
     val enabled: Boolean = true,
-    val lastScanTime: Long = 0
+    val lastScanTime: Long = 0,
+    // ===== 局域网同步（PC 主控推送，DB v13） =====
+    /** PC 侧创建时间（Unix ms，契约 createdAt）。 */
+    val createdAt: Long = 0,
+    /** PC 侧最后修改时间（Unix ms，契约 updatedAt）。 */
+    val updatedAt: Long = 0
 )

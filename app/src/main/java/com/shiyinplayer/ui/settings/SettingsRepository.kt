@@ -181,6 +181,15 @@ class SettingsRepository @Inject constructor(
     // ===== 内置电台清单远程版本（RadioBuiltInUpdater 每启动比对更新） =====
     private val RADIO_BUILTIN_VERSION = intPreferencesKey("radio_builtin_version")
 
+    // ===== 局域网同步（PC 主控 / 安卓接收端，端口 23541） =====
+    // 仅这些非敏感项走 DataStore；deviceId / deviceToken / 服务端证书 / 已配对设备列表
+    // 均属凭据类，走 EncryptedSharedPreferences（SyncPairingStore）。
+    private val LAN_SYNC_ENABLED = booleanPreferencesKey("lan_sync_enabled")
+    private val LAN_SYNC_DEVICE_NAME = stringPreferencesKey("lan_sync_device_name")
+    private val LAN_SYNC_PIN = stringPreferencesKey("lan_sync_pin")
+    private val LAN_SYNC_PIN_CREATED_AT = longPreferencesKey("lan_sync_pin_created_at")
+    private val LAN_SYNC_LAST_SYNC_AT = longPreferencesKey("lan_sync_last_sync_at")
+
     // ===== 界面（I） =====
     val themeMode: Flow<Int> = dataStore.data.map { it[THEME_MODE] ?: 0 }
     val accent: Flow<Int> = dataStore.data.map { it[ACCENT] ?: 0 }
@@ -293,7 +302,7 @@ class SettingsRepository @Inject constructor(
     // ===== 歌词 / 在线元数据（LyricFinder + 163MusicLyrics 数据源整合） =====
     val lyricsEnabled: Flow<Boolean> = dataStore.data.map { it[LYRICS_ENABLED] ?: true }
     val metadataEnabled: Flow<Boolean> = dataStore.data.map { it[METADATA_ENABLED] ?: true }
-    /** 元数据获取源启用集合（仅决定启用/禁用，不决定顺序）。空/缺省为默认三源。 */
+    /** 元数据获取源启用集合（仅决定启用/禁用，不决定顺序）。空/缺省为 [SettingsRepository.defaultEnabledSources]。 */
     val metadataSourcesEnabled: Flow<List<String>> = dataStore.data.map { prefs ->
         prefs[METADATA_SOURCES_ENABLED]
             ?.split(",")
@@ -525,6 +534,14 @@ class SettingsRepository @Inject constructor(
     fun silenceRemoverSync(): Boolean = prefsCache[SILENCE_REMOVER] ?: true
     fun replaygainModeSync(): String = prefsCache[REPLAYGAIN_MODE] ?: "track"
     fun radioWifiOnlySync(): Boolean = prefsCache[RADIO_WIFI_ONLY] ?: true
+    /** 网络源本地缓存开关的同步快照（MusicCacheManager 在主线程判定缓存命中时要读）。 */
+    fun cacheEnabledSync(): Boolean = prefsCache[CACHE_ENABLED] ?: true
+    // 收音机重试/重连参数同步读（RadioPlayer 的重试在播放回调与 BroadcastReceiver 线程上，
+    // 不能挂协程 —— 与 radioWifiOnlySync 同一理由）。缺省值与对应的 Flow 保持一致。
+    fun radioMaxRetryCountSync(): Int = prefsCache[RADIO_MAX_RETRY_COUNT] ?: 5
+    fun radioRetryDelaySecondsSync(): Int = prefsCache[RADIO_RETRY_DELAY_SECONDS] ?: 2
+    fun radioAutoReconnectSync(): Boolean = prefsCache[RADIO_AUTO_RECONNECT] ?: true
+    fun radioShowProgramInfoSync(): Boolean = prefsCache[RADIO_SHOW_PROGRAM_INFO] ?: true
 
     // ===== P0-4 附加：元数据获取源同步快照（SourceRegistry.orderedEnabled 主线程安全读取） =====
     /** 启用集合快照。 */
@@ -542,6 +559,29 @@ class SettingsRepository @Inject constructor(
     /** 当前生效源（按排列顺序过滤启用）。 */
     fun orderedMetadataSourcesEnabledSync(): List<String> =
         metadataSourcesOrderSync().filter { it in metadataSourcesEnabledSync() }
+
+    // ===== 局域网同步（契约 android-sync-module.md §7） =====
+
+    val lanSyncEnabled: Flow<Boolean> = dataStore.data.map { it[LAN_SYNC_ENABLED] ?: false }
+    val lanSyncDeviceName: Flow<String> = dataStore.data.map { it[LAN_SYNC_DEVICE_NAME] ?: "" }
+    val lanSyncPin: Flow<String> = dataStore.data.map { it[LAN_SYNC_PIN] ?: "" }
+    val lanSyncPinCreatedAt: Flow<Long> = dataStore.data.map { it[LAN_SYNC_PIN_CREATED_AT] ?: 0L }
+    val lanSyncLastSyncAt: Flow<Long> = dataStore.data.map { it[LAN_SYNC_LAST_SYNC_AT] ?: 0L }
+
+    // 同步快照读：/sync/hello 与各路由在 NanoHTTPD 工作线程上执行，不能走 Flow 收集。
+    fun lanSyncEnabledSync(): Boolean = prefsCache[LAN_SYNC_ENABLED] ?: false
+    fun lanSyncDeviceNameSync(): String = prefsCache[LAN_SYNC_DEVICE_NAME] ?: ""
+    fun lanSyncPinSync(): String = prefsCache[LAN_SYNC_PIN] ?: ""
+    fun lanSyncPinCreatedAtSync(): Long = prefsCache[LAN_SYNC_PIN_CREATED_AT] ?: 0L
+    fun lanSyncLastSyncAtSync(): Long = prefsCache[LAN_SYNC_LAST_SYNC_AT] ?: 0L
+
+    suspend fun setLanSyncEnabled(v: Boolean) = dataStore.edit { it[LAN_SYNC_ENABLED] = v }
+    suspend fun setLanSyncDeviceName(v: String) = dataStore.edit { it[LAN_SYNC_DEVICE_NAME] = v }
+    suspend fun setLanSyncPin(pin: String, createdAt: Long) = dataStore.edit {
+        it[LAN_SYNC_PIN] = pin
+        it[LAN_SYNC_PIN_CREATED_AT] = createdAt
+    }
+    suspend fun setLanSyncLastSyncAt(ms: Long) = dataStore.edit { it[LAN_SYNC_LAST_SYNC_AT] = ms }
 
     // ===== 播放器数据导出/导入（设置部分） =====
     /**
@@ -634,11 +674,26 @@ class SettingsRepository @Inject constructor(
             "lyrics_enabled", "metadata_enabled", "metadata_sources_order",
             "metadata_sources_enabled", "search_history",
             // 收音机冷启动续播
-            "last_radio_url", "last_radio_name", "last_radio_id"
+            "last_radio_url", "last_radio_name", "last_radio_id",
+            // 局域网同步（PC 主控 / 安卓接收端）
+            "lan_sync_enabled", "lan_sync_device_name", "lan_sync_pin",
+            "lan_sync_pin_created_at", "lan_sync_last_sync_at"
         )
 
-        /** 默认启用源（仅前 3 个中文核心源；其余源默认不启用，用户在「元数据来源」设置中手动开启）。 */
-        val defaultEnabledSources: List<String> = listOf("netease", "qq", "kuwo", "migu", "kugou")
+        /**
+         * 默认启用源：**5 家中文源 + TheAudioDB**。
+         *
+         * TheAudioDB 是 1.0.16 需求①（「两端都要接 TheAudioDB 拿中文简介」）的落点，
+         * 也是 8 家里**唯一**默认启用的 `MetaCapability.ARTIST`（歌手头像/简介）来源 ——
+         * 它不在默认集里时，`MetadataRepository.getArtistInfo` 会在遍历启用源时按能力位逐个跳过，
+         * 歌手资料便成了「代码写好了但默认永不触发」。维基同样声明 ARTIST，但它只给简介不给头像，
+         * 且要逐歌手打 zh.wikipedia，故保持默认关闭。
+         *
+         * 注意：PC 端 `MetadataSourceRegistry.DefaultEnabled` 刻意只有 3 家中文源 + TheAudioDB
+         * （1.0.14 拍板口径 D6：按安卓**文案**取 3 家，不采用本处代码的 5 源）。两端不同是有意为之。
+         */
+        val defaultEnabledSources: List<String> =
+            listOf("netease", "qq", "kuwo", "migu", "kugou", "theaudiodb")
         /** 默认排列顺序（全部源统一序）：网易→QQ→酷我→咪咕→酷狗→Genius→TheAudioDB→维基。 */
         val defaultSourceOrder: List<String> = listOf(
             "netease", "qq", "kuwo", "migu", "kugou", "genius", "theaudiodb", "wikipedia"
