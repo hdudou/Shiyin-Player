@@ -162,17 +162,28 @@ if ($SkipBuild) {
 if (-not (Test-Path $Apk)) { throw "Expected APK missing: $Apk" }
 
 # ---- 5. push main -----------------------------------------------------------
-Write-Host "==> Pushing main..."
-Invoke-Checked { & $Git -C $Root push origin main } 'git push main'
+# -SkipGithub 时跳过对 GitHub(origin) 的推送：GitHub 连不通就只发 Gitea，
+# 主线与标签稍后网络恢复再补推 GitHub（Gitea 侧 push 在步骤 8 完成）。
+if ($SkipGithub) {
+    Write-Host "==> Skipping push to origin main (GitHub) [-SkipGithub]"
+} else {
+    Write-Host "==> Pushing main..."
+    Invoke-Checked { & $Git -C $Root push origin main } 'git push main'
+}
 
 # ---- 6. tag (create+push only if not already on remote) ----------------------
+# 标签本地一定创建（供 Gitea 推送与发布使用）；推到 origin 这一步同样受 -SkipGithub 控制。
 $remoteTag = (& $Git -C $Root ls-remote origin "refs/tags/$Tag" 2>&1) | Where-Object { $_ }
 if ($remoteTag) {
     Write-Host "==> Tag $Tag already exists on remote, skipping tag push."
 } else {
     Write-Host "==> Tagging $Tag..."
     Invoke-Checked { & $Git -C $Root tag $Tag } 'git tag'
-    Invoke-Checked { & $Git -C $Root push origin $Tag } 'git tag push'
+    if ($SkipGithub) {
+        Write-Host "==> Skipping push tag to origin (GitHub) [-SkipGithub]"
+    } else {
+        Invoke-Checked { & $Git -C $Root push origin $Tag } 'git tag push'
+    }
 }
 
 # ---- 7. create release or add asset (GitHub) --------------------------------
