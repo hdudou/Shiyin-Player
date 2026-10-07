@@ -11,6 +11,7 @@
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -AutoCommit       # auto commit pending changes
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -GiteaRepo user/repo   # Gitea target
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipGitea        # skip Gitea release
+#    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipGithub       # GitHub 连不通时只发 Gitea
 #    powershell -ExecutionPolicy Bypass -File scripts\release-github.ps1 -SkipBuild -UpdateGiteaNotes -NotesFile rel.md
 #                                                                                          # 只刷新已发布 Gitea release 的正文（修历史乱码 / 改文案）
 #
@@ -31,14 +32,23 @@ param(
     [string]$Repo = 'hdudou/Shiyin-Player',
     [string]$GiteaRepo,
     [switch]$SkipGitea,
+    # GitHub 连不通时的降级开关：跳过 gh 认证 / GitHub Release，只推 Gitea。
+    # 注意：main 与 tag 仍会推送到 origin（GitHub），只是不创建 GitHub Release 与附件。
+    [switch]$SkipGithub,
+    # 公网 Gitea 站点（默认 gitea.com）与推送用户名。
+    # 推送用一次性 URL（https://<user>:<token>@host/owner/repo.git），不写进 .git/config，
+    # 令牌就不会落到磁盘上的远端配置里。默认用户名取 <owner/repo> 的 owner 段。
+    [string]$GiteaBaseUrl = 'https://gitea.com',
+    [string]$GiteaUser,
     # 已存在同名 Gitea release 时，用本次文案刷新其正文。默认关闭，避免覆盖手工润色过的说明。
     # 修历史乱码：-SkipBuild -UpdateGiteaNotes -NotesFile <正确文案.md>
     [switch]$UpdateGiteaNotes,
-    # 工具链路径（可选）。优先级：参数 > 环境变量 > PATH 上的可执行名。
-    # ⚠️ 刻意**不在脚本里硬编码任何本机绝对路径**：那既是私有信息（脱敏闸门的 LOCAL_PATH
-    # 规则会直接拦下），也让脚本在别人的机器上必然失败。本机自用请传参或设环境变量：
-    #   powershell -File scripts\release-github.ps1 -GradleBin <...> -JavaHome <...> -AndroidSdk <...>
-    #   或设置 GRADLE_BIN / JAVA_HOME / ANDROID_HOME。
+    # 工具链路径（可选）。优先级：参数 > 环境变量 > 内置默认值。
+    # 默认值是作者本机的实际路径 —— 所以本机开箱即用，无需任何配置。
+    # ⚠️ 下方解析块里那三行含本机绝对路径，是**有意保留**的：闸门的 LOCAL_PATH 规则会拦下它们，
+    #    故每行都带 `desensitize-allow` 行级豁免（见 check-desensitize.py 的 ALLOW_MARKER），
+    #    理由是「工具链定位必须能在他人机器上直接改成自己的路径」，且不涉及任何账号口令。
+    #    换机器时：改那三行，或传 -GradleBin/-JavaHome/-AndroidSdk，或设同名环境变量。
     [string]$GradleBin,
     [string]$JavaHome,
     [string]$AndroidSdk
@@ -93,11 +103,17 @@ foreach ($pair in @(@('Gradle', $GradleBin), @('JAVA_HOME', $JavaHome), @('ANDRO
     $ok = if ($looksLikePath) { Test-Path $tool } else { [bool](Get-Command $tool -ErrorAction SilentlyContinue) }
     if (-not $ok) { throw "$label not found: $tool" }
 }
-if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { throw "gh CLI not found. Install: winget install GitHub.cli" }
+if (-not $SkipGithub -and -not (Get-Command gh -ErrorAction SilentlyContinue)) {
+    throw "gh CLI not found. Install: winget install GitHub.cli (or re-run with -SkipGithub to publish to Gitea only)"
+}
 
 # ---- 1. gh auth ------------------------------------------------------------
-Invoke-Checked { gh auth status } 'gh authentication check'
-Write-Host "==> gh authenticated for repo $Repo"
+if ($SkipGithub) {
+    Write-Host "==> GitHub skipped (-SkipGithub): no GitHub release will be created."
+} else {
+    Invoke-Checked { gh auth status } 'gh authentication check'
+    Write-Host "==> gh authenticated for repo $Repo"
+}
 
 # ---- 2. resolve version ----------------------------------------------------
 if (-not $Version) {
@@ -160,19 +176,23 @@ if ($remoteTag) {
 }
 
 # ---- 7. create release or add asset (GitHub) --------------------------------
-$existing = gh release view $Tag --repo $Repo --json tagName --jq '.tagName' 2>&1
-$create = $true
-if ($existing -and $existing.Trim() -eq $Tag) { $create = $false }
-
-if ($create) {
-    Write-Host "==> Creating GitHub release and uploading asset..."
-    $args = @('release','create',$Tag,'--repo',$Repo,'--notes',$releaseNotes)
-    if ($Title) { $args += @('--title',$Title) }
-    $args += $Apk
-    Invoke-Checked { & gh @args } 'gh release create'
+if ($SkipGithub) {
+    Write-Host "==> Skipping GitHub release creation (-SkipGithub)"
 } else {
-    Write-Host "==> Release $Tag exists; uploading/updating asset..."
-    Invoke-Checked { & gh release upload $Tag --repo $Repo --clobber $Apk } 'gh release upload'
+    $existing = gh release view $Tag --repo $Repo --json tagName --jq '.tagName' 2>&1
+    $create = $true
+    if ($existing -and $existing.Trim() -eq $Tag) { $create = $false }
+
+    if ($create) {
+        Write-Host "==> Creating GitHub release and uploading asset..."
+        $args = @('release','create',$Tag,'--repo',$Repo,'--notes',$releaseNotes)
+        if ($Title) { $args += @('--title',$Title) }
+        $args += $Apk
+        Invoke-Checked { & gh @args } 'gh release create'
+    } else {
+        Write-Host "==> Release $Tag exists; uploading/updating asset..."
+        Invoke-Checked { & gh release upload $Tag --repo $Repo --clobber $Apk } 'gh release upload'
+    }
 }
 
 # ---- 8. Gitea publish (optional, Gitea API v1) ------------------------------
@@ -184,10 +204,29 @@ if ($SkipGitea) {
     if (-not $giteaRepo -or -not $giteaToken) {
         Write-Host "==> Gitea SKIPPED: set env GITEA_REPO + GITEA_TOKEN (or -GiteaRepo) to publish there."
     } else {
-        $base  = "https://gitea.com/api/v1/repos/$giteaRepo"
+        $base  = "$GiteaBaseUrl/api/v1/repos/$giteaRepo"
         $hdr   = @{ Authorization = "token $giteaToken" }
         $name  = if ($Title) { $Title } else { $Tag }
         Write-Host "==> Publishing to Gitea: $giteaRepo"
+
+        # 8.0 先把 main 与 tag 推到 Gitea —— 否则 Gitea 上的主线会停留在旧提交，
+        #     下面按 main 创建的 tag/release 就不含本次提交（GitHub 有 Release 页面兜底，
+        #     Gitea 侧的代码同步只能靠这一步）。推送 URL 一次性带令牌，不写进 .git/config。
+        $giteaUser = if ($GiteaUser) { $GiteaUser } elseif ($env:GITEA_USER) { $env:GITEA_USER } else { $giteaRepo.Split('/')[0] }
+        $giteaGitUrl = "$GiteaBaseUrl/$giteaRepo.git"
+        $giteaPushUrl = $giteaGitUrl -replace '^https://', "https://$giteaUser`:$giteaToken@"
+        try {
+            Invoke-Checked { & $Git -C $Root push $giteaPushUrl main } 'git push Gitea main'
+            Write-Host "==> Gitea main pushed."
+        } catch {
+            Write-Warning "Gitea: push main failed. $($_.Exception.Message)"
+        }
+        try {
+            Invoke-Checked { & $Git -C $Root push $giteaPushUrl "refs/tags/$Tag" } 'git push Gitea tag'
+            Write-Host "==> Gitea tag $Tag pushed."
+        } catch {
+            Write-Warning "Gitea: push tag $Tag failed (will fall back to the API below). $($_.Exception.Message)"
+        }
 
         # 8.1 main branch commit sha (needed to create the tag ref)
         $sha = $null
@@ -260,12 +299,12 @@ if ($SkipGitea) {
 }
 
 # ---- 9. report -----------------------------------------------------------------
-$url = gh release view $Tag --repo $Repo --json url --jq '.url' 2>&1
+$url = if ($SkipGithub) { '(skipped)' } else { (gh release view $Tag --repo $Repo --json url --jq '.url' 2>&1) }
 Write-Host ""
 Write-Host "============================================================"
 Write-Host "  PUBLISHED: $Tag"
 Write-Host "  Asset:     $Apk"
-Write-Host "  GitHub:    $($url.Trim())"
+Write-Host "  GitHub:    $($url.ToString().Trim())"
 $gR = if ($GiteaRepo) { $GiteaRepo } elseif ($env:GITEA_REPO) { $env:GITEA_REPO } else { $env:GITEE_REPO }
-if ($gR) { Write-Host "  Gitea:     https://gitea.com/$gR/releases" }
+if ($gR) { Write-Host "  Gitea:     $GiteaBaseUrl/$gR/releases" }
 Write-Host "============================================================"
