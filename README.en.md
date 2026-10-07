@@ -13,6 +13,7 @@ This repository is a redacted open-source copy of the author's private build: it
 - **Full-featured library**: bottom navigation with Songs / Albums / Artists / Playlists / More; fixed tag order is Songs → Folders → Albums → Artists. Songs / albums / artists support multi-select, batch play, batch add-to-playlist, plus global search (Pinyin / initial-letter matching), and search results can be batch-selected to play or add to a playlist.
 - **Multiple music sources**: local storage (media store + full-file access), WebDAV and SMB sources can be scanned into the library, with incremental / full update support; SMB supports "Browse LAN" auto-discovery (with manual entry fallback), asks for credentials (or anonymous access) when you enter a host, and shows an up-level navigation path.
 - **ZeroTier virtual network**: join a ZeroTier network directly inside the app (libzt user-space, not a system VPN) to access WebDAV / SMB servers in the virtual LAN across networks. The network ID is entered by you.
+- **LAN sync (PC host / Android receiver)**: discover peers over mDNS on the same LAN and pair them (self-signed cert pinning + token, credentials stored encrypted); the PC side pushes library / playlist / cover / lyric snapshots and Android receives them in the background and applies deltas automatically. The protocol fields and port ship with this repo so you can write your own counterpart; the feature is off by default, and toggling it starts/stops both the receiver service and the mDNS advertisement.
 - **Metadata scraping**: auto / manual sync of music and lyric metadata (album art, artist info, online lyrics) with configurable sources and priorities (NetEase Cloud / QQ Music / KuWo / Migu / Kugou). See the "Metadata Scraping" section.
 - **Internet radio**: HLS / network-stream stations; a built-in station list categorized into Mainland / Hong Kong–Macau–Taiwan / Overseas (with multiple lines per station), auto line-switching, manual line selection, station search and custom stations.
 - **Broad audio format support**: built on Media3 (ExoPlayer), covering mp3 / aac / ogg / wav / flac / opus / ac3 / dts / aiff / alac and more; FFmpeg soft-decoding (NDK) additionally supports lossless and rare formats such as ape / wma / wv / tta / tak / mpc / ofr / oma / dsf / dff.
@@ -203,6 +204,18 @@ For tracks the auto-sync missed, or that need correcting:
 ---
 
 ## Release history
+
+### 3.0.1 (2026-10-07)
+
+- **Added**: the whole LAN sync module is open-sourced (PC host / Android receiver) — mDNS discovery, pairing with encrypted credentials, chunked push with resume, and background apply of deltas on Android.
+- **Data layer**: migration chain upgraded to 16 with a migration safety pipeline (`DbSafetyGuard` / `StartupDataGuard` / `MigrationChain`) so migrations are verifiable and failures surface as readable messages instead of crashes.
+- **Deduplication**: the dedupe key is now sha256 (`DedupKey`), fixing duplicate entries and split records after a source address or credentials change.
+- **Lyrics & caches**: embedded-lyric reading (`EmbeddedLyrics`) with a lyric line index; new artwork cache (`ArtworkCache`) and media cache clean-up (`MediaCacheCleaner`); the library scan pipeline was rewritten.
+- **Radio**: the built-in station list can be remote-synced by version (`RadioBuiltInUpdater`); the update URL ships empty and must be configured by you.
+- **Fixed**: artist-name cleanup no longer strips the leading digits of legitimate artist names — `2 Unlimited`, `3 Doors Down`, `5 Seconds of Summer` were truncated, splitting one artist into several rows.
+- **Fixed**: divide-by-zero crash when loading the music cache index (Kotlin property initialization order).
+- **Tooling**: build/release scripts take their toolchain paths as parameters (`-GradleBin` / `-JavaHome` / `-AndroidSdk`, or the matching environment variables) so other machines can build this.
+- **Version note**: the open-source line was `2.1.4` (`versionCode` 98); this release moves to `3.0.1` (`versionCode` 102) — builds carrying LAN sync are numbered `3.0.x`, matching the private edition; `versionCode` increases strictly and stays above every previous release.
 
 ### 2.1.4 (2026-09-15)
 
