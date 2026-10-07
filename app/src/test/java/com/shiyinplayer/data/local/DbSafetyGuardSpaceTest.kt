@@ -15,7 +15,7 @@ class DbSafetyGuardSpaceTest {
 
     @Test
     fun `迁移所需空间为主库大小的三倍`() {
-        // 真实曲库量级：PJF110 上的主库约 26.5MB
+        // 取一个偏保守的真实量级（约 26 MB）作为样本：太小则测不出"库增长后是否仍宽裕"
         val dbSize = 26_521_600L
         assertEquals(dbSize * 3, DbSafetyGuard.requiredMigrationBytes(dbSize))
     }

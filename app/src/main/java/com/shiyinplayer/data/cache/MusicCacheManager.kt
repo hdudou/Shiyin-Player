@@ -54,6 +54,21 @@ class MusicCacheManager @Inject constructor(
     companion object {
         private const val TAG = "MusicCache"
         private const val GB = 1024L * 1024 * 1024
+
+        /**
+         * ⚠️ 必须是 **const**（编译期常量），不能是类体里的普通 `val`。
+         *
+         * 历史事故：它原先声明在类体末尾（普通 `private val MB = 1024L * 1024`），而类体的
+         * `init` 块（启动时 `scope.launch { loadIndex() }`）在声明之前就执行了 —— Kotlin 按**声明顺序**
+         * 初始化属性，于是那一刻 `MB` 仍是默认的 `0L`，`loadIndex()` 里 `cachedBytes() / MB`
+         * 直接 **ArithmeticException: divide by zero** 把进程带走。
+         *
+         * 为什么平时不容易发现：loadIndex 跑在 IO 协程上，通常等对象构造完才真正取到 MB，
+         * 于是绝大多数时候正常；但只要这个单例在后台线程被创建、协程立刻被调度，就会稳定复现。
+         *
+         * 改成 const 后它在编译期就内联进调用点，彻底不存在初始化顺序问题。
+         */
+        private const val MB = 1024L * 1024
         private const val DOWNLOAD_STALL_MS = 20_000L
         private const val DEFAULT_WATER_LEVEL_GB = 5
         private const val DEFAULT_CAP_GB = 20
@@ -456,8 +471,6 @@ class MusicCacheManager @Inject constructor(
             }
         }
     }
-
-    private val MB = 1024L * 1024
 
     /** 缓存索引项（内存可变，lastAccessMs 为 LRU 依据）。 */
     private class CacheEntry(
