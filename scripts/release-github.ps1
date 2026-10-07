@@ -54,6 +54,10 @@ param(
     [string]$AndroidSdk
 )
 $ErrorActionPreference = 'Stop'
+# git 网络操作超时：GitHub 不可达时不要无限悬停（ls-remote / push 在 ~20s 内失败）。
+$env:GIT_HTTP_TIMEOUT        = '20'
+$env:GIT_HTTP_LOW_SPEED_LIMIT = '1'
+$env:GIT_HTTP_LOW_SPEED_TIME  = '10'
 $Root     = Split-Path -Parent $PSScriptRoot
 $Git      = 'C:\Program Files\Git\bin\git.exe'
 # 工具链解析：参数 > 环境变量 > PATH 上的可执行名（gradle / javac 自动回退）。
@@ -173,7 +177,12 @@ if ($SkipGithub) {
 
 # ---- 6. tag (create+push only if not already on remote) ----------------------
 # 标签本地一定创建（供 Gitea 推送与发布使用）；推到 origin 这一步同样受 -SkipGithub 控制。
-$remoteTag = (& $Git -C $Root ls-remote origin "refs/tags/$Tag" 2>&1) | Where-Object { $_ }
+# -SkipGithub 时跳过对 origin 的远端标签探测（GitHub 可能不可达/悬停），仅本地建标签。
+if ($SkipGithub) {
+    $remoteTag = $null
+} else {
+    $remoteTag = (& $Git -C $Root ls-remote origin "refs/tags/$Tag" 2>&1) | Where-Object { $_ }
+}
 if ($remoteTag) {
     Write-Host "==> Tag $Tag already exists on remote, skipping tag push."
 } else {
